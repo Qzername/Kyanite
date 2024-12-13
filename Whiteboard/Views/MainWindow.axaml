@@ -8,5 +8,6 @@
         x:Class="Whiteboard.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="Whiteboard">
+	
         <views:MainView />
 </Window>
