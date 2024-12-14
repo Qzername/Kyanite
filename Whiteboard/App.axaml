@@ -7,7 +7,7 @@
 
 	<TrayIcon.Icons>
 		<TrayIcons>
-			<TrayIcon Icon="/Assets/avalonia-logo.ico"
+			<TrayIcon Command="{Binding OpenApplication}" Icon="/Assets/avalonia-logo.ico"
 					  ToolTipText="Whiteboard">
 				<TrayIcon.Menu>
 					<NativeMenu>
