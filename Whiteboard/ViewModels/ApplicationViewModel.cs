@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using System.Diagnostics;
 using Whiteboard.Views;
 
 namespace Whiteboard.ViewModels
@@ -10,10 +9,10 @@ namespace Whiteboard.ViewModels
         public static void OpenApplication()
         {
             var desktop = (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
-           
+
             if (desktop.MainWindow!.IsVisible)
                 return;
-        
+
             desktop.MainWindow = new MainWindow();
             desktop.MainWindow.Show();
         }

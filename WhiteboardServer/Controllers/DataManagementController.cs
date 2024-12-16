@@ -1,6 +1,5 @@
 ﻿using LiteDB;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
 using WhiteboardServer.Models;
 
 namespace WhiteboardServer.Controllers
