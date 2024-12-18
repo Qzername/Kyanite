@@ -13,7 +13,10 @@ namespace Whiteboard.ViewModels
             if (desktop.MainWindow!.IsVisible)
                 return;
 
-            desktop.MainWindow = new MainWindow();
+            desktop.MainWindow = new MainWindow()
+            {
+                DataContext = new MainViewModel()
+            };
             desktop.MainWindow.Show();
         }
 
