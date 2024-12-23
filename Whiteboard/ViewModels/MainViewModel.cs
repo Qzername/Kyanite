@@ -1,28 +1,21 @@
-﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Whiteboard.Models;
 
 namespace Whiteboard.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
     SynchronizedVariable<string> syncText;
-    
-    string text 
-    { 
-        get => syncText.Value; 
-        set 
+
+    string text
+    {
+        get => syncText.Value;
+        set
         {
             syncText.Value = value;
             this.RaisePropertyChanged(nameof(text));
-        } 
+        }
     }
 
     public MainViewModel()
@@ -35,6 +28,14 @@ public class MainViewModel : ViewModelBase
         syncText = new SynchronizedVariable<string>("text");
         await syncText.InitializeVariable();
         text = syncText.Value;
+    }
+
+    public async Task ConnectionTest()
+    {
+        var connection = new HubConnectionBuilder().WithUrl("ws://localhost:5000/notification").Build();
+
+        await connection.StartAsync();
+        await connection.InvokeAsync("SendMessage", "test");
     }
 
 }

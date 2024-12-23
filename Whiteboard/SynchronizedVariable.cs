@@ -2,7 +2,6 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,16 +18,16 @@ namespace Whiteboard
         bool synchronizeOnExit;
 
         T _value;
-        public T Value 
-        { 
+        public T Value
+        {
             get => _value;
-            set 
+            set
             {
                 _value = value;
 
-                if(!synchronizeOnExit)
+                if (!synchronizeOnExit)
                     _ = SetVariable();
-            } 
+            }
         }
 
         public SynchronizedVariable(string variableName, bool synchronizeOnExit = false)

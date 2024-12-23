@@ -12,5 +12,8 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-	<TextBox Text="{Binding text}"/>
+	<DockPanel>
+		<Button Command="{Binding ConnectionTest}" DockPanel.Dock="Top">SignalR connection Test</Button>
+		<TextBox Text="{Binding text}"/>
+	</DockPanel>
 </UserControl>
