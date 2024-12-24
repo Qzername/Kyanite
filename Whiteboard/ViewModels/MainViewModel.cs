@@ -1,33 +1,24 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Whiteboard.Modules;
+using Whiteboard.Modules.Text;
 
 namespace Whiteboard.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    SynchronizedVariable<string> syncText;
+    public RoutingState Router { get; }
 
-    string text
-    {
-        get => syncText.Value;
-        set
-        {
-            syncText.Value = value;
-            this.RaisePropertyChanged(nameof(text));
-        }
-    }
+    ModuleManager moduleMananger;
+    TextModule textModule { get; set; }
 
     public MainViewModel()
     {
-        _ = InitializeVariables();
-    }
-
-    async Task InitializeVariables()
-    {
-        syncText = new SynchronizedVariable<string>("text");
-        await syncText.InitializeVariable();
-        text = syncText.Value;
+        Router = new RoutingState();
+        _ = PrepareLoad();
     }
 
     public async Task ConnectionTest()
@@ -38,4 +29,13 @@ public class MainViewModel : ViewModelBase
         await connection.InvokeAsync("SendMessage", "test");
     }
 
+    public async Task PrepareLoad()
+    {
+        moduleMananger = new();
+        textModule = new();
+
+        Router.Navigate.Execute(textModule);
+
+        await moduleMananger.LoadModule(textModule);
+    }
 }

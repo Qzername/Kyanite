@@ -3,17 +3,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Whiteboard.ViewModels"
+			 xmlns:rxui="clr-namespace:Avalonia.ReactiveUI;assembly=Avalonia.ReactiveUI"
+			 xmlns:module="clr-namespace:Whiteboard.ModuleManagement"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Views.MainView"
              x:DataType="vm:MainViewModel">
   <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
 
 	<DockPanel>
-		<Button Command="{Binding ConnectionTest}" DockPanel.Dock="Top">SignalR connection Test</Button>
-		<TextBox Text="{Binding text}"/>
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+			<Button Command="{Binding ConnectionTest}" >SignalR connection Test</Button>
+		</StackPanel>
+		<rxui:RoutedViewHost Router="{Binding Router}">
+			<rxui:RoutedViewHost.ViewLocator>
+				<module:ModuleViewLocator/>
+			</rxui:RoutedViewHost.ViewLocator>
+		</rxui:RoutedViewHost>
 	</DockPanel>
 </UserControl>
