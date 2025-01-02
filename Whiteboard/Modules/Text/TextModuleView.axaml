@@ -3,7 +3,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Whiteboard.Modules.Text"
+			 xmlns:md="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
+			 xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+			 xmlns:TextModule="clr-namespace:Whiteboard.Modules.Text;assembly=Whiteboard"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Modules.Text.TextModuleView">
- <TextBox Text="{Binding Text}"/>
+	<DockPanel>
+		<TextBox DockPanel.Dock="Top" AcceptsReturn="True" AcceptsTab="True" Text="{Binding Text}"/>
+		<md:MarkdownScrollViewer DockPanel.Dock="Left" Markdown="{Binding Text}" xml:space="preserve"/>
+		<AvaloniaEdit:TextEditor DockPanel.Dock="Right" ShowLineNumbers="True">
+			<i:Interaction.Behaviors>
+				<TextModule:DocumentTextBindingBehavior Text="{Binding Text, Mode=TwoWay}"/>
+			</i:Interaction.Behaviors>
+		</AvaloniaEdit:TextEditor>
+	</DockPanel>
 </UserControl>

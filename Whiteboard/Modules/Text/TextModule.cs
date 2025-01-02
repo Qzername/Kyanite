@@ -10,10 +10,11 @@ namespace Whiteboard.Modules.Text
         {
             get => _text;
             set
-            { 
+            {
                 _text = value;
                 _ = SendChangesToServer("text", _text);
                 OnPropertyChanged("Text");
+                this.RaiseAndSetIfChanged(ref _text, value, nameof(Text));
             }
         }
     }
