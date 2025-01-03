@@ -8,18 +8,27 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Views.MainView"
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <vm:MainViewModel />
-  </Design.DataContext>
+	<Design.DataContext>
+	   	<vm:MainViewModel />
+    </Design.DataContext>
 
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-			<Button Command="{Binding ConnectionTest}" >SignalR connection Test</Button>
+		<StackPanel Width="240" Background="Gray">
+			<Button Command="{Binding AddModule}">Add module</Button>
+			<ItemsControl ItemsSource="{Binding modules}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Command="{Binding $parent[ItemsControl].DataContext.SwitchModule}" CommandParameter="{Binding}" Content="{Binding Name}"/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
 		</StackPanel>
-		<rxui:RoutedViewHost Router="{Binding Router}">
-			<rxui:RoutedViewHost.ViewLocator>
-				<module:ModuleViewLocator/>
-			</rxui:RoutedViewHost.ViewLocator>
-		</rxui:RoutedViewHost>
+		<ScrollViewer>
+			<rxui:RoutedViewHost Router="{Binding Router}">
+				<rxui:RoutedViewHost.ViewLocator>
+					<module:ModuleViewLocator/>
+				</rxui:RoutedViewHost.ViewLocator>
+			</rxui:RoutedViewHost>
+		</ScrollViewer>
 	</DockPanel>
 </UserControl>
