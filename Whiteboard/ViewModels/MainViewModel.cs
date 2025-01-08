@@ -1,11 +1,9 @@
 ﻿using Avalonia.Collections;
-using AvaloniaEdit.Highlighting;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using System;
-using System.Diagnostics;
-using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 using Whiteboard.Modules;
@@ -21,12 +19,29 @@ public class MainViewModel : ViewModelBase
 
     ModuleManager moduleMananger;
 
+    HttpClient client;
+
     public MainViewModel()
     {
         Router = new RoutingState();
 
         moduleMananger = new();
-        modules = new AvaloniaList<ModuleInfo>(UserDataManager.Modules);
+
+        client = new();
+
+        _ = GetModules();
+
+        modules = new AvaloniaList<ModuleInfo>();
+    }
+
+    async Task GetModules()
+    {
+        var response = await client.GetAsync(Paths.ServerIP + "api/Module");
+
+        var json = await response.Content.ReadAsStringAsync();
+        var moduleInfos = JsonConvert.DeserializeObject<ModuleInfo[]>(json);
+
+        modules.AddRange(moduleInfos);
     }
 
     public async Task SwitchModule(object moduleInfoObj)
@@ -46,14 +61,22 @@ public class MainViewModel : ViewModelBase
             Router.Navigate.Execute(module);
         }
 
-        await moduleMananger.LoadModule(module!);
+        await moduleMananger.LoadModule(moduleInfo.ID!.Value, module!);
     }
 
-    public void AddModule()
+    public async void AddModule()
     {
-        ModuleInfo moduleInfo = new ModuleInfo() { Name = nameof(ReminderModule) };
-        UserDataManager.AddModule(moduleInfo);
-        modules.Add(moduleInfo);
+        ModuleInfo moduleInfo = new ModuleInfo() 
+        {
+            Type = nameof(TextModule),
+            Name = nameof(TextModule) 
+        };
+
+        var json = JsonConvert.SerializeObject(moduleInfo);
+        var response = await client.PostAsync(Paths.ServerIP + "api/Module", new StringContent(json, Encoding.UTF8, "application/json"));
+
+        modules.Clear();
+        await GetModules();
     }
 
     public async Task ConnectionTest()

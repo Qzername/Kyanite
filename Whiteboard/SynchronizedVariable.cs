@@ -11,7 +11,7 @@ namespace Whiteboard
 {
     internal class SynchronizedVariable<T>
     {
-        const string ip = "http://localhost:5000/api/DataManagement";
+        const string ip = "http://localhost:5000/api/Data";
         static HttpClient client = new();
 
         DataItem variableData;

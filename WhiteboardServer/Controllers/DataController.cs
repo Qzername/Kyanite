@@ -1,19 +1,19 @@
 ﻿using LiteDB;
 using Microsoft.AspNetCore.Mvc;
-using WhiteboardServer.Models;
+using Whiteboard.Models;
 
 namespace WhiteboardServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DataManagementController : ControllerBase
+    public class DataController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get([FromQuery] string name)
+        public IActionResult Get([FromQuery] int moduleId, [FromQuery] string name)
         {
-            using (var db = new LiteDatabase("./Database/database.db"))
+            using (var db = new LiteDatabase(Paths.Database))
             {
-                var valuesTable = db.GetCollection<DataItem>("Values");
+                var valuesTable = db.GetCollection<DataItem>("module" + moduleId.ToString());
 
                 var dataItem = valuesTable.Find(x => x.Name == name);
 
@@ -25,27 +25,27 @@ namespace WhiteboardServer.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] DataItem item)
+        public IActionResult Post([FromQuery] int moduleId, [FromBody] DataItem item)
         {
-            using (var db = new LiteDatabase("./Database/database.db"))
+            using (var db = new LiteDatabase(Paths.Database))
             {
-                var valuesTable = db.GetCollection<DataItem>("Values");
+                var valuesTable = db.GetCollection<DataItem>("module"+moduleId.ToString());
 
                 if (!valuesTable.EnsureIndex(x => x.Name, true))
                     return BadRequest();
 
                 valuesTable.Insert(item);
 
-                return Ok("ok");
+                return Ok();
             }
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] DataItem item)
+        public IActionResult Put([FromQuery] int moduleId, [FromBody] DataItem item)
         {
-            using (var db = new LiteDatabase("./Database/database.db"))
+            using (var db = new LiteDatabase(Paths.Database))
             {
-                var valuesTable = db.GetCollection<DataItem>("Values");
+                var valuesTable = db.GetCollection<DataItem>("module" + moduleId.ToString());
 
                 var dataItem = valuesTable.Find(x => x.Name == item.Name);
 
@@ -56,7 +56,7 @@ namespace WhiteboardServer.Controllers
 
                 valuesTable.Update(item);
 
-                return Ok("ok");
+                return Ok();
             }
         }
     }

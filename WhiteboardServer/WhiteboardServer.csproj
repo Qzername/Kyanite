@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Whiteboard.Models\Whiteboard.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Database\database.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -23,4 +23,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Whiteboard.Models\Whiteboard.Models.csproj" />
+  </ItemGroup>
 </Project>
