@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using ReactiveUI;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,6 +75,18 @@ public class MainViewModel : ViewModelBase
 
         var json = JsonConvert.SerializeObject(moduleInfo);
         var response = await client.PostAsync(Paths.ServerIP + "api/Module", new StringContent(json, Encoding.UTF8, "application/json"));
+
+        modules.Clear();
+        await GetModules();
+    }
+
+    public async void DeleteModule(object moduleInfoObj)
+    {
+        ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
+        var response = await client.DeleteAsync(Paths.ServerIP + "api/Module?moduleId="+moduleInfo.ID);
+
+        Debug.WriteLine(moduleInfo.ID);
+        Debug.WriteLine(response.StatusCode);
 
         modules.Clear();
         await GetModules();

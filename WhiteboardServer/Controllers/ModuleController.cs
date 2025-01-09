@@ -34,5 +34,30 @@ namespace WhiteboardServer.Controllers
                 return Ok();
             }
         }
+
+
+        [HttpDelete]
+        public IActionResult Delete([FromQuery] int moduleId)
+        {
+            using (var db = new LiteDatabase(Paths.Database))
+            {
+                bool tableExist = db.CollectionExists("module" + moduleId.ToString());
+                bool infoExist = db.GetCollection<ModuleInfo>("Modules").Exists("$._id = " + moduleId);
+
+                if (!infoExist && !tableExist)
+                    return BadRequest();
+                
+                if (infoExist) 
+                {
+                    var collection = db.GetCollection<ModuleInfo>("Modules");
+                    collection.Delete(moduleId);
+                }
+               
+                if(tableExist)
+                    db.DropCollection("module" + moduleId.ToString());
+            }
+
+            return Ok();
+        }
     }
 }
