@@ -8,7 +8,6 @@ namespace Whiteboard.ModuleManagement
         IViewFor IViewLocator.ResolveView<T>(T viewModel, string contract)
         {
             var name = viewModel!.GetType().FullName + "View";
-            Debug.WriteLine(name);  
             var type = Type.GetType(name);
 
             return (IViewFor)Activator.CreateInstance(type!)!;

@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using ReactiveUI;
 
 namespace Whiteboard.Modules.Text
 {
@@ -15,6 +16,11 @@ namespace Whiteboard.Modules.Text
                 OnPropertyChanged("Text");
                 this.RaiseAndSetIfChanged(ref _text, value, nameof(Text));
             }
+        }
+
+
+        public void Send()
+        {
         }
     }
 }

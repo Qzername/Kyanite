@@ -30,7 +30,6 @@ public class ModuleManager
         foreach (var field in synchronizedFields)
         {
             var attribute = field.GetCustomAttribute<SynchronizeAttribute>();
-            Debug.WriteLine($"?moduleId={moduleId}&name={attribute!.VariableName}");
             var response = await client.GetAsync(apiPath + $"?moduleId={moduleId}&name={attribute!.VariableName}");
            
             if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
@@ -50,13 +49,11 @@ public class ModuleManager
 
             var json = await response.Content.ReadAsStringAsync();
 
-            Debug.WriteLine(json);
             var item = JsonConvert.DeserializeObject<DataItem>(json);
 
             field.SetValue(module, item.Value[0]);
         }
 
-        Debug.WriteLine("dab");
         module.Initialize(this);
     }
 

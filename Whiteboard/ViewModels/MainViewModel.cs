@@ -85,9 +85,6 @@ public class MainViewModel : ViewModelBase
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         var response = await client.DeleteAsync(Paths.ServerIP + "api/Module?moduleId="+moduleInfo.ID);
 
-        Debug.WriteLine(moduleInfo.ID);
-        Debug.WriteLine(response.StatusCode);
-
         modules.Clear();
         await GetModules();
     }

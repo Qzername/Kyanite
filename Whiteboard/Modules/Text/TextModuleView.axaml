@@ -10,6 +10,7 @@
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Modules.Text.TextModuleView">
 	<DockPanel>
+		<Button Command="Send">notification test</Button>
 		<md:MarkdownScrollViewer DockPanel.Dock="Left" Markdown="{Binding Text}" xml:space="preserve"/>
 		<AvaloniaEdit:TextEditor DockPanel.Dock="Right" ShowLineNumbers="True">
 			<i:Interaction.Behaviors>
