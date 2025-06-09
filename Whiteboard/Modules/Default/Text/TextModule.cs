@@ -5,12 +5,8 @@ namespace Whiteboard.Modules.Text
 {
     public class TextModule : Module
     {
-        [Synchronize("text", "sample text")]
         [Reactive]
+        [Synchronize("text", "sample text")]
         public string Text { get; set; }
-
-        public void Send()
-        {
-        }
     }
 }

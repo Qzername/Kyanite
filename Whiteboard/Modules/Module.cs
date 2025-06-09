@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Whiteboard.ModuleManagement;
+namespace Whiteboard.Modules;
 
 public abstract class Module : ReactiveObject, INotifyPropertyChanged, IRoutableViewModel
 {
@@ -20,7 +20,7 @@ public abstract class Module : ReactiveObject, INotifyPropertyChanged, IRoutable
 
     PropertyInfo[] properties;
 
-    public void Initialize(ModuleManager moduleManager, PropertyInfo[] properties) 
+    public void Initialize(ModuleManager moduleManager, PropertyInfo[] properties)
     {
         manager = moduleManager;
         this.properties = properties;
@@ -33,8 +33,8 @@ public abstract class Module : ReactiveObject, INotifyPropertyChanged, IRoutable
     {
         if (e.PropertyName is null)
             throw new Exception("Property name cannot be null");
-        
-        var value = properties.Single(x=>x.Name == e.PropertyName).GetValue(this)!;
+
+        var value = properties.Single(x => x.Name == e.PropertyName).GetValue(this)!;
 
         await manager.SynchronizeVariable(e.PropertyName, (string)value);
     }

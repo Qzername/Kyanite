@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Whiteboard.ViewModels"
 			 xmlns:rxui="clr-namespace:Avalonia.ReactiveUI;assembly=Avalonia.ReactiveUI"
-			 xmlns:module="clr-namespace:Whiteboard.ModuleManagement"
+			 xmlns:module="clr-namespace:Whiteboard.Modules"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Views.MainView"
              x:DataType="vm:MainViewModel">

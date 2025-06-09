@@ -1,11 +1,8 @@
 ﻿using Avalonia.Collections;
 using Microsoft.AspNetCore.SignalR.Client;
-using Newtonsoft.Json;
 using ReactiveUI;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using Whiteboard.Data;
 using Whiteboard.Models;
 using Whiteboard.Modules;
 using Whiteboard.Modules.Reminder;
@@ -18,31 +15,23 @@ public class MainViewModel : ViewModelBase
     public AvaloniaList<ModuleInfo> modules { get; set; }
     public RoutingState Router { get; }
 
+    IDataManager dataManager;
     ModuleManager moduleMananger;
-
-    HttpClient client;
-
+    
     public MainViewModel()
     {
         Router = new RoutingState();
 
-        moduleMananger = new();
-
-        client = new();
-
-        _ = GetModules();
+        dataManager = new LocalDataManager();
+        moduleMananger = new(dataManager);
 
         modules = new AvaloniaList<ModuleInfo>();
+        _ = GetModules();
     }
 
     async Task GetModules()
     {
-        var response = await client.GetAsync(Paths.ServerIP + "api/Module");
-
-        var json = await response.Content.ReadAsStringAsync();
-        var moduleInfos = JsonConvert.DeserializeObject<ModuleInfo[]>(json);
-
-        modules.AddRange(moduleInfos);
+        modules.AddRange(dataManager.GetModules());
     }
 
     public async Task SwitchModule(object moduleInfoObj)
@@ -73,8 +62,7 @@ public class MainViewModel : ViewModelBase
             Name = nameof(TextModule) 
         };
 
-        var json = JsonConvert.SerializeObject(moduleInfo);
-        var response = await client.PostAsync(Paths.ServerIP + "api/Module", new StringContent(json, Encoding.UTF8, "application/json"));
+        dataManager.AddModule(moduleInfo);
 
         modules.Clear();
         await GetModules();
@@ -83,17 +71,9 @@ public class MainViewModel : ViewModelBase
     public async void DeleteModule(object moduleInfoObj)
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
-        var response = await client.DeleteAsync(Paths.ServerIP + "api/Module?moduleId="+moduleInfo.ID);
+        dataManager.DeleteModule(moduleInfo.ID.Value);
 
         modules.Clear();
         await GetModules();
-    }
-
-    public async Task ConnectionTest()
-    {
-        var connection = new HubConnectionBuilder().WithUrl("ws://localhost:5000/notification").Build();
-
-        await connection.StartAsync();
-        await connection.InvokeAsync("SendMessage", "test");
     }
 }

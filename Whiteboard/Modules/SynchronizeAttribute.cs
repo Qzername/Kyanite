@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Whiteboard.ModuleManagement
+namespace Whiteboard.Modules
 {
     [AttributeUsage(AttributeTargets.Property)]
     internal class SynchronizeAttribute : Attribute
@@ -14,7 +14,7 @@ namespace Whiteboard.ModuleManagement
             _defaultValue = defaultValue;
         }
 
-        public string VariableName =>  _variableName;
+        public string VariableName => _variableName;
         public string DefaultValue => _defaultValue;
     }
 }
