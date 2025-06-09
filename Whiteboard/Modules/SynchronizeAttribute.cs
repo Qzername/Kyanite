@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Whiteboard.Modules
+namespace Whiteboard.ModuleManagement
 {
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Property)]
     internal class SynchronizeAttribute : Attribute
     {
         string _variableName;

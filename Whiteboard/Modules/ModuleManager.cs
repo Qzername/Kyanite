@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 
-namespace Whiteboard.Modules;
+namespace Whiteboard.ModuleManagement;
 
 public class ModuleManager
 {
@@ -23,15 +24,16 @@ public class ModuleManager
     {
         _moduleId = moduleId;
 
-        var fields = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+        var properties = module.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
-        var synchronizedFields = fields.Where(x => x.GetCustomAttribute(typeof(SynchronizeAttribute)) is not null);
+        var synchronizedProperties = properties.Where(x => x.GetCustomAttribute(typeof(SynchronizeAttribute)) is not null);
 
-        foreach (var field in synchronizedFields)
+        foreach (var property in synchronizedProperties)
         {
-            var attribute = field.GetCustomAttribute<SynchronizeAttribute>();
+            var attribute = property.GetCustomAttribute<SynchronizeAttribute>();
             var response = await client.GetAsync(apiPath + $"?moduleId={moduleId}&name={attribute!.VariableName}");
            
+            //if module doesnt exist, create it
             if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 DataItem dataItem = new DataItem()
@@ -47,14 +49,13 @@ public class ModuleManager
                 response = await client.GetAsync(apiPath + $"?moduleId={moduleId}&name={attribute!.VariableName}");
             }
 
+            //setting the values from the server to the module's field
             var json = await response.Content.ReadAsStringAsync();
-
             var item = JsonConvert.DeserializeObject<DataItem>(json);
-
-            field.SetValue(module, item.Value[0]);
+            property.SetValue(module, item.Value[0]); 
         }
 
-        module.Initialize(this);
+        module.Initialize(this, synchronizedProperties.ToArray());
     }
 
     public async Task SynchronizeVariable(string name, string value)

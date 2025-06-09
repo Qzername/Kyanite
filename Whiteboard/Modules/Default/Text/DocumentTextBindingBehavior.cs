@@ -6,7 +6,7 @@ using AvaloniaEdit;
 
 namespace Whiteboard.Modules.Text
 {
-    //this code is from https://github.com/AvaloniaUI/AvaloniaEdit/wiki/M`VVM#create-usercontrol
+    //this code is from https://github.com/AvaloniaUI/AvaloniaEdit/wiki/MVVM#create-usercontrol
     public class DocumentTextBindingBehavior : Behavior<TextEditor>
     {
         private TextEditor _textEditor = null;
