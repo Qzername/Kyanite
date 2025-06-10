@@ -1,5 +1,7 @@
-﻿using LiteDB;
+﻿
+using LiteDB;
 using System;
+using System.IO;
 using System.Linq;
 using Whiteboard.Models;
 
@@ -11,6 +13,9 @@ namespace Whiteboard.Data
 
         public LocalDataManager()
         {
+            if (!Directory.Exists("./Database/"))
+                Directory.CreateDirectory("./Database/");
+
             database = new LiteDatabase("./Database/database.db");
         }
 
