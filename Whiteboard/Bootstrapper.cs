@@ -11,6 +11,7 @@ internal static class Bootstrapper
     {
         // --- DATA MANAGING ---
         services.RegisterLazySingleton(() => new LiteDbConnection());
+        services.RegisterLazySingleton(() => new GoogleDriveConnection());
         services.RegisterLazySingleton(() => new LocalDataItemDatabase(GetService<LiteDbConnection>(resolver)), typeof(IDataItemDatabase));
         services.RegisterLazySingleton(() => new LocalModuleDatabase(GetService<LiteDbConnection>(resolver)),   typeof(IModuleDatabase));
 

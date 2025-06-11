@@ -5,6 +5,11 @@ namespace Whiteboard.ViewModels;
 
 public class ViewModelBase : ReactiveObject
 {
+    public virtual void OnClose()
+    {
+
+    }
+
     protected T GetService<T>()
     {
         var service = Locator.Current.GetService<T>();

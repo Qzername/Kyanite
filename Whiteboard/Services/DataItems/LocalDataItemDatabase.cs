@@ -10,16 +10,16 @@ namespace Whiteboard.Services.DataItems
     /// </summary>
     public class LocalDataItemDatabase : IDataItemDatabase
     {
-        LiteDatabase database;
+        LiteDbConnection connection;
 
         public LocalDataItemDatabase(LiteDbConnection connection)
         {
-            database = connection.Database;
+            this.connection = connection;
         }
 
         public DataItem GetDataItem(int moduleId, string name)
         {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+            var valuesTable = connection.Database.GetCollection<DataItem>("module" + moduleId.ToString());
             var dataItem = valuesTable.Find(x => x.Name == name);
 
             if (dataItem.Count() == 0)
@@ -30,7 +30,7 @@ namespace Whiteboard.Services.DataItems
 
         public bool ExistDataItem(int moduleId, string name)
         {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+            var valuesTable = connection.Database.GetCollection<DataItem>("module" + moduleId.ToString());
             var dataItem = valuesTable.Find(x => x.Name == name);
 
             return dataItem.Count() > 0;
@@ -38,7 +38,7 @@ namespace Whiteboard.Services.DataItems
 
         public void AddDataItem(int moduleId, DataItem item)
         {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+            var valuesTable = connection.Database.GetCollection<DataItem>("module" + moduleId.ToString());
 
             if (!valuesTable.EnsureIndex(x => x.Name, true))
                 throw new Exception("Data item not unique");
@@ -48,7 +48,7 @@ namespace Whiteboard.Services.DataItems
 
         public void UpdateDataItem(int moduleId, DataItem item)
         {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+            var valuesTable = connection.Database.GetCollection<DataItem>("module" + moduleId.ToString());
 
             var dataItem = valuesTable.Find(x => x.Name == item.Name);
 

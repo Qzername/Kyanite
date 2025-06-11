@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using ReactiveUI;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 using Whiteboard.Modules;
@@ -17,6 +18,8 @@ public class MainViewModel : ViewModelBase
     public AvaloniaList<ModuleInfo> modules { get; set; }
     public RoutingState Router { get; }
 
+    GoogleDriveConnection driveConnection;
+
     IDataItemDatabase dataDatabase;
     IModuleDatabase moduleDatabase;
 
@@ -28,6 +31,14 @@ public class MainViewModel : ViewModelBase
     {
         Router = new RoutingState();
 
+        driveConnection = GetService<GoogleDriveConnection>();
+
+        driveConnection.OnInitialized += () =>
+        {
+            GetService<LiteDbConnection>().OpenConnection();
+            GetModules();
+        };
+
         dataDatabase = GetService<IDataItemDatabase>();
         moduleDatabase = GetService<IModuleDatabase>();
 
@@ -37,7 +48,6 @@ public class MainViewModel : ViewModelBase
         moduleMananger = new(dataDatabase);
 
         modules = new AvaloniaList<ModuleInfo>();
-        _ = GetModules();
     }
 
     async Task GetModules()
@@ -94,5 +104,10 @@ public class MainViewModel : ViewModelBase
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         popupService.ShowPopup(new RenameViewModel(moduleInfo));
+    }
+
+    public override void OnClose()
+    {
+        driveConnection.SaveDatabase();
     }
 }
