@@ -10,9 +10,9 @@ public class ModuleManager
 {
     int _moduleId;
 
-    IDataManager dataManager;
+    IDataItemDatabase dataManager;
 
-    public ModuleManager(IDataManager dataManager)
+    public ModuleManager(IDataItemDatabase dataManager)
     {
         this.dataManager = dataManager;
     }

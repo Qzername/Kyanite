@@ -1,0 +1,63 @@
+﻿
+using LiteDB;
+using System;
+using System.IO;
+using System.Linq;
+using Whiteboard.Models;
+using Whiteboard.Modules;
+
+namespace Whiteboard.Services
+{
+    public class LocalDataItemDatabase : IDataItemDatabase
+    {
+        LiteDatabase database;
+
+        public LocalDataItemDatabase(LiteDbConnection connection)
+        {
+            database = connection.Database;
+        }
+
+        public DataItem GetDataItem(int moduleId, string name)
+        {
+            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+            var dataItem = valuesTable.Find(x => x.Name == name);
+
+            if (dataItem.Count() == 0)
+                throw new Exception("Data item not found");
+
+            return dataItem.First();
+        }
+
+        public bool ExistDataItem(int moduleId, string name)
+        {
+            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+            var dataItem = valuesTable.Find(x => x.Name == name);
+
+            return dataItem.Count() > 0;
+        }
+
+        public void AddDataItem(int moduleId, DataItem item)
+        {
+            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+
+            if (!valuesTable.EnsureIndex(x => x.Name, true))
+                throw new Exception("Data item not unique");
+
+            valuesTable.Insert(item);
+        }
+
+        public void UpdateDataItem(int moduleId, DataItem item)
+        {
+            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
+
+            var dataItem = valuesTable.Find(x => x.Name == item.Name);
+
+            if (dataItem.Count() == 0)
+                throw new Exception("Data item not found");
+
+            item.Id = dataItem.First().Id;
+
+            valuesTable.Update(item);
+        }
+    }
+}

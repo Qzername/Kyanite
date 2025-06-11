@@ -1,26 +1,22 @@
-﻿
-using LiteDB;
+﻿using LiteDB;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Whiteboard.Models;
-using Whiteboard.Modules;
 
 namespace Whiteboard.Services
 {
-    public class LocalDataManager : IDataManager
+    public class LocalModuleDatabase : IModuleDatabase
     {
         LiteDatabase database;
 
-        public LocalDataManager()
+        public LocalModuleDatabase(LiteDbConnection connection)
         {
-            if (!Directory.Exists("./Database/"))
-                Directory.CreateDirectory("./Database/");
-
-            database = new LiteDatabase("./Database/database.db");
+            database = connection.Database;
         }
 
-        #region Module
         public ModuleInfo[] GetModules()
         {
             var collection = database.GetCollection<ModuleInfo>("Modules");
@@ -71,51 +67,5 @@ namespace Whiteboard.Services
 
             valuesTable.Update(tempModule);
         }
-        #endregion
-
-        #region Data item
-        public DataItem GetDataItem(int moduleId, string name)
-        {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
-            var dataItem = valuesTable.Find(x => x.Name == name);
-
-            if (dataItem.Count() == 0)
-                throw new Exception("Data item not found");
-
-            return dataItem.First();
-        }
-
-        public bool ExistDataItem(int moduleId, string name)
-        {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
-            var dataItem = valuesTable.Find(x => x.Name == name);
-
-            return dataItem.Count() > 0;
-        }
-
-        public void AddDataItem(int moduleId, DataItem item)
-        {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
-
-            if (!valuesTable.EnsureIndex(x => x.Name, true))
-                throw new Exception("Data item not unique");
-
-            valuesTable.Insert(item);
-        }
-
-        public void UpdateDataItem(int moduleId, DataItem item)
-        {
-            var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
-
-            var dataItem = valuesTable.Find(x => x.Name == item.Name);
-
-            if (dataItem.Count() == 0)
-                throw new Exception("Data item not found");
-
-            item.Id = dataItem.First().Id;
-
-            valuesTable.Update(item);
-        }
-        #endregion
     }
 }

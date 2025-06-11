@@ -7,7 +7,10 @@ internal static class Bootstrapper
 {
     public static void Register(IMutableDependencyResolver services, IReadonlyDependencyResolver resolver)
     {
-        services.RegisterLazySingleton(() => new LocalDataManager(), typeof(IDataManager));
+        // --- DATA MANAGING ---
+        services.RegisterLazySingleton(() => new LiteDbConnection());
+        services.RegisterLazySingleton(() => new LocalDataItemDatabase(GetService<LiteDbConnection>(resolver)), typeof(IDataItemDatabase));
+        services.RegisterLazySingleton(() => new LocalModuleDatabase(GetService<LiteDbConnection>(resolver)), typeof(IModuleDatabase));
     }
 
     /*

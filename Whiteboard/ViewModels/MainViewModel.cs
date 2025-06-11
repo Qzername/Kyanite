@@ -17,15 +17,18 @@ public class MainViewModel : ViewModelBase
     public AvaloniaList<ModuleInfo> modules { get; set; }
     public RoutingState Router { get; }
 
-    IDataManager dataManager;
+    IDataItemDatabase dataDatabase;
+    IModuleDatabase moduleDatabase;
     ModuleManager moduleMananger;
     
     public MainViewModel()
     {
         Router = new RoutingState();
 
-        dataManager = GetService<IDataManager>();
-        moduleMananger = new(dataManager);
+        dataDatabase = GetService<IDataItemDatabase>();
+        moduleDatabase = GetService<IModuleDatabase>();
+
+        moduleMananger = new(dataDatabase);
 
         modules = new AvaloniaList<ModuleInfo>();
         _ = GetModules();
@@ -33,7 +36,7 @@ public class MainViewModel : ViewModelBase
 
     async Task GetModules()
     {
-        modules.AddRange(dataManager.GetModules());
+        modules.AddRange(moduleDatabase.GetModules());
     }
 
     public async Task SwitchModule(object moduleInfoObj)
@@ -67,7 +70,7 @@ public class MainViewModel : ViewModelBase
             Name = nameof(TextModule) 
         };
 
-        dataManager.AddModule(moduleInfo);
+        moduleDatabase.AddModule(moduleInfo);
 
         modules.Clear();
         await GetModules();
@@ -76,7 +79,7 @@ public class MainViewModel : ViewModelBase
     public async void DeleteModule(object moduleInfoObj)
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
-        dataManager.DeleteModule(moduleInfo.ID.Value);
+        moduleDatabase.DeleteModule(moduleInfo.ID.Value);
 
         modules.Clear();
         await GetModules();

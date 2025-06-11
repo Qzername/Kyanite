@@ -17,7 +17,7 @@ public class RenameViewModel : ViewModelBase
 
     public void Confirm()
     {
-        var manager = GetService<IDataManager>();
+        var manager = GetService<IModuleDatabase>();
         _moduleInfo.Name = newName;
         manager.UpdateModule(_moduleInfo.ID!.Value, _moduleInfo);
     }
