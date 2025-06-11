@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="clr-namespace:Whiteboard.ViewModels"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Whiteboard.Views.PopupView">
+	<UserControl.DataContext>
+		<vm:PopupViewModel />
+	</UserControl.DataContext>
+	
+	<Panel IsEnabled="{Binding isOpen}" IsVisible="{Binding isOpen}">
+		<Panel Background="#101010" Opacity="0.5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+		<Panel Width="500" Height="300" Background="Black" VerticalAlignment="Center" HorizontalAlignment="Center">
+			<Button Command="{Binding Close}" VerticalAlignment="Top" HorizontalAlignment="Right">X</Button>
+			<ContentControl Content="{Binding popupContentViewModel}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+		</Panel>
+		
+	</Panel>
+</UserControl>

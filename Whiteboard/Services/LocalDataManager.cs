@@ -4,8 +4,9 @@ using System;
 using System.IO;
 using System.Linq;
 using Whiteboard.Models;
+using Whiteboard.Modules;
 
-namespace Whiteboard.Data
+namespace Whiteboard.Services
 {
     public class LocalDataManager : IDataManager
     {
@@ -56,6 +57,20 @@ namespace Whiteboard.Data
             if (tableExist)
                 database.DropCollection("module" + moduleId.ToString());
         }
+
+        public void UpdateModule(int moduleId, ModuleInfo name)
+        {
+            var valuesTable = database.GetCollection<ModuleInfo>("Modules");
+            var moduleList = valuesTable.Find(x => x.ID == moduleId);
+
+            if (moduleList.Count() == 0)
+                throw new Exception("Module not found");
+
+            var tempModule = moduleList.First();
+            tempModule.Name = name.Name;
+
+            valuesTable.Update(tempModule);
+        }
         #endregion
 
         #region Data item
@@ -75,7 +90,7 @@ namespace Whiteboard.Data
             var valuesTable = database.GetCollection<DataItem>("module" + moduleId.ToString());
             var dataItem = valuesTable.Find(x => x.Name == name);
 
-            return dataItem.Count() > 0;    
+            return dataItem.Count() > 0;
         }
 
         public void AddDataItem(int moduleId, DataItem item)

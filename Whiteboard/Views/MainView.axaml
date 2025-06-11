@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Whiteboard.ViewModels"
 			 xmlns:rxui="clr-namespace:Avalonia.ReactiveUI;assembly=Avalonia.ReactiveUI"
-			 xmlns:module="clr-namespace:Whiteboard.Modules"
+			 xmlns:viewLocators="clr-namespace:Whiteboard.ViewLocators"
+			 xmlns:views="clr-namespace:Whiteboard.Views;assembly=Whiteboard"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -12,29 +13,34 @@
 	   	<vm:MainViewModel />
     </Design.DataContext>
 
-	<DockPanel>
-		<StackPanel Width="240" Background="Gray">
-			<Button Command="{Binding AddModule}">Add module</Button>
-			<ItemsControl ItemsSource="{Binding modules}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<Button Command="{Binding $parent[ItemsControl].DataContext.SwitchModule}" CommandParameter="{Binding}" Content="{Binding Name}">
-							<Button.ContextMenu>
-								<ContextMenu>
-									<MenuItem Command="{Binding $parent[DockPanel].DataContext.DeleteModule}" CommandParameter="{Binding}" Header="Delete module"/>
-								</ContextMenu>
-							</Button.ContextMenu>
-						</Button>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-		</StackPanel>
-		<ScrollViewer>
-			<rxui:RoutedViewHost Router="{Binding Router}">
-				<rxui:RoutedViewHost.ViewLocator>
-					<module:ModuleViewLocator/>
-				</rxui:RoutedViewHost.ViewLocator>
-			</rxui:RoutedViewHost>
-		</ScrollViewer>
-	</DockPanel>
+	<Panel>
+		<DockPanel>
+			<StackPanel Width="240" Background="Gray">
+				<Button Command="{Binding AddModule}" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add module</Button>
+				<ItemsControl ItemsSource="{Binding modules}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Button Command="{Binding $parent[ItemsControl].DataContext.SwitchModule}" CommandParameter="{Binding}" Content="{Binding Name}" HorizontalAlignment="Stretch">
+								<Button.ContextMenu>
+									<ContextMenu>
+										<MenuItem Command="{Binding $parent[DockPanel].DataContext.DeleteModule}" CommandParameter="{Binding}" Header="Delete module"/>
+										<MenuItem Command="{Binding $parent[DockPanel].DataContext.OpenRename}" CommandParameter="{Binding}" Header="Rename module"/>
+									</ContextMenu>
+								</Button.ContextMenu>
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+			<ScrollViewer>
+				<rxui:RoutedViewHost Router="{Binding Router}">
+					<rxui:RoutedViewHost.ViewLocator>
+						<viewLocators:ModuleViewLocator/>
+					</rxui:RoutedViewHost.ViewLocator>
+				</rxui:RoutedViewHost>
+			</ScrollViewer>
+		</DockPanel>
+		<views:PopupView/>
+	</Panel>
+	
 </UserControl>

@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using System;
 using System.Diagnostics;
-namespace Whiteboard.Modules
+namespace Whiteboard.ViewLocators
 {
     public class ModuleViewLocator : IViewLocator
     {

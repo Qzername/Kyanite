@@ -1,12 +1,14 @@
 ﻿using Avalonia.Collections;
 using Microsoft.AspNetCore.SignalR.Client;
 using ReactiveUI;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using Whiteboard.Data;
 using Whiteboard.Models;
 using Whiteboard.Modules;
 using Whiteboard.Modules.Reminder;
 using Whiteboard.Modules.Text;
+using Whiteboard.Services;
+using Whiteboard.ViewModels.Popups;
 
 namespace Whiteboard.ViewModels;
 
@@ -22,7 +24,7 @@ public class MainViewModel : ViewModelBase
     {
         Router = new RoutingState();
 
-        dataManager = new LocalDataManager();
+        dataManager = GetService<IDataManager>();
         moduleMananger = new(dataManager);
 
         modules = new AvaloniaList<ModuleInfo>();
@@ -40,18 +42,21 @@ public class MainViewModel : ViewModelBase
 
         Module module = null;
 
-        if (moduleInfo.Name == nameof(TextModule))
+        if (moduleInfo.Type == nameof(TextModule))
         {
             module = new TextModule();
             Router.Navigate.Execute(module);
         }
-        else if(moduleInfo.Name == nameof(ReminderModule))
+        else if(moduleInfo.Type == nameof(ReminderModule))
         {
             module = new ReminderModule();
             Router.Navigate.Execute(module);
         }
 
-        await moduleMananger.LoadModule(moduleInfo.ID!.Value, module!);
+        if (module is null)
+            throw new System.Exception("Wrong module info type has been read from database");
+
+        await moduleMananger.LoadModule(moduleInfo.ID!.Value, module);
     }
 
     public async void AddModule()
@@ -75,5 +80,11 @@ public class MainViewModel : ViewModelBase
 
         modules.Clear();
         await GetModules();
+    }
+
+    public void OpenRename(object moduleInfoObj)
+    {
+        ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
+        PopupViewModel.Instance.Open(new RenameViewModel(moduleInfo));
     }
 }

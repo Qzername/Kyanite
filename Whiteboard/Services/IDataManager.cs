@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 
-namespace Whiteboard.Data
+namespace Whiteboard.Services
 {
     public interface IDataManager
     {
         public ModuleInfo[] GetModules();
         public bool ExistModule(int moduleId);
         public void AddModule(ModuleInfo moduleInfo);
+        public void UpdateModule(int moduleId, ModuleInfo moduleInfo);
         public void DeleteModule(int moduleId);
 
         public DataItem GetDataItem(int moduleId, string name);
