@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Whiteboard.Models;
-using Whiteboard.Services;
+using Whiteboard.Services.DataItems;
 
 namespace Whiteboard.Modules;
 
@@ -29,7 +29,6 @@ public class ModuleManager
         {
             var attribute = property.GetCustomAttribute<SynchronizeAttribute>();
             
-
             //if date item doesnt exist, create it
             if (!dataManager.ExistDataItem(moduleId, attribute!.VariableName))
             {

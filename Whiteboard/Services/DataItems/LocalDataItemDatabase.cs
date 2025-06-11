@@ -1,13 +1,13 @@
-﻿
-using LiteDB;
+﻿using LiteDB;
 using System;
-using System.IO;
 using System.Linq;
 using Whiteboard.Models;
-using Whiteboard.Modules;
 
-namespace Whiteboard.Services
+namespace Whiteboard.Services.DataItems
 {
+    /// <summary>
+    /// database is localy stored in nosql LiteDB database.
+    /// </summary>
     public class LocalDataItemDatabase : IDataItemDatabase
     {
         LiteDatabase database;

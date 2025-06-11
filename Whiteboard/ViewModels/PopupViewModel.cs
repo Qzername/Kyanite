@@ -1,17 +1,16 @@
 ﻿using ReactiveUI.Fody.Helpers;
+using Whiteboard.Services;
 
 namespace Whiteboard.ViewModels;
 
 public class PopupViewModel :ViewModelBase
 {
-    public static PopupViewModel Instance { get; private set; }
-
     [Reactive] bool isOpen { get; set; } = false;
     [Reactive] ViewModelBase popupContentViewModel { get; set; }
 
     public PopupViewModel()
     {
-        Instance = this;
+        GetService<PopupService>().Initialize(this);
     }
 
     public void Open(ViewModelBase popup)

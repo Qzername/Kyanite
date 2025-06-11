@@ -6,8 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 
-namespace Whiteboard.Services
+namespace Whiteboard.Services.Modules
 {
+    /// <summary>
+    /// database is localy stored in nosql LiteDB database.
+    /// </summary>
     public class LocalModuleDatabase : IModuleDatabase
     {
         LiteDatabase database;

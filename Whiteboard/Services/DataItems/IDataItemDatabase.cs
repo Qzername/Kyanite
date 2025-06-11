@@ -1,7 +1,10 @@
 ﻿using Whiteboard.Models;
 
-namespace Whiteboard.Services
+namespace Whiteboard.Services.DataItems
 {
+    /// <summary>
+    /// Resposible for reading dataitems
+    /// </summary>
     public interface IDataItemDatabase
     {
         public DataItem GetDataItem(int moduleId, string name);

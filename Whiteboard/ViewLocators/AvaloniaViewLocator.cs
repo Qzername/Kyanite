@@ -5,6 +5,7 @@ using Whiteboard.ViewModels;
 
 namespace Whiteboard.ViewLocators;
 
+//viewlocator used for default view searching for example in content control
 internal class AvaloniaViewLocator : IDataTemplate
 {
     public Control Build(object data)

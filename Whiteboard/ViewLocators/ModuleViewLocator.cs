@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 namespace Whiteboard.ViewLocators
 {
+    //viewlocator used for modules
     public class ModuleViewLocator : IViewLocator
     {
         IViewFor IViewLocator.ResolveView<T>(T viewModel, string contract)

@@ -1,6 +1,7 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using Whiteboard.Models;
 using Whiteboard.Services;
+using Whiteboard.Services.Modules;
 
 namespace Whiteboard.ViewModels.Popups;
 
@@ -20,5 +21,7 @@ public class RenameViewModel : ViewModelBase
         var manager = GetService<IModuleDatabase>();
         _moduleInfo.Name = newName;
         manager.UpdateModule(_moduleInfo.ID!.Value, _moduleInfo);
+
+        GetService<PopupService>().ClosePopup();
     }
 }

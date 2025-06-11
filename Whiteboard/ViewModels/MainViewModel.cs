@@ -1,13 +1,13 @@
 ﻿using Avalonia.Collections;
-using Microsoft.AspNetCore.SignalR.Client;
 using ReactiveUI;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 using Whiteboard.Modules;
 using Whiteboard.Modules.Reminder;
 using Whiteboard.Modules.Text;
 using Whiteboard.Services;
+using Whiteboard.Services.DataItems;
+using Whiteboard.Services.Modules;
 using Whiteboard.ViewModels.Popups;
 
 namespace Whiteboard.ViewModels;
@@ -19,14 +19,20 @@ public class MainViewModel : ViewModelBase
 
     IDataItemDatabase dataDatabase;
     IModuleDatabase moduleDatabase;
+
+    PopupService popupService;
+
     ModuleManager moduleMananger;
-    
+
     public MainViewModel()
     {
         Router = new RoutingState();
 
         dataDatabase = GetService<IDataItemDatabase>();
         moduleDatabase = GetService<IModuleDatabase>();
+
+        popupService = GetService<PopupService>();
+        popupService.OnPopupClosed += () => _ = GetModules();
 
         moduleMananger = new(dataDatabase);
 
@@ -36,6 +42,7 @@ public class MainViewModel : ViewModelBase
 
     async Task GetModules()
     {
+        modules.Clear();
         modules.AddRange(moduleDatabase.GetModules());
     }
 
@@ -72,7 +79,6 @@ public class MainViewModel : ViewModelBase
 
         moduleDatabase.AddModule(moduleInfo);
 
-        modules.Clear();
         await GetModules();
     }
 
@@ -81,13 +87,12 @@ public class MainViewModel : ViewModelBase
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         moduleDatabase.DeleteModule(moduleInfo.ID.Value);
 
-        modules.Clear();
         await GetModules();
     }
 
     public void OpenRename(object moduleInfoObj)
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
-        PopupViewModel.Instance.Open(new RenameViewModel(moduleInfo));
+        popupService.ShowPopup(new RenameViewModel(moduleInfo));
     }
 }

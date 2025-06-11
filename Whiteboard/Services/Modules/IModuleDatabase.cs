@@ -1,7 +1,10 @@
 ﻿using Whiteboard.Models;
 
-namespace Whiteboard.Services
+namespace Whiteboard.Services.Modules
 {
+    /// <summary>
+    /// Resposible for reading data about modules
+    /// </summary>
     public interface IModuleDatabase
     {
         public ModuleInfo[] GetModules();
