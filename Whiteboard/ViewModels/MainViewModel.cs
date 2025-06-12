@@ -19,6 +19,7 @@ public class MainViewModel : ViewModelBase
     public RoutingState Router { get; }
 
     GoogleDriveConnection driveConnection;
+    LiteDbConnection liteDBConnection;
 
     IDataItemDatabase dataDatabase;
     IModuleDatabase moduleDatabase;
@@ -32,10 +33,11 @@ public class MainViewModel : ViewModelBase
         Router = new RoutingState();
 
         driveConnection = GetService<GoogleDriveConnection>();
+        liteDBConnection = GetService<LiteDbConnection>();  
 
         driveConnection.OnInitialized += () =>
         {
-            GetService<LiteDbConnection>().OpenConnection();
+            liteDBConnection.OpenConnection();
             GetModules();
         };
 
@@ -48,6 +50,8 @@ public class MainViewModel : ViewModelBase
         moduleMananger = new(dataDatabase);
 
         modules = new AvaloniaList<ModuleInfo>();
+
+        GetService<INotificationService>().ShowNotification("test", "test");
     }
 
     async Task GetModules()
@@ -104,10 +108,5 @@ public class MainViewModel : ViewModelBase
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         popupService.ShowPopup(new RenameViewModel(moduleInfo));
-    }
-
-    public override void OnClose()
-    {
-        driveConnection.SaveDatabase();
     }
 }

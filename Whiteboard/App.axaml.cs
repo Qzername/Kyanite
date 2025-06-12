@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Splat;
+using Whiteboard.Services;
 using Whiteboard.ViewModels;
 using Whiteboard.Views;
 
@@ -43,5 +44,10 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    public void RegisterNotificationService(INotificationService notificationService)
+    {
+        Locator.CurrentMutable.RegisterConstant(notificationService, typeof(INotificationService));
     }
 }
