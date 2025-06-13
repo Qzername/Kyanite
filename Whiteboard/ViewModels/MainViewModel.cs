@@ -50,8 +50,6 @@ public class MainViewModel : ViewModelBase
         moduleMananger = new(dataDatabase);
 
         modules = new AvaloniaList<ModuleInfo>();
-
-        GetService<INotificationService>().ShowNotification("test", "test");
     }
 
     async Task GetModules()
@@ -108,5 +106,15 @@ public class MainViewModel : ViewModelBase
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         popupService.ShowPopup(new RenameViewModel(moduleInfo));
+    }
+
+    public void UploadChanges()
+    {
+        driveConnection.SaveDatabase();
+    }
+
+    public override void OnClose()
+    {
+        driveConnection.SaveDatabase();
     }
 }

@@ -37,6 +37,7 @@ namespace Whiteboard.Services.Modules
 
             var collection = connection.Database.GetCollection<ModuleInfo>("Modules");
             collection.Insert(moduleInfo);
+            connection.Database.Checkpoint();
         }
 
         public void DeleteModule(int moduleId)
@@ -55,6 +56,7 @@ namespace Whiteboard.Services.Modules
 
             if (tableExist)
                 connection.Database.DropCollection("module" + moduleId.ToString());
+            connection.Database.Checkpoint();
         }
 
         public void UpdateModule(int moduleId, ModuleInfo name)
@@ -69,6 +71,7 @@ namespace Whiteboard.Services.Modules
             tempModule.Name = name.Name;
 
             valuesTable.Update(tempModule);
+            connection.Database.Checkpoint();
         }
     }
 }

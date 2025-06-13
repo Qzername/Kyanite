@@ -16,7 +16,9 @@
 	<Panel>
 		<DockPanel>
 			<StackPanel Width="240" Background="Gray">
-				<Button Command="{Binding AddModule}" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add module</Button>
+				<Button Command="{Binding AddModule}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Add module</Button>
+				<Button Command="{Binding UploadChanges}" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">Upload changes</Button>
+				
 				<ItemsControl ItemsSource="{Binding modules}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>

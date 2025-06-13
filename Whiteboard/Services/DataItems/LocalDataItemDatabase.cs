@@ -44,6 +44,7 @@ namespace Whiteboard.Services.DataItems
                 throw new Exception("Data item not unique");
 
             valuesTable.Insert(item);
+            connection.Database.Checkpoint();
         }
 
         public void UpdateDataItem(int moduleId, DataItem item)
@@ -58,6 +59,7 @@ namespace Whiteboard.Services.DataItems
             item.Id = dataItem.First().Id;
 
             valuesTable.Update(item);
+            connection.Database.Checkpoint();
         }
     }
 }

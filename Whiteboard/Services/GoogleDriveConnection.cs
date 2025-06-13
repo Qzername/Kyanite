@@ -12,7 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Google.Apis.Upload;
-using Google.Apis.Drive.v3.Data;
+using Avalonia.Platform;
+using Avalonia;
 
 namespace Whiteboard.Services;
 
@@ -23,24 +24,29 @@ internal class GoogleDriveConnection
 
     public event Action OnInitialized;
 
+    readonly string pathDirectory;
+    readonly string pathFile;
+    readonly string pathFileCopy;
+
     public GoogleDriveConnection()
     {
+        string personalDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+
+        pathDirectory = personalDirectory + "/Database/";
+
+        pathFile = pathDirectory + "database.db";
+        pathFileCopy = pathDirectory + "database_copy.db";
+
         _ = Connect();
     }
 
     async Task Connect()
     {
-        UserCredential credential;
+        var uri = new Uri("avares://Whiteboard/Assets/service_account.json");
+        using var stream = AssetLoader.Open(uri);
 
-        using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
-        {
-            credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                GoogleClientSecrets.FromStream(stream).Secrets,
-                new[] { DriveService.Scope.Drive },
-                "user",
-                CancellationToken.None,
-                new FileDataStore("token.json", true));
-        }
+        var credential = GoogleCredential.FromStream(stream)
+            .CreateScoped(DriveService.ScopeConstants.Drive);
 
         driveService = new DriveService(new BaseClientService.Initializer()
         {
@@ -54,41 +60,37 @@ internal class GoogleDriveConnection
     }
 
     async Task GetDatabase()
-    {
-        try{
-            var file = await FindFolderByNameAsync(driveService, "WhiteboardDatabase");
+{
+        var file = await FindFolderByNameAsync(driveService, "WhiteboardDatabase");
 
-            if (file is null)
-            {
-                file = await CreateFolderAsync(driveService, "WhiteboardDatabase");
-                return;
-            }
-            folder = file;
-
-            var files = GetFilesInFolder(driveService, file.Id);
-
-            if (files.Count == 0)
-                return;
-
-            if (!Directory.Exists("./Database/"))
-                Directory.CreateDirectory("./Database/");
-
-            DownloadFile(driveService, files.First().Id, "./Database/database.db");
-        }
-        catch(Exception ex)
+        if (file is null)
         {
-            Debug.WriteLine(ex.Message);
+            file = await CreateFolderAsync(driveService, "WhiteboardDatabase");
+            return;
         }
-       
+        folder = file;
+
+        var files = GetFilesInFolder(driveService, file.Id);
+
+        if (files.Count == 0)
+            return;
+
+        if (!Directory.Exists(pathDirectory))
+            Directory.CreateDirectory(pathDirectory);
+
+        if (File.Exists(pathFile))
+            File.Delete(pathFile);
+
+        DownloadFile(driveService, files.First().Id, pathFile);
     }
 
     public async Task SaveDatabase()
     {
-        System.IO.File.Copy("./Database/database.db", "./Database/database_copy.db");
+        System.IO.File.Copy(pathFile, pathFileCopy);
 
-        await UploadOrUpdateFileAsync(driveService, "./Database/database_copy.db", folder.Id );
+        await UploadOrUpdateFileAsync(driveService, pathFileCopy, folder.Id );
 
-        System.IO.File.Delete("./Database/database_copy.db");   
+        System.IO.File.Delete(pathFileCopy);   
     }
 
     async Task<Google.Apis.Drive.v3.Data.File> FindFolderByNameAsync(DriveService service, string folderName)
@@ -153,74 +155,41 @@ internal class GoogleDriveConnection
     }
 
     async Task<string> UploadOrUpdateFileAsync(DriveService service, string filePath, string parentFolderId = null)
-    {
-        try
+{
+        var fileName = Path.GetFileName(filePath);
+        var existingFile = GetFileByName(service, fileName, parentFolderId);
+
+        Google.Apis.Drive.v3.Data.File fileMetadata;
+        IUploadProgress response;
+
+        if (existingFile != null)
         {
+            service.Files.Delete(existingFile.Id).Execute();
+        }
+            // Upload new file
+        fileMetadata = new Google.Apis.Drive.v3.Data.File()
+        {
+            Name = fileName,
+            Parents = parentFolderId != null ? new List<string> { parentFolderId } : null
+        };
 
-            var fileName = Path.GetFileName(filePath);
-            var existingFile = GetFileByName(service, fileName, parentFolderId);
+        using (var stream = new FileStream(filePath, FileMode.Open))
+        {
+            var createRequest = service.Files.Create(fileMetadata, stream, "application/octet-stream");
+            createRequest.Fields = "id, name, webViewLink";
+            response = await createRequest.UploadAsync(); // <-- Changed to UploadAsync()
 
-            Google.Apis.Drive.v3.Data.File fileMetadata;
-            IUploadProgress response;
-
-            if (existingFile != null)
+            if (response.Status == UploadStatus.Completed)
             {
-                // Update existing file
-                fileMetadata = new Google.Apis.Drive.v3.Data.File() { Name = fileName };
-
-                using (var stream = new FileStream(filePath, FileMode.Open))
-                {
-                    var updateRequest = service.Files.Update(fileMetadata, existingFile.Id, stream, "application/octet-stream");
-                    updateRequest.Fields = "id, name, webViewLink";
-                    response = await updateRequest.UploadAsync(); // <-- Changed to UploadAsync()
-
-                    if (response.Status == UploadStatus.Completed)
-                    {
-                        var updatedFile = updateRequest.ResponseBody;
-                        Debug.WriteLine($"Updated file: {updatedFile.Name} (ID: {updatedFile.Id})");
-                        return updatedFile.Id;
-                    }
-                    else
-                    {
-                        throw new Exception($"Update failed: {response.Exception?.Message}");
-                    }
-                }
+                var uploadedFile = createRequest.ResponseBody;
+                Debug.WriteLine($"Uploaded new file: {uploadedFile.Name} (ID: {uploadedFile.Id})");
+                return uploadedFile.Id;
             }
             else
             {
-                // Upload new file
-                fileMetadata = new Google.Apis.Drive.v3.Data.File()
-                {
-                    Name = fileName,
-                    Parents = parentFolderId != null ? new List<string> { parentFolderId } : null
-                };
-
-                using (var stream = new FileStream(filePath, FileMode.Open))
-                {
-                    var createRequest = service.Files.Create(fileMetadata, stream, "application/octet-stream");
-                    createRequest.Fields = "id, name, webViewLink";
-                    response = await createRequest.UploadAsync(); // <-- Changed to UploadAsync()
-
-                    if (response.Status == UploadStatus.Completed)
-                    {
-                        var uploadedFile = createRequest.ResponseBody;
-                        Debug.WriteLine($"Uploaded new file: {uploadedFile.Name} (ID: {uploadedFile.Id})");
-                        return uploadedFile.Id;
-                    }
-                    else
-                    {
-                        throw new Exception($"Upload failed: {response.Exception?.Message}");
-                    }
-                }
+                throw new Exception($"Upload failed: {response.Exception?.Message}");
             }
         }
-        catch(Exception ex)
-        {
-            Debug.WriteLine(ex.Message);
-        }
-
-        return "";
-
     }
 }
 

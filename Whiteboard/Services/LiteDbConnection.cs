@@ -1,4 +1,6 @@
 ﻿using LiteDB;
+using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Whiteboard.Services
@@ -10,10 +12,16 @@ namespace Whiteboard.Services
 
         public void OpenConnection()
         {
-            if (!Directory.Exists("./Database/"))
-                Directory.CreateDirectory("./Database/");
+            string path= 
+                Environment.GetFolderPath(Environment.SpecialFolder.Personal)+
+                "/Database/";
 
-            _database = new LiteDatabase("./Database/database.db");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            path = path + "database.db";
+
+            _database = new LiteDatabase(path);
         }
 
         public void CloseConnection()
