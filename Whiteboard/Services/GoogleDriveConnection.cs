@@ -1,19 +1,15 @@
 ﻿using Google.Apis.Auth.OAuth2;
+using Data = Google.Apis.Drive.v3.Data;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using System.IO;
-using System.Threading;
 using System;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using Google.Apis.Upload;
 using Avalonia.Platform;
-using Avalonia;
 
 namespace Whiteboard.Services;
 
@@ -70,9 +66,9 @@ internal class GoogleDriveConnection
         }
         folder = file;
 
-        var files = GetFilesInFolder(driveService, file.Id);
+        var files = await GetFilesInFolder(driveService, file.Id);
 
-        if (files.Count == 0)
+        if (files.Length == 0)
             return;
 
         if (!Directory.Exists(pathDirectory))
@@ -81,19 +77,17 @@ internal class GoogleDriveConnection
         if (File.Exists(pathFile))
             File.Delete(pathFile);
 
-        DownloadFile(driveService, files.First().Id, pathFile);
+        await DownloadFile(driveService, files[0].Id, pathFile);
     }
 
     public async Task SaveDatabase()
     {
-        System.IO.File.Copy(pathFile, pathFileCopy);
-
-        await UploadOrUpdateFileAsync(driveService, pathFileCopy, folder.Id );
-
-        System.IO.File.Delete(pathFileCopy);   
+        File.Copy(pathFile, pathFileCopy);
+        await UploadFileAsync(driveService, pathFileCopy, folder.Id );
+        File.Delete(pathFileCopy);   
     }
 
-    async Task<Google.Apis.Drive.v3.Data.File> FindFolderByNameAsync(DriveService service, string folderName)
+    async Task<Data.File> FindFolderByNameAsync(DriveService service, string folderName)
     {
         var request = service.Files.List();
         request.Q = $"mimeType='application/vnd.google-apps.folder' and name='{folderName}' and trashed=false";
@@ -102,13 +96,12 @@ internal class GoogleDriveConnection
 
         var result = await request.ExecuteAsync();
 
-        var folder = result.Files.Count > 0 ? result.Files[0] : null;
-        return folder;
+        return result.Files.Count > 0 ? result.Files[0] : null!;
     }
 
-    async Task<Google.Apis.Drive.v3.Data.File> CreateFolderAsync(DriveService service, string folderName, string? parentId = null)
+    async Task<Data.File> CreateFolderAsync(DriveService service, string folderName, string? parentId = null)
     {
-        var fileMetadata = new Google.Apis.Drive.v3.Data.File
+        var fileMetadata = new Data.File
         {
             Name = folderName,
             MimeType = "application/vnd.google-apps.folder",
@@ -122,52 +115,52 @@ internal class GoogleDriveConnection
         return folder;
     }
 
-    IList<Google.Apis.Drive.v3.Data.File> GetFilesInFolder(DriveService service, string folderId)
+    async Task<Data.File[]> GetFilesInFolder(DriveService service, string folderId)
     {
         var request = service.Files.List();
         request.Q = $"'{folderId}' in parents and trashed=false";
         request.Fields = "files(id, name, mimeType)";
 
-        return request.Execute().Files;
+        var result = await request.ExecuteAsync();
+        
+        return result.Files.ToArray();
     }
 
-    void DownloadFile(DriveService service, string fileId, string downloadPath)
+    async Task DownloadFile(DriveService service, string fileId, string downloadPath)
     {
         var request = service.Files.Get(fileId);
         using (var stream = new FileStream(downloadPath, FileMode.Create))
         {
-            request.Download(stream);
+            await request.DownloadAsync(stream);
         }
     }
 
-    Google.Apis.Drive.v3.Data.File GetFileByName(DriveService service, string fileName, string parentFolderId = null)
+    async Task<Data.File> GetFileByName(DriveService service, string fileName, string parentFolderId = null)
     {
         var request = service.Files.List();
         request.Q = $"name='{fileName}' and trashed=false";
+
         if (parentFolderId != null)
-        {
             request.Q += $" and '{parentFolderId}' in parents";
-        }
+
         request.Fields = "files(id, name, mimeType)";
 
-        var result = request.Execute();
-        return result.Files.FirstOrDefault(); // Returns null if not found
+        var result = await request.ExecuteAsync();
+        return result.Files.FirstOrDefault()!;
     }
 
-    async Task<string> UploadOrUpdateFileAsync(DriveService service, string filePath, string parentFolderId = null)
+    async Task<string> UploadFileAsync(DriveService service, string filePath, string parentFolderId = null)
 {
         var fileName = Path.GetFileName(filePath);
-        var existingFile = GetFileByName(service, fileName, parentFolderId);
+        var existingFile = await GetFileByName(service, fileName, parentFolderId);
 
-        Google.Apis.Drive.v3.Data.File fileMetadata;
+        Data.File fileMetadata;
         IUploadProgress response;
 
         if (existingFile != null)
-        {
-            service.Files.Delete(existingFile.Id).Execute();
-        }
-            // Upload new file
-        fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            await service.Files.Delete(existingFile.Id).ExecuteAsync();
+
+        fileMetadata = new Data.File()
         {
             Name = fileName,
             Parents = parentFolderId != null ? new List<string> { parentFolderId } : null
@@ -177,7 +170,7 @@ internal class GoogleDriveConnection
         {
             var createRequest = service.Files.Create(fileMetadata, stream, "application/octet-stream");
             createRequest.Fields = "id, name, webViewLink";
-            response = await createRequest.UploadAsync(); // <-- Changed to UploadAsync()
+            response = await createRequest.UploadAsync();
 
             if (response.Status == UploadStatus.Completed)
             {
@@ -186,9 +179,7 @@ internal class GoogleDriveConnection
                 return uploadedFile.Id;
             }
             else
-            {
                 throw new Exception($"Upload failed: {response.Exception?.Message}");
-            }
         }
     }
 }

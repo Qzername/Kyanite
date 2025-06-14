@@ -32,8 +32,8 @@ public class MainViewModel : ViewModelBase
     {
         Router = new RoutingState();
 
+        liteDBConnection = GetService<LiteDbConnection>();
         driveConnection = GetService<GoogleDriveConnection>();
-        liteDBConnection = GetService<LiteDbConnection>();  
 
         driveConnection.OnInitialized += () =>
         {
@@ -45,14 +45,13 @@ public class MainViewModel : ViewModelBase
         moduleDatabase = GetService<IModuleDatabase>();
 
         popupService = GetService<PopupService>();
-        popupService.OnPopupClosed += () => _ = GetModules();
+        popupService.OnPopupClosed += GetModules;
 
         moduleMananger = new(dataDatabase);
-
         modules = new AvaloniaList<ModuleInfo>();
     }
 
-    async Task GetModules()
+    void GetModules()
     {
         modules.Clear();
         modules.AddRange(moduleDatabase.GetModules());
@@ -91,7 +90,7 @@ public class MainViewModel : ViewModelBase
 
         moduleDatabase.AddModule(moduleInfo);
 
-        await GetModules();
+        GetModules();
     }
 
     public async void DeleteModule(object moduleInfoObj)
@@ -99,7 +98,7 @@ public class MainViewModel : ViewModelBase
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         moduleDatabase.DeleteModule(moduleInfo.ID.Value);
 
-        await GetModules();
+        GetModules();
     }
 
     public void OpenRename(object moduleInfoObj)
@@ -108,13 +107,7 @@ public class MainViewModel : ViewModelBase
         popupService.ShowPopup(new RenameViewModel(moduleInfo));
     }
 
-    public void UploadChanges()
-    {
-        driveConnection.SaveDatabase();
-    }
-
-    public override void OnClose()
-    {
-        driveConnection.SaveDatabase();
-    }
+    public void UploadChanges() => _ = SaveDatabase();
+    public override void OnClose() => _ = SaveDatabase();
+    async Task SaveDatabase() => await driveConnection.SaveDatabase();
 }
