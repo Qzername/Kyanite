@@ -9,12 +9,10 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Modules.Text.TextModuleView">
-	<DockPanel>
-		<md:MarkdownScrollViewer DockPanel.Dock="Left" Markdown="{Binding Text}" xml:space="preserve"/>
-		<AvaloniaEdit:TextEditor DockPanel.Dock="Right" ShowLineNumbers="True">
-			<i:Interaction.Behaviors>
-				<TextModule:DocumentTextBindingBehavior Text="{Binding Text, Mode=TwoWay}"/>
-			</i:Interaction.Behaviors>
-		</AvaloniaEdit:TextEditor>
-	</DockPanel>
+	<Panel>
+		<md:MarkdownScrollViewer IsEnabled="{Binding !editMode}" IsVisible="{Binding !editMode}" Markdown="{Binding Text}" xml:space="preserve"/>
+		<TextBox Text="{Binding Text}" IsEnabled="{Binding editMode}" IsVisible="{Binding editMode}" AcceptsReturn="True" TextWrapping="Wrap" />
+
+		<Button Command="{Binding SwitchEditMode}" Margin="10" Content="Change mode" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+	</Panel>
 </UserControl>

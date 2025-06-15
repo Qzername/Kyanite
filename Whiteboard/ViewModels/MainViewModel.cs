@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Whiteboard.Models;
@@ -27,6 +28,8 @@ public class MainViewModel : ViewModelBase
     PopupService popupService;
 
     ModuleManager moduleMananger;
+
+    [Reactive] int width { get; set; }= 240;
 
     public MainViewModel()
     {
@@ -105,6 +108,14 @@ public class MainViewModel : ViewModelBase
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         popupService.ShowPopup(new RenameViewModel(moduleInfo));
+    }
+
+    public void ChangeWidth()
+    {
+        if (width == 240)
+            width = 40;
+        else
+            width = 240;
     }
 
     public void UploadChanges() => _ = SaveDatabase();

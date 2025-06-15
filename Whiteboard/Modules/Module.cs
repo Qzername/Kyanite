@@ -34,6 +34,9 @@ public abstract class Module : ReactiveObject, INotifyPropertyChanged, IRoutable
         if (e.PropertyName is null)
             throw new Exception("Property name cannot be null");
 
+        if (!properties.Any((x) => x.Name == e.PropertyName))
+            return;
+
         var value = properties.Single(x => x.Name == e.PropertyName).GetValue(this)!;
 
         await manager.SynchronizeVariable(e.PropertyName, (string)value);
