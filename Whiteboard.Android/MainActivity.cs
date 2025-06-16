@@ -26,7 +26,7 @@ public class MainActivity : AvaloniaMainActivity<App>
             if (ContextCompat.CheckSelfPermission(this, And.Manifest.Permission.PostNotifications) != Permission.Granted)
                 ActivityCompat.RequestPermissions(this, [And.Manifest.Permission.PostNotifications], 0);
 
-        var app = (App)App.Current;
+        var app = (App)App.Current!;
         app.RegisterNotificationService(new AndroidNotificationService(this));
     }
 

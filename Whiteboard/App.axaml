@@ -25,5 +25,6 @@
 	<Application.Styles>
         <FluentTheme />
 		<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+		<StyleInclude Source="/Views/Styles/TextBoxStyle.axaml"/>
     </Application.Styles>
 </Application>
