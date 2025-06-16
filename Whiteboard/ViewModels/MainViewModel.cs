@@ -119,8 +119,12 @@ public class MainViewModel : ViewModelBase
         modules.Clear();
         modules.AddRange(moduleDatabase.GetModules());
     }
-    async Task SaveDatabase() => await driveConnection.SaveDatabase();
-    
+    async Task SaveDatabase()
+    {
+        await driveConnection.SaveDatabase();
+        GetService<INotificationService>().ShowNotification("Whiteboard", "Synchronization sucessful");
+    }
+
     //from ViewModelBase
     public override void OnClose() => _ = SaveDatabase();
 }

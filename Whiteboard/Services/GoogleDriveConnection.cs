@@ -56,7 +56,7 @@ internal class GoogleDriveConnection
     }
 
     async Task GetDatabase()
-{
+    {
         var file = await FindFolderByNameAsync(driveService, "WhiteboardDatabase");
 
         if (file is null)
