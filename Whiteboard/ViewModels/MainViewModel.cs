@@ -1,7 +1,6 @@
 ﻿using Avalonia.Collections;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 using Whiteboard.Modules;
@@ -16,7 +15,6 @@ namespace Whiteboard.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    public AvaloniaList<ModuleInfo> modules { get; set; }
     public RoutingState Router { get; }
 
     GoogleDriveConnection driveConnection;
@@ -27,6 +25,7 @@ public class MainViewModel : ViewModelBase
 
     PopupService popupService;
 
+    AvaloniaList<ModuleInfo> modules { get; set; }
     ModuleManager moduleMananger;
 
     [Reactive] int width { get; set; }= 240;
@@ -35,6 +34,7 @@ public class MainViewModel : ViewModelBase
     {
         Router = new RoutingState();
 
+        //database connection initialization
         liteDBConnection = GetService<LiteDbConnection>();
         driveConnection = GetService<GoogleDriveConnection>();
 
@@ -43,29 +43,28 @@ public class MainViewModel : ViewModelBase
             liteDBConnection.OpenConnection();
             GetModules();
         };
-
+        
+        //database management initialization
         dataDatabase = GetService<IDataItemDatabase>();
         moduleDatabase = GetService<IModuleDatabase>();
 
+        //popups
         popupService = GetService<PopupService>();
         popupService.OnPopupClosed += GetModules;
 
-        moduleMananger = new(dataDatabase);
+        //module manager initialization
         modules = new AvaloniaList<ModuleInfo>();
+        moduleMananger = new(dataDatabase);
     }
 
-    void GetModules()
-    {
-        modules.Clear();
-        modules.AddRange(moduleDatabase.GetModules());
-    }
-
+    //button
     public async Task SwitchModule(object moduleInfoObj)
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
 
         Module module = null;
 
+        //TODO: this should be automated later on 
         if (moduleInfo.Type == nameof(TextModule))
         {
             module = new TextModule();
@@ -80,23 +79,14 @@ public class MainViewModel : ViewModelBase
         if (module is null)
             throw new System.Exception("Wrong module info type has been read from database");
 
-        await moduleMananger.LoadModule(moduleInfo.ID!.Value, module);
+        moduleMananger.LoadModule(moduleInfo.ID!.Value, module);
     }
 
-    public async void AddModule()
-    {
-        ModuleInfo moduleInfo = new ModuleInfo() 
-        {
-            Type = nameof(TextModule),
-            Name = nameof(TextModule) 
-        };
+    //button
+    public void AddModule() => popupService.ShowPopup(new ModuleCreationViewModel());
 
-        moduleDatabase.AddModule(moduleInfo);
-
-        GetModules();
-    }
-
-    public async void DeleteModule(object moduleInfoObj)
+    //button
+    public void DeleteModule(object moduleInfoObj)
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         moduleDatabase.DeleteModule(moduleInfo.ID.Value);
@@ -104,12 +94,14 @@ public class MainViewModel : ViewModelBase
         GetModules();
     }
 
+    //button
     public void OpenRename(object moduleInfoObj)
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
         popupService.ShowPopup(new RenameViewModel(moduleInfo));
     }
 
+    //button
     public void ChangeWidth()
     {
         if (width == 240)
@@ -118,7 +110,17 @@ public class MainViewModel : ViewModelBase
             width = 240;
     }
 
+    //button
     public void UploadChanges() => _ = SaveDatabase();
-    public override void OnClose() => _ = SaveDatabase();
+
+    //module list management
+    void GetModules()
+    {
+        modules.Clear();
+        modules.AddRange(moduleDatabase.GetModules());
+    }
     async Task SaveDatabase() => await driveConnection.SaveDatabase();
+    
+    //from ViewModelBase
+    public override void OnClose() => _ = SaveDatabase();
 }

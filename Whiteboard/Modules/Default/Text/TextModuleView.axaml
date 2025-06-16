@@ -10,7 +10,7 @@
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Modules.Text.TextModuleView">
 	<Panel>
-		<md:MarkdownScrollViewer IsEnabled="{Binding !editMode}" IsVisible="{Binding !editMode}" Markdown="{Binding Text}" xml:space="preserve"/>
+		<md:MarkdownScrollViewer Margin="10" IsEnabled="{Binding !editMode}" IsVisible="{Binding !editMode}" Markdown="{Binding Text}" xml:space="preserve"/>
 		<TextBox Text="{Binding Text}" IsEnabled="{Binding editMode}" IsVisible="{Binding editMode}" AcceptsReturn="True" TextWrapping="Wrap" />
 
 		<Button Command="{Binding SwitchEditMode}" Margin="10" Content="Change mode" VerticalAlignment="Top" HorizontalAlignment="Right"/>

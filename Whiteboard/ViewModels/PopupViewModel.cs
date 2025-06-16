@@ -10,7 +10,7 @@ public class PopupViewModel :ViewModelBase
 
     public PopupViewModel()
     {
-        GetService<PopupService>().Initialize(this);
+        GetService<PopupService>().SetPopupHandler(this);
     }
 
     public void Open(ViewModelBase popup)

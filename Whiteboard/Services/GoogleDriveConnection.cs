@@ -16,7 +16,7 @@ namespace Whiteboard.Services;
 internal class GoogleDriveConnection
 {
     DriveService driveService;
-    Google.Apis.Drive.v3.Data.File folder;
+    Data.File folder;
 
     public event Action OnInitialized;
 
@@ -82,9 +82,15 @@ internal class GoogleDriveConnection
 
     public async Task SaveDatabase()
     {
+        if (!File.Exists(pathFile))
+            throw new Exception("For some reason the database file does not exist.");
+
+        if(File.Exists(pathFileCopy))
+            File.Delete(pathFileCopy);
+
         File.Copy(pathFile, pathFileCopy);
-        await UploadFileAsync(driveService, pathFileCopy, folder.Id );
-        File.Delete(pathFileCopy);   
+        await UploadFileAsync(driveService, pathFileCopy, folder.Id);
+        File.Delete(pathFileCopy);
     }
 
     async Task<Data.File> FindFolderByNameAsync(DriveService service, string folderName)
@@ -150,7 +156,7 @@ internal class GoogleDriveConnection
     }
 
     async Task<string> UploadFileAsync(DriveService service, string filePath, string parentFolderId = null)
-{
+    {
         var fileName = Path.GetFileName(filePath);
         var existingFile = await GetFileByName(service, fileName, parentFolderId);
 
@@ -182,6 +188,5 @@ internal class GoogleDriveConnection
                 throw new Exception($"Upload failed: {response.Exception?.Message}");
         }
     }
+
 }
-
-

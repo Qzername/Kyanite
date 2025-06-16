@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using Splat;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -39,6 +40,16 @@ public abstract class Module : ReactiveObject, INotifyPropertyChanged, IRoutable
 
         var value = properties.Single(x => x.Name == e.PropertyName).GetValue(this)!;
 
-        await manager.SynchronizeVariable(e.PropertyName, (string)value);
+        manager.SynchronizeVariable(e.PropertyName, (string)value);
+    }
+
+    protected T GetService<T>()
+    {
+        var service = Locator.Current.GetService<T>();
+
+        if (service is null)
+            throw new System.Exception("Unknown service type: " + typeof(T).FullName);
+
+        return service;
     }
 }

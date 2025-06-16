@@ -5,6 +5,9 @@ namespace Whiteboard.ViewModels;
 
 public class ViewModelBase : ReactiveObject
 {
+    /// <summary>
+    /// On window close 
+    /// </summary>
     public virtual void OnClose()
     {
 

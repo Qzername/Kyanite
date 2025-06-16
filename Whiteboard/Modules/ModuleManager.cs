@@ -6,6 +6,9 @@ using Whiteboard.Services.DataItems;
 
 namespace Whiteboard.Modules;
 
+/// <summary>
+/// manages modules and their synchronization with data items
+/// </summary>
 public class ModuleManager
 {
     int _moduleId;
@@ -17,7 +20,7 @@ public class ModuleManager
         this.dataManager = dataManager;
     }
 
-    public async Task LoadModule(int moduleId, Module module)
+    public void LoadModule(int moduleId, Module module)
     {
         _moduleId = moduleId;
 
@@ -28,7 +31,7 @@ public class ModuleManager
         foreach (var property in synchronizedProperties)
         {
             var attribute = property.GetCustomAttribute<SynchronizeAttribute>();
-            
+
             //if date item doesnt exist, create it
             if (!dataManager.ExistDataItem(moduleId, attribute!.VariableName))
             {
@@ -51,7 +54,7 @@ public class ModuleManager
         module.Initialize(this, synchronizedProperties.ToArray());
     }
 
-    public async Task SynchronizeVariable(string name, string value)
+    public void SynchronizeVariable(string name, string value)
     {
         DataItem dataItem = new DataItem()
         {

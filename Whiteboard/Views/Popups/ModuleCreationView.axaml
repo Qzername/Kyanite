@@ -3,12 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Whiteboard.Modules.Reminder.ReminderModuleView">
-	<ScrollViewer>
-		<StackPanel>
-			<TextBox Text="{Binding title}" Watermark="Title"/>
-			<TextBox Text="{Binding description}" Watermark="Description" AcceptsReturn="True" TextWrapping="Wrap"/>
-			<Button  Command="{Binding Send}" Content="Send"/>
-		</StackPanel>
-	</ScrollViewer>
+             x:Class="Whiteboard.Views.Popups.ModuleCreationView">
+	<StackPanel Margin="10" Spacing="5">
+		<ComboBox ItemsSource="{Binding ModuleNamesText}" SelectedIndex="{Binding SelectedModuleIndex}"/>
+		<TextBox Watermark="Name" Text="{Binding ModuleName}"/>
+		<Button Content="Confirm" Command="{Binding Confirm}"/>
+	</StackPanel>
 </UserControl>

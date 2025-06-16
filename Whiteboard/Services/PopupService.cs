@@ -3,13 +3,13 @@ using Whiteboard.ViewModels;
 
 namespace Whiteboard.Services;
 
-internal class PopupService : ViewModelBase
+internal class PopupService 
 {
     PopupViewModel? _popupViewModel;
 
     public event Action OnPopupClosed; // Initialize with an empty delegate to avoid nullability issues  
 
-    public void Initialize(PopupViewModel popupViewModel)
+    public void SetPopupHandler(PopupViewModel popupViewModel)
     {
         _popupViewModel = popupViewModel;
     }
@@ -17,7 +17,7 @@ internal class PopupService : ViewModelBase
     public void ShowPopup(ViewModelBase popup)
     {
         if (_popupViewModel is null)
-            throw new System.Exception("PopupViewModel is not initialized.");
+            throw new Exception("PopupViewModel is not initialized.");
 
         _popupViewModel.Open(popup);
     }
@@ -25,7 +25,7 @@ internal class PopupService : ViewModelBase
     public void ClosePopup()
     {
         if (_popupViewModel is null)
-            throw new System.Exception("PopupViewModel is not initialized.");
+            throw new Exception("PopupViewModel is not initialized.");
 
         _popupViewModel.Close();
         OnPopupClosed?.Invoke();
