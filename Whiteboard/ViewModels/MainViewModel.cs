@@ -1,6 +1,7 @@
 ﻿using Avalonia.Collections;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 using Whiteboard.Modules;
@@ -55,10 +56,14 @@ public class MainViewModel : ViewModelBase
         //module manager initialization
         modules = new AvaloniaList<ModuleInfo>();
         moduleMananger = new(dataDatabase);
-    }
+
+        //this is for after user closes app and reopens it
+        if (driveConnection.IsInitialized)
+            GetModules();
+   }
 
     //button
-    public async Task SwitchModule(object moduleInfoObj)
+    public void SwitchModule(object moduleInfoObj)
     {
         ModuleInfo moduleInfo = (ModuleInfo)moduleInfoObj;
 

@@ -19,6 +19,8 @@ internal class GoogleDriveConnection
     Data.File folder;
 
     public event Action OnInitialized;
+    bool _isInitialized = false;    
+    public bool IsInitialized => _isInitialized;
 
     readonly string pathDirectory;
     readonly string pathFile;
@@ -52,6 +54,7 @@ internal class GoogleDriveConnection
 
         await GetDatabase();
 
+        _isInitialized = true;
         OnInitialized?.Invoke();
     }
 
