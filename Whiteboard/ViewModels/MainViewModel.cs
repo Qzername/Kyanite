@@ -1,7 +1,6 @@
 ﻿using Avalonia.Collections;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 using Whiteboard.Modules;
@@ -29,7 +28,7 @@ public class MainViewModel : ViewModelBase
     AvaloniaList<ModuleInfo> modules { get; set; }
     ModuleManager moduleMananger;
 
-    [Reactive] int width { get; set; }= 240;
+    [Reactive] int width { get; set; } = 240;
 
     public MainViewModel()
     {
@@ -44,7 +43,7 @@ public class MainViewModel : ViewModelBase
             liteDBConnection.OpenConnection();
             GetModules();
         };
-        
+
         //database management initialization
         dataDatabase = GetService<IDataItemDatabase>();
         moduleDatabase = GetService<IModuleDatabase>();
@@ -60,7 +59,7 @@ public class MainViewModel : ViewModelBase
         //this is for after user closes app and reopens it
         if (driveConnection.IsInitialized)
             GetModules();
-   }
+    }
 
     //button
     public void SwitchModule(object moduleInfoObj)
@@ -75,7 +74,7 @@ public class MainViewModel : ViewModelBase
             module = new TextModule();
             Router.Navigate.Execute(module);
         }
-        else if(moduleInfo.Type == nameof(ReminderModule))
+        else if (moduleInfo.Type == nameof(ReminderModule))
         {
             module = new ReminderModule();
             Router.Navigate.Execute(module);
