@@ -13,6 +13,6 @@
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Whiteboard.Modules.Text.TextModuleView">
 	<Panel>
-		<hotMarkdown:HotMarkdownEditor Text="{Binding Text}"/>
+		<hotMarkdown:HotMarkdownEditor Text="{Binding Text}" Padding="10"/>
 	</Panel>
 </UserControl>
