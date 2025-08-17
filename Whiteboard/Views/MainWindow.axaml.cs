@@ -10,14 +10,12 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        this.Closed += OnClosed;
+        Closed += OnClosed;
     }
 
     private void OnClosed(object? sender, EventArgs e)
     {
         if (DataContext is MainViewModel vm)
-        {
             vm.OnClose();
-        }
     }
 }

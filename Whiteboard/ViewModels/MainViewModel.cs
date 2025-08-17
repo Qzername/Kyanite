@@ -1,7 +1,6 @@
 ﻿using Avalonia.Collections;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Whiteboard.Models;
 using Whiteboard.Modules;
@@ -124,19 +123,11 @@ public class MainViewModel : ViewModelBase
         modules.Clear();
         modules.AddRange(moduleDatabase.GetModules());
     }
+
     async Task SaveDatabase()
     {
-        try
-        {
-            await driveConnection.SaveDatabase();
-            GetService<INotificationService>().ShowNotification("Whiteboard", "Synchronization sucessful");
-        }
-        catch (System.Exception ex)
-        {
-            Debug.WriteLine(ex.Message);
-            return;
-        }
-
+        await driveConnection.SaveDatabase();
+        GetService<INotificationService>().ShowNotification("Whiteboard", "Synchronization sucessful");
     }
 
     //from ViewModelBase

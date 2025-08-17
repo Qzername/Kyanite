@@ -6,6 +6,8 @@ namespace Whiteboard.ViewModels
 {
     public class ApplicationViewModel : ViewModelBase
     {
+        //handle tray
+
         public static void OpenApplication()
         {
             var desktop = (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
