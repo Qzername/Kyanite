@@ -17,7 +17,7 @@ public class ViewModelBase : ReactiveObject
     {
         var service = Locator.Current.GetService<T>();
 
-        if(service is null)
+        if (service is null)
             throw new System.Exception("Unknown service type: " + typeof(T).FullName);
 
         return service;

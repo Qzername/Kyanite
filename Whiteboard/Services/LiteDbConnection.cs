@@ -1,6 +1,5 @@
 ﻿using LiteDB;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace Whiteboard.Services
@@ -12,8 +11,8 @@ namespace Whiteboard.Services
 
         public void OpenConnection()
         {
-            string path= 
-                Environment.GetFolderPath(Environment.SpecialFolder.Personal)+
+            string path =
+                Environment.GetFolderPath(Environment.SpecialFolder.Personal) +
                 "/Database/";
 
             if (!Directory.Exists(path))

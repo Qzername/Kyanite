@@ -3,7 +3,7 @@ using Whiteboard.Services;
 
 namespace Whiteboard.ViewModels;
 
-public class PopupViewModel :ViewModelBase
+public class PopupViewModel : ViewModelBase
 {
     [Reactive] bool isOpen { get; set; } = false;
     [Reactive] ViewModelBase popupContentViewModel { get; set; }
@@ -21,6 +21,6 @@ public class PopupViewModel :ViewModelBase
 
     public void Close()
     {
-        isOpen = false; 
+        isOpen = false;
     }
 }

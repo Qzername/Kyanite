@@ -1,6 +1,5 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using System;
-using Whiteboard.Modules;
 using Whiteboard.Modules.Reminder;
 using Whiteboard.Modules.Text;
 using Whiteboard.Services;

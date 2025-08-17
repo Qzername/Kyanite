@@ -1,17 +1,17 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Data = Google.Apis.Drive.v3.Data;
+﻿using Avalonia.Platform;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
-using System.IO;
-using System;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
 using Google.Apis.Upload;
-using Avalonia.Platform;
 using Google.Apis.Util.Store;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Data = Google.Apis.Drive.v3.Data;
 
 namespace Whiteboard.Services;
 
@@ -21,7 +21,7 @@ internal class GoogleDriveConnection
     Data.File folder;
 
     public event Action OnInitialized;
-    bool _isInitialized = false;    
+    bool _isInitialized = false;
     public bool IsInitialized => _isInitialized;
 
     readonly string pathDirectory;
@@ -97,7 +97,7 @@ internal class GoogleDriveConnection
         if (!File.Exists(pathFile))
             throw new Exception("For some reason the database file does not exist.");
 
-        if(File.Exists(pathFileCopy))
+        if (File.Exists(pathFileCopy))
             File.Delete(pathFileCopy);
 
         File.Copy(pathFile, pathFileCopy);
@@ -140,7 +140,7 @@ internal class GoogleDriveConnection
         request.Fields = "files(id, name, mimeType)";
 
         var result = await request.ExecuteAsync();
-        
+
         return result.Files.ToArray();
     }
 

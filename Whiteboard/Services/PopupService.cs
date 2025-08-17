@@ -3,7 +3,7 @@ using Whiteboard.ViewModels;
 
 namespace Whiteboard.Services;
 
-internal class PopupService 
+internal class PopupService
 {
     PopupViewModel? _popupViewModel;
 
