@@ -399,4 +399,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-*/credentials.json
+Whiteboard/Assets/credentials.json
+/token.json
