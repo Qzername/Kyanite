@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Google.Apis.Upload;
 using Avalonia.Platform;
+using Google.Apis.Util.Store;
+using System.Threading;
 
 namespace Whiteboard.Services;
 
@@ -40,11 +42,18 @@ internal class GoogleDriveConnection
 
     async Task Connect()
     {
-        var uri = new Uri("avares://Whiteboard/Assets/service_account.json");
+        UserCredential credential;
+
+        var uri = new Uri("avares://Whiteboard/Assets/credentials.json");
         using var stream = AssetLoader.Open(uri);
 
-        var credential = GoogleCredential.FromStream(stream)
-            .CreateScoped(DriveService.ScopeConstants.Drive);
+        string credPath = "token.json";
+        credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+            GoogleClientSecrets.FromStream(stream).Secrets,
+            [DriveService.Scope.DriveFile],
+            "user",
+            CancellationToken.None,
+            new FileDataStore(credPath, true));
 
         driveService = new DriveService(new BaseClientService.Initializer()
         {
