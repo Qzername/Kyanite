@@ -42,29 +42,36 @@ internal class GoogleDriveConnection
 
     async Task Connect()
     {
-        UserCredential credential;
-
-        var uri = new Uri("avares://Whiteboard/Assets/credentials.json");
-        using var stream = AssetLoader.Open(uri);
-
-        string credPath = "token.json";
-        credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-            GoogleClientSecrets.FromStream(stream).Secrets,
-            [DriveService.Scope.DriveFile],
-            "user",
-            CancellationToken.None,
-            new FileDataStore(credPath, true));
-
-        driveService = new DriveService(new BaseClientService.Initializer()
+        try
         {
-            HttpClientInitializer = credential,
-            ApplicationName = "Whiteboard",
-        });
+            UserCredential credential;
 
-        await GetDatabase();
+            var uri = new Uri("avares://Whiteboard/Assets/credentials.json");
+            using var stream = AssetLoader.Open(uri);
 
-        _isInitialized = true;
-        OnInitialized?.Invoke();
+            string credPath = "token.json";
+            credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                GoogleClientSecrets.FromStream(stream).Secrets,
+                [DriveService.Scope.DriveFile],
+                "user",
+                CancellationToken.None,
+                new FileDataStore(credPath, true));
+
+            driveService = new DriveService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "Whiteboard",
+            });
+
+            await GetDatabase();
+
+            _isInitialized = true;
+            OnInitialized?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error during Google Drive connection initialization: {ex.Message}");
+        }    
     }
 
     async Task GetDatabase()
