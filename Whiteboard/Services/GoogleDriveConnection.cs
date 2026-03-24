@@ -76,27 +76,36 @@ internal class GoogleDriveConnection
 
     async Task GetDatabase()
     {
-        var file = await FindFolderByNameAsync(driveService, "WhiteboardDatabase");
-
-        if (file is null)
+        try
         {
-            file = await CreateFolderAsync(driveService, "WhiteboardDatabase");
-            return;
+
+            var file = await FindFolderByNameAsync(driveService, "WhiteboardDatabase");
+
+            if (file is null)
+            {
+                file = await CreateFolderAsync(driveService, "WhiteboardDatabase");
+                return;
+            }
+            folder = file;
+
+            var files = await GetFilesInFolder(driveService, file.Id);
+
+            if (files.Length == 0)
+                return;
+
+            if (!Directory.Exists(pathDirectory))
+                Directory.CreateDirectory(pathDirectory);
+
+            if (File.Exists(pathFile))
+                File.Delete(pathFile);
+
+            await DownloadFile(driveService, files[0].Id, pathFile);
         }
-        folder = file;
+        catch(Exception ex)
+        {
 
-        var files = await GetFilesInFolder(driveService, file.Id);
-
-        if (files.Length == 0)
-            return;
-
-        if (!Directory.Exists(pathDirectory))
-            Directory.CreateDirectory(pathDirectory);
-
-        if (File.Exists(pathFile))
-            File.Delete(pathFile);
-
-        await DownloadFile(driveService, files[0].Id, pathFile);
+            Debug.WriteLine($"Error during Google Drive GetDatabase: {ex.Message}");
+        }
     }
 
     public async Task SaveDatabase()
