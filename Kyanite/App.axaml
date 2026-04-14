@@ -1,15 +1,35 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Kyanite"
+             xmlns:viewModels="using:Kyanite.ViewModels"
+
              x:Class="Kyanite.App"
+             x:DataType="viewModels:ApplicationViewModel"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <FontFamily x:Key="Unbounded">avares://Kyanite/Assets#Unbounded</FontFamily>
+    </Application.Resources>
+
+    <TrayIcon.Icons>
+		<TrayIcons>
+			<TrayIcon Command="{Binding OpenApplication}" Icon="/Assets/avalonia-logo.ico"
+					  ToolTipText="Whiteboard">
+				<TrayIcon.Menu>
+					<NativeMenu>
+						<NativeMenuItem Command="{Binding CloseApplication}" Header="Close application"/>
+					</NativeMenu>
+				</TrayIcon.Menu>
+			</TrayIcon>
+		</TrayIcons>
+	</TrayIcon.Icons>
+
     <Application.Styles>
         <FluentTheme />
+
     </Application.Styles>
 </Application>

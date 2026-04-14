@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Kyanite.ViewModels;
@@ -21,6 +22,9 @@ namespace Kyanite
                 {
                     DataContext = new MainViewModel()
                 };
+
+                desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                DataContext = new ApplicationViewModel();
             }
             else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
             {
