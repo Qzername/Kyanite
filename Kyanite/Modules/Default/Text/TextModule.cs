@@ -1,12 +1,11 @@
-﻿using ReactiveUI;
-using ReactiveUI.SourceGenerators;
-using System.Dynamic;
+﻿using ReactiveUI.SourceGenerators;
+using System;
 
 namespace Kyanite.Modules.Text;
 
-public partial class TextModule : ReactiveObject
+public partial class TextModule(Guid id) : Module(id)
 {
     [Reactive]
-    [Synchronize("text", "### Here you can write your text.")]
+    [Synchronize(nameof(Text), "### Here you can write your text.")]
     public partial string Text { get; set; }
 }

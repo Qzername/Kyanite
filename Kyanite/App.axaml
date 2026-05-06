@@ -1,6 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Kyanite"
+             xmlns:viewLocators="using:Kyanite.ViewLocators"
              xmlns:viewModels="using:Kyanite.ViewModels"
 
              x:Class="Kyanite.App"
@@ -8,7 +8,7 @@
              RequestedThemeVariant="Default">
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <viewLocators:AvaloniaViewLocator/>
     </Application.DataTemplates>
 
     <Application.Resources>

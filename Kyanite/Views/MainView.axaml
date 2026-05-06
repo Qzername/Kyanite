@@ -3,7 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Kyanite.ViewModels"
-		     xmlns:HotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown"
+		     xmlns:hotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown"
+             
+			 xmlns:rxui="clr-namespace:ReactiveUI.Avalonia;assembly=ReactiveUI.Avalonia"
+             xmlns:viewLocators="clr-namespace:Kyanite.ViewLocators"
 
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Kyanite.Views.MainView"
@@ -18,6 +21,12 @@
         <Panel DockPanel.Dock="Top" Height="30" Background="#0F0E0F">
 			<TextBlock VerticalAlignment="Center" Padding="5,0" Foreground="#0012DE" Text="Kyanite"/>
         </Panel>
-		<HotMarkdown:HotMarkdownEditor DockPanel.Dock="Top" Text="# test" />
+        <Button DockPanel.Dock="Top" Command="{Binding InitializeExampleModule}">Load module</Button>
+
+	    <rxui:RoutedViewHost Router="{Binding Router}">
+			<rxui:RoutedViewHost.ViewLocator>
+				<viewLocators:ModuleViewLocator/>
+			</rxui:RoutedViewHost.ViewLocator>
+		</rxui:RoutedViewHost>
     </DockPanel>
 </UserControl>

@@ -6,6 +6,7 @@ namespace KyaniteAPI.Controllers;
 
 //support string only for now
 public record struct CreateDataRequest(Guid ModuleId, string Name, string Value);
+public record struct PatchDataRequest(Guid DataId, string NewValue);
 
 [ApiController]
 [Route("api/[controller]")]
@@ -31,9 +32,9 @@ public class DataController(DataRepository dataRepository) : ControllerBase
     }
 
     [HttpPatch]
-    public ActionResult Patch([FromBody] Guid dataId, [FromBody] string newValue)
+    public ActionResult Patch([FromBody] PatchDataRequest patchDataRequest)
     {
-        dataRepository.Update(dataId, newValue);
+        dataRepository.Update(patchDataRequest.DataId, patchDataRequest.NewValue);
         return Ok();
     }
 

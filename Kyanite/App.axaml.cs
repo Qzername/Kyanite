@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Kyanite.ViewModels;
 using Kyanite.Views;
+using Splat;
 
 namespace Kyanite
 {
@@ -15,7 +16,9 @@ namespace Kyanite
         }
 
         public override void OnFrameworkInitializationCompleted()
-        {
+        { 
+            Bootstrapper.Register(Locator.CurrentMutable, Locator.Current);
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow

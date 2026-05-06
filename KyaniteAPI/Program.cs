@@ -18,7 +18,7 @@ builder.Services.AddScoped<DataRepository>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (true) //app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -1,5 +1,6 @@
 ﻿using Kyanite.Modules;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -11,13 +12,13 @@ internal class APIDataRepositoryHandler(HttpClient client) : IDataRepositoryHand
 {
     public async Task<Data[]> GetFromModuleAsync(Guid moduleId)
     {
-        var result = await client.GetFromJsonAsync<Data[]>($"api/Data/GetFromModule?moduleId={moduleId}");
+        var result = await client.GetFromJsonAsync<Data[]>($"data/GetFromModule?moduleId={moduleId}");
         return result ?? Array.Empty<Data>();
     }
 
     public async Task<Data> CreateAsync(Guid moduleId, string name, string value)
     {
-        var response = await client.PostAsJsonAsync("api/Data", new { 
+        var response = await client.PostAsJsonAsync("data", new { 
             ModuleId = moduleId,
             Name = name,
             Value = value
@@ -39,7 +40,7 @@ internal class APIDataRepositoryHandler(HttpClient client) : IDataRepositoryHand
         var datas = await GetFromModuleAsync(moduleId);
         var data = datas.Single(x => x.Name == dataName);
 
-        await client.PatchAsJsonAsync("api/Data", new
+        var response = await client.PatchAsJsonAsync("data", new
         {
             DataId = data.Id,
             NewValue = newValue

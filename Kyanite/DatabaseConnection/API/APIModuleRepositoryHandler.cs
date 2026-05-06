@@ -10,13 +10,13 @@ internal class APIModuleRepositoryHandler(HttpClient client) : IModuleRepository
 {
     public async Task<ModuleData[]> GetAllModulesAsync()
     {
-        var modules = await client.GetFromJsonAsync<ModuleData[]>("api/modules");
+        var modules = await client.GetFromJsonAsync<ModuleData[]>("module");
         return modules ?? Array.Empty<ModuleData>();
     }
 
     public async Task<ModuleData> CreateAsync(string name)
     {
-        var response = await client.PostAsJsonAsync("api/modules", new { Name = name });
+        var response = await client.PostAsJsonAsync("module", new { Name = name });
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<ModuleData>();

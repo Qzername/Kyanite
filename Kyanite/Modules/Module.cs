@@ -2,6 +2,7 @@
 using Splat;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -24,7 +25,7 @@ public abstract class Module(Guid moduleId) : ReactiveObject, INotifyPropertyCha
         manager = moduleManager;
         this.properties = properties;
 
-        PropertyChanged += Module_PropertyChanged;
+        this.PropertyChanged += Module_PropertyChanged;
     }
 
     //Synchronize value whenever property changes
