@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace Kyanite.DatabaseConnection.StandardAPI;
+namespace Kyanite.DatabaseConnection.API;
 
 internal class APIDataRepositoryHandler(HttpClient client) : IDataRepositoryHandler
 {

@@ -11,6 +11,9 @@
              x:Class="Kyanite.Modules.Text.TextModuleView"
              x:DataType="textNamespace:TextModule">
   	<Panel>
-		<hotMarkdown:HotMarkdownEditor Text="{Binding Text}" Padding="10"/>
+          <!-->
+          hotMarkdown:HotMarkdownEditor
+          <!-->
+		<TextBox Text="{Binding Text}" Padding="10"/>
 	</Panel>
 </UserControl>

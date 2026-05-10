@@ -1,7 +1,6 @@
-﻿using Kyanite.DatabaseConnection.API;
-using System.Net.Http;
+﻿using System.Net.Http;
 
-namespace Kyanite.DatabaseConnection.StandardAPI;
+namespace Kyanite.DatabaseConnection.API;
 
 internal class APIServerHandler : ServerHandler
 {
