@@ -13,14 +13,15 @@ internal class GoogleDriveServerHandler : LocalServerHandler
     const string DatabaseLocalization = "./Kyanite/Database.db";
     const string scriptUrl = "[INSERT HERE SCRIPT URL]";
 
-    public GoogleDriveServerHandler() : base()
+    public override async void OnApplicationOpen()
     {
-        OnDatabaseDirty += async () =>
-        {
-            await UploadDatabaseFile(DatabaseLocalization);
-        };
+        await DownloadDatabaseFile("Database.db", DatabaseLocalization);
+        base.OnApplicationOpen();
+    }
 
-        Task.Run(async () => await DownloadDatabaseFile("Database.db", DatabaseLocalization)).Wait();
+    public override async void OnApplicationClose()
+    {
+        await UploadDatabaseFile(DatabaseLocalization);
     }
 
     async Task DownloadDatabaseFile(string fileName, string savePath)
@@ -32,7 +33,7 @@ internal class GoogleDriveServerHandler : LocalServerHandler
 
         if (!response.IsSuccessStatusCode)
         {
-            Debug.WriteLine("Connection error.");
+            Debug.WriteLine($"[{nameof(GoogleDriveServerHandler)}] Connection error.");
             return;
         }
 
@@ -47,18 +48,17 @@ internal class GoogleDriveServerHandler : LocalServerHandler
             byte[] fileBytes = Convert.FromBase64String(base64Content);
 
             File.WriteAllBytes(savePath, fileBytes);
-            Debug.WriteLine($"File {fileName} was saved in {savePath}");
+            Debug.WriteLine($"[{nameof(GoogleDriveServerHandler)}] File {fileName} was saved in {savePath}");
             OpenDatabase();
         }
         else
         {
             string message = root.GetProperty("message").GetString();
 
-            Debug.WriteLine(message);
             if (message == "File not found")
                 await UploadDatabaseFile(DatabaseLocalization);
             else
-                Debug.WriteLine($"Script error: {message}");
+                Debug.WriteLine($"[{nameof(GoogleDriveServerHandler)}] Script error: {message}");
         }
     }
 
@@ -66,7 +66,7 @@ internal class GoogleDriveServerHandler : LocalServerHandler
     {
         try
         {
-            Debug.WriteLine("upload..");
+            Debug.WriteLine($"[{nameof(GoogleDriveServerHandler)}] Uploading database...");
 
             CloseDatabase();
 
@@ -87,13 +87,12 @@ internal class GoogleDriveServerHandler : LocalServerHandler
             var response = await client.PostAsync(scriptUrl, new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json"));
 
             string result = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine(result);
 
+            Debug.WriteLine($"[{nameof(GoogleDriveServerHandler)}] Databased is uploaded.");
         }
         catch(Exception ex)
         {
-            Debug.WriteLine(ex.Message);
+            Debug.WriteLine($"[{nameof(GoogleDriveServerHandler)}] " + ex.Message);
         }
-
     }
 }

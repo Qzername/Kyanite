@@ -5,7 +5,7 @@ namespace Kyanite.ViewModels
 {
     public abstract class ViewModelBase : ReactiveObject
     {
-        protected T GetService<T>()
+        protected static T GetService<T>()
         {
             var service = Locator.Current.GetService<T>();
 

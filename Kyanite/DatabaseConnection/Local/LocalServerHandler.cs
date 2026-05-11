@@ -24,6 +24,8 @@ internal class LocalServerHandler : ServerHandler
             Directory.CreateDirectory(Path.GetDirectoryName(LocalDatabasePath)!);
 
         OpenDatabase();
+
+        OnApplicationOpen();//call ready
     }
 
     protected void OpenDatabase()

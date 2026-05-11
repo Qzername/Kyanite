@@ -21,5 +21,7 @@ internal class APIServerHandler : ServerHandler
 
         _dataRepositoryHandler = new APIDataRepositoryHandler(_httpClient);
         _moduleRepositoryHandler = new APIModuleRepositoryHandler(_httpClient);
+
+        OnApplicationOpen();//call ready
     }
 }

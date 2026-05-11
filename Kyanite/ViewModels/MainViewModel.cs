@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using DynamicData;
+using Kyanite.DatabaseConnection;
 using Kyanite.Modules;
 using Kyanite.Modules.Text;
 using ReactiveUI;
@@ -20,7 +21,7 @@ public class MainViewModel : ViewModelBase
         Router = new RoutingState();
         modules = new AvaloniaList<Module>();
 
-        LoadFromServer();
+        GetService<ServerHandler>().OnReady += LoadFromServer;
     }
 
     async void LoadFromServer()
