@@ -1,0 +1,37 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewLocators="using:Kyanite.ViewLocators"
+             x:Class="Kyanite.App"
+			 xmlns:vm="using:Kyanite.ViewModels"
+			 x:CompileBindings="False"
+             RequestedThemeVariant="Default">
+
+	<Application.DataContext>
+		<vm:AppViewModel/>
+    </Application.DataContext>
+
+    <Application.DataTemplates>
+        <viewLocators:ViewLocator/>
+    </Application.DataTemplates>
+
+	<Application.Resources>
+		<FontFamily x:Key="Unbounded">avares://Kyanite/Assets#Unbounded</FontFamily>
+	</Application.Resources>
+
+	<TrayIcon.Icons>
+		<TrayIcons>
+			<TrayIcon Command="{Binding OpenApplicationCommand}" Icon="/Assets/avalonia-logo.ico"
+					  ToolTipText="Whiteboard">
+				<TrayIcon.Menu>
+					<NativeMenu>
+						<NativeMenuItem Command="{Binding CloseApplicationCommand}" Header="Close application"/>
+					</NativeMenu>
+				</TrayIcon.Menu>
+			</TrayIcon>
+		</TrayIcons>
+	</TrayIcon.Icons>
+	
+	<Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>

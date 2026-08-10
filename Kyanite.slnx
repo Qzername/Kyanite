@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/App/">
+    <Project Path="App/Kyanite/Kyanite.Android/Kyanite.Android.csproj" Id="52beddc2-09bf-4025-8c38-61cffb4bb197">
+      <Deploy />
+    </Project>
+    <Project Path="App/Kyanite/Kyanite.Browser/Kyanite.Browser.csproj" Id="76a69ae5-71a7-497c-b66d-1e7f7b91087c" />
+    <Project Path="App/Kyanite/Kyanite.Desktop/Kyanite.Desktop.csproj" Id="239ddd81-9806-4bba-80f1-cfd523e62f94" />
+    <Project Path="App/Kyanite/Kyanite.iOS/Kyanite.iOS.csproj" Id="85a86615-8c77-4f2f-b2a2-afe2ac17359a">
+      <Deploy />
+    </Project>
+    <Project Path="App/Kyanite/Kyanite/Kyanite.csproj" Id="b7a538d9-002f-4f19-9ec5-6b23f5c59d61" />
+  </Folder>
+  <Project Path="Kyanite.Database/Kyanite.Database.csproj" Id="253b72f5-530c-49ca-9892-ef3fedb3c810" />
+  <Project Path="Kyanite.ModuleHandling/Kyanite.ModuleHandling.csproj" Id="1a6d5b13-a32a-49c0-af11-940736c07c6f" />
+</Solution>

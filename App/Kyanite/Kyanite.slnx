@@ -1,0 +1,11 @@
+﻿<Solution>
+  <Project Path="Kyanite.Android/Kyanite.Android.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="Kyanite.Browser/Kyanite.Browser.csproj" />
+  <Project Path="Kyanite.Desktop/Kyanite.Desktop.csproj" />
+  <Project Path="Kyanite.iOS/Kyanite.iOS.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="Kyanite/Kyanite.csproj" />
+</Solution>
