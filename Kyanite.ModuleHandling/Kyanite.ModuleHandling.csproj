@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\" />
+    <PackageReference Include="Avalonia" Version="12.1.1" />
+    <PackageReference Include="AvaloniaHotMarkdown" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
