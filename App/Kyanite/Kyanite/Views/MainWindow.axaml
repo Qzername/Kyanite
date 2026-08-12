@@ -22,6 +22,7 @@
 		<Style Selector="WindowDrawnDecorations /template/ StackPanel#PART_OverlayPanel">
 			<Setter Property="HorizontalAlignment" Value="Right"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
+			<!-- this fixes gap between last button and edge-->
 			<Setter Property="Width" Value="138"/>
 		</Style>
     </Window.Styles>
