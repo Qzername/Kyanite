@@ -16,18 +16,20 @@
             <Setter Property="IsVisible" Value="False" />
         </Style>
         <!-- Hide full screen button (not the maximalize window) -->
-        <Style Selector="WindowDrawnDecorations /template/ Button#PART_FullScreenButton">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
+		<Style Selector="WindowDrawnDecorations /template/ Button#PART_FullScreenButton">
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+		<Style Selector="WindowDrawnDecorations /template/ StackPanel#PART_OverlayPanel">
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Width" Value="138"/>
+		</Style>
     </Window.Styles>
 
     <DockPanel>
         <Panel DockPanel.Dock="Top"
                Height="30" Background="#0F0E0F"
-               WindowDecorationProperties.ElementRole="User">
-
-            <Panel Background="Transparent"
-                   WindowDecorationProperties.ElementRole="TitleBar" />
+               WindowDecorationProperties.ElementRole="TitleBar">
 
             <TextBlock VerticalAlignment="Center" Padding="5,0" Foreground="#0012DE" Text="Kyanite"/>
         </Panel>
