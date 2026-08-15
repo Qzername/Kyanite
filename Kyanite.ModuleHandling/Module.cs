@@ -1,13 +1,10 @@
-﻿namespace Kyanite.ModuleHandling;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public abstract class Module
+namespace Kyanite.ModuleHandling;
+
+public abstract class Module : ObservableObject
 {
     public Guid ModuleId { get; private set; }
-
-    protected Module()
-    {
-        ModuleId = Guid.NewGuid();
-    }
 
     protected Module(Guid moduleId)
     {

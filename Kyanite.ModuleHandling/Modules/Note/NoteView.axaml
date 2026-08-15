@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Kyanite.ModuleHandling.Modules.Note.NoteView"
-
-             xmlns:hotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown">
+             x:CompileBindings="False"
+             
+			 xmlns:hotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown">
     <hotMarkdown:RichTextPresenter Text="{Binding Text}"/>
 </UserControl>
