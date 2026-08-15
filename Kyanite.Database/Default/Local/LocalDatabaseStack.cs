@@ -23,15 +23,13 @@ public class LocalDatabaseStack(string databaseFilename = "./database.db")
         bool newDatabase = !File.Exists(currentDbFilename);
 
         connection = new SqliteConnection($"Data Source={currentDbFilename}");
+        SqlMapper.AddTypeHandler(new GuidHandler());
         await connection.OpenAsync();
 
-        if (newDatabase)
-        {
-            ((LocalModuleRepository)ModuleRepository).Initialize(connection);
-            ((LocalDataRepository)DataRepository).Initialize(connection);
+        ((LocalModuleRepository)ModuleRepository).Initialize(connection);
+        ((LocalDataRepository)DataRepository).Initialize(connection);
 
-            await connection.ExecuteAsync(createModuleListTableQuery);
-        }
+        await connection.ExecuteAsync(createModuleListTableQuery);
 
         return true;
     }

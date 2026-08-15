@@ -1,6 +1,6 @@
 ﻿using Kyanite.Database;
 using Kyanite.Database.Default.Local;
-using Kyanite.ModuleHandling;
+using Kyanite.Modules;
 using Kyanite.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 

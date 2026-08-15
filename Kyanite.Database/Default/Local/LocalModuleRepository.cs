@@ -18,16 +18,16 @@ public class LocalModuleRepository : IModuleRepository
             INSERT INTO Modules (Id, Name, Type)
             VALUES (@Id, @Name, @Type);";
 
-        const string createModuleTableQuery = @"
-            CREATE TABLE IF NOT EXISTS M_@Id (
-                Id TEXT PRIMARY KEY,
-                Type TEXT NOT NULL,
-                Value TEXT NOT NULL
-            );";
-
         CheckForInitialization();
 
         var moduleWithId = module with { Id = Guid.NewGuid() };
+
+        string createModuleTableQuery = $@"
+            CREATE TABLE IF NOT EXISTS ""{moduleWithId.Id}"" (
+            Id TEXT PRIMARY KEY,
+            Type TEXT NOT NULL,
+            Value TEXT NOT NULL
+        );";
 
         await sqliteConnection.ExecuteAsync(insertQuery, moduleWithId);
         await sqliteConnection.ExecuteAsync(createModuleTableQuery, moduleWithId);
@@ -55,7 +55,7 @@ public class LocalModuleRepository : IModuleRepository
 
     public async Task<ModuleInformation> UpdateAsync(ModuleInformation module)
     {
-        const string updateQuery = @"
+        string updateQuery = @$"
             UPDATE Modules
             SET Name = @Name, Type = @Type
             WHERE Id = @Id;";

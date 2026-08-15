@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 
-namespace Kyanite.ModuleHandling;
+namespace Kyanite.Modules;
 
 public abstract class Module : ObservableObject
 {
@@ -9,5 +10,10 @@ public abstract class Module : ObservableObject
     protected Module(Guid moduleId)
     {
         ModuleId = moduleId;
+    }
+
+    public void Refresh()
+    {
+        OnPropertyChanged();
     }
 }

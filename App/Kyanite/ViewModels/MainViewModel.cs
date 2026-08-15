@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Kyanite.ModuleHandling;
+using Kyanite.Modules;
+using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Kyanite.ViewModels;

@@ -1,7 +1,13 @@
 ﻿using Kyanite.Database;
-using Kyanite.ModuleHandling.Modules.Note;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Linq;
+using Kyanite.Modules.Note;
+using System.Diagnostics;
 
-namespace Kyanite.ModuleHandling;
+namespace Kyanite.Modules;
 
 public class ModuleManager
 {
@@ -35,24 +41,28 @@ public class ModuleManager
             Type = type
         });
 
-        var synchronizableProperties = addedModule.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Any());
+        var properties = typeof(NoteViewModel).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
         foreach(var synchronizableProperty in synchronizableProperties)
             await _databaseStack.DataRepository.AddAsync(new DataInformation()
             {
                 Id = synchronizableProperty.Name,
                 Type = "string", //add more supported types
-                Value = synchronizableProperty.GetValue(addedModule)?.ToString() ?? string.Empty
+                Value = string.Empty
             }, addedModule.Id);
 
-        return ConvertTypeToModule(type, addedModule.Id);
+        var module = ConvertTypeToModule(type, addedModule.Id);
+        modules.Add(module);
+        return module;
     }
 
     public async Task LoadModule(Module module)
     {
         var data = await _databaseStack.DataRepository.GetAllAsync(module.ModuleId);
 
-        var synchronizableProperties = module.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Any());
+        var properties = typeof(NoteViewModel).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
         foreach (var synchronizableProperty in synchronizableProperties)
         {
@@ -60,15 +70,18 @@ public class ModuleManager
             
             if (propertyData is null)
                 continue;
-            
+
             synchronizableProperty.SetValue(module, propertyData.Value);
-        }   
+        }
+
+        module.Refresh();
     }
 
     public async Task SaveModule(Module module)
     {
-        var synchronizableProperties = module.GetType().GetProperties().Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Any());
-     
+        var properties = typeof(NoteViewModel).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
+
         foreach (var synchronizableProperty in synchronizableProperties)
         {
             DataInformation propertyData = new DataInformation()

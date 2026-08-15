@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Kyanite.ModuleHandling.Modules.Note;
+namespace Kyanite.Modules.Note;
 
 public partial class NoteView : UserControl
 {

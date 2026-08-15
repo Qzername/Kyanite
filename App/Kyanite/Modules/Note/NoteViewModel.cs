@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 
-namespace Kyanite.ModuleHandling.Modules.Note;
+namespace Kyanite.Modules.Note;
 
 public partial class NoteViewModel(Guid moduleId) : Module(moduleId)
 {
