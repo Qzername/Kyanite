@@ -15,28 +15,53 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
+	
+	<SplitView IsPaneOpen="{Binding IsPaneOpen}"
+			   DisplayMode="CompactInline"
+			   
+			   CompactPaneLength="48"
+			   OpenPaneLength="200">
+		<SplitView.Pane>
+			<DockPanel>
+				<Button DockPanel.Dock="Bottom" 
+						Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+						Command="{Binding CreateModuleCommand}"/>
+			
+				<Button DockPanel.Dock="Top"
+						Content="☰" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+						Command="{Binding TogglePaneCommand}" />
 
-	<Grid RowDefinitions="Auto,*">
-		<StackPanel Grid.Row="0" Orientation="Horizontal"
-					IsEnabled="{Binding IsLoaded}">
-			<Button Content="Create Module"
-					Command="{Binding CreateModuleCommand}"/>
-			
-			<Button Content="Load Module" 
-					Command="{Binding LoadModuleCommand}"/>
-			
-			<Button Content="Save Module"
-					Command="{Binding SaveModuleCommand}"/>
-			
-		</StackPanel>
+				<ListBox Background="Transparent">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="test"/>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</DockPanel>
+		</SplitView.Pane>
+		
+		<Grid RowDefinitions="Auto,*">
+			<StackPanel Grid.Row="0" 
+						Orientation="Horizontal"
+						IsEnabled="{Binding IsLoaded}">
+				
+				<Button Content="Load Module"
+						Command="{Binding LoadModuleCommand}"/>
 
-		<ContentControl Grid.Row="1"
-						Content="{Binding CurrentModule}">
-			<ContentControl.DataTemplates>
-				<DataTemplate DataType="noteModule:NoteViewModel">
-					<noteModule:NoteView />
-				</DataTemplate>
-			</ContentControl.DataTemplates>
-		</ContentControl>
-	</Grid>
+				<Button Content="Save Module"
+						Command="{Binding SaveModuleCommand}"/>
+			</StackPanel>
+
+			<ContentControl Grid.Row="1"
+							Content="{Binding CurrentModule}">
+				<ContentControl.DataTemplates>
+					<DataTemplate DataType="noteModule:NoteViewModel">
+						<noteModule:NoteView />
+					</DataTemplate>
+				</ContentControl.DataTemplates>
+			</ContentControl>
+		</Grid>
+	</SplitView>
+	
 </UserControl>

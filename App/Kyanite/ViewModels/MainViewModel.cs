@@ -14,6 +14,8 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] bool _isLoaded;
     [ObservableProperty] Module _currentModule;
 
+    [ObservableProperty] bool _isPaneOpen = true;
+
     public MainViewModel(ModuleManager moduleManager)
     {
         _moduleManager = moduleManager;
@@ -45,4 +47,6 @@ public partial class MainViewModel : ViewModelBase
     {
         await _moduleManager.SaveModule(CurrentModule);
     }
+
+    [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
 }
