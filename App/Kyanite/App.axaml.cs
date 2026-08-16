@@ -22,26 +22,27 @@ public partial class App : Application
 
         var services = collection.BuildServiceProvider();
 
-        var vm = services.GetRequiredService<MainViewModel>();
+        DataContext = services.GetRequiredService<AppViewModel>();
+        var mainVm = services.GetRequiredService<MainViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = vm
+                DataContext = mainVm
             };
 
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
         {
-            singleViewFactoryApplicationLifetime.MainViewFactory = () => new MainView { DataContext = vm };
+            singleViewFactoryApplicationLifetime.MainViewFactory = () => new MainView { DataContext = mainVm };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = new MainView
             {
-                DataContext = vm
+                DataContext = mainVm
             };
         }
 

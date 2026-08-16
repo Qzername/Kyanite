@@ -6,10 +6,6 @@
 			 x:CompileBindings="False"
              RequestedThemeVariant="Default">
 
-	<Application.DataContext>
-		<vm:AppViewModel/>
-    </Application.DataContext>
-
     <Application.DataTemplates>
         <viewLocators:ViewLocator/>
     </Application.DataTemplates>

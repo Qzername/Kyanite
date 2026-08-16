@@ -2,11 +2,15 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Views;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Kyanite.ViewModels;
 
-internal partial class AppViewModel : ViewModelBase
+internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewModelBase
 {
+    readonly IServiceProvider _serviceProvider = serviceProvider;
+
     [RelayCommand]
     void OpenApplication()
     {
@@ -14,13 +18,14 @@ internal partial class AppViewModel : ViewModelBase
         
         if (desktop.MainWindow!.IsVisible)
             return;
-        /*
+        
         desktop.MainWindow = new MainWindow()
         {
-            DataContext = new MainViewModel()
+            DataContext = _serviceProvider.GetRequiredService<MainViewModel>()
         };
         desktop.MainWindow.Show();
-   */ }
+    }
+
     [RelayCommand]
     void CloseApplication()
     {

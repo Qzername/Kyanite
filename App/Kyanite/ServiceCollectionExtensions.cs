@@ -13,6 +13,8 @@ internal static class ServiceCollectionExtensions
         collection.AddSingleton<DatabaseStack, LocalDatabaseStack>();
         collection.AddSingleton<ModuleManager>();
 
+        collection.AddSingleton<AppViewModel>();
+
         collection.AddTransient<MainViewModel>();
     }
 }
