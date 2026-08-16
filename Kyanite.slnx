@@ -11,4 +11,5 @@
     <Project Path="App/Kyanite/Kyanite.csproj" Id="b7a538d9-002f-4f19-9ec5-6b23f5c59d61" />
   </Folder>
   <Project Path="Kyanite.Database/Kyanite.Database.csproj" Id="253b72f5-530c-49ca-9892-ef3fedb3c810" />
+  <Project Path="Kyanite.Modules/Kyanite.Modules.csproj" Id="7f45b3ec-4974-4975-a655-c43a4f3a807f" />
 </Solution>

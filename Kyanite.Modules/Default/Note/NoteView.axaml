@@ -7,5 +7,7 @@
              x:CompileBindings="False"
              
 			 xmlns:hotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown">
-    <TextBox Text="{Binding Text}"/>
+	<Panel>
+		<hotMarkdown:HotMarkdownEditor IsReadOnly="False" IsSelectable="True" Text="{Binding Text}"/>
+	</Panel>
 </UserControl>

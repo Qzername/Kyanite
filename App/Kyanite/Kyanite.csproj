@@ -23,6 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Kyanite.Database\Kyanite.Database.csproj" />
+    <ProjectReference Include="..\..\Kyanite.Modules\Kyanite.Modules.csproj" />
   </ItemGroup>
 </Project>

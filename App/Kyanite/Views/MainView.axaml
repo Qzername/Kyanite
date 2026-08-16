@@ -7,7 +7,7 @@
              x:Class="Kyanite.Views.MainView"
              x:DataType="vm:MainViewModel"
 			 
-			 xmlns:noteModule="clr-namespace:Kyanite.Modules.Note"
+			 xmlns:noteModule="clr-namespace:Kyanite.Modules.Note;assembly=Kyanite.Modules"
 			 
 			 FontFamily="Unbounded">
   <Design.DataContext>
@@ -27,6 +27,7 @@
 			
 			<Button Content="Save Module"
 					Command="{Binding SaveModuleCommand}"/>
+			
 		</StackPanel>
 
 		<ContentControl Grid.Row="1"
