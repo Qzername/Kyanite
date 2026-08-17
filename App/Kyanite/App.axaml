@@ -4,7 +4,9 @@
              x:Class="Kyanite.App"
 			 xmlns:vm="using:Kyanite.ViewModels"
 			 x:CompileBindings="False"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Dark"
+			 
+			 xmlns:suki="clr-namespace:SukiUI;assembly=SukiUI">
 
     <Application.DataTemplates>
         <viewLocators:ViewLocator/>
@@ -28,6 +30,6 @@
 	</TrayIcon.Icons>
 	
 	<Application.Styles>
-        <FluentTheme />
+		<suki:SukiTheme ThemeColor="Blue" />
     </Application.Styles>
 </Application>

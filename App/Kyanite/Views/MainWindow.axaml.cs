@@ -1,9 +1,8 @@
-using Avalonia.Controls;
-using Avalonia.Interactivity;
+using SukiUI.Controls;
 
 namespace Kyanite.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : SukiWindow
 {
     public MainWindow()
     {
