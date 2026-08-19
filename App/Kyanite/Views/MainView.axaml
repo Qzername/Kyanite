@@ -11,51 +11,24 @@
 			 xmlns:noteModule="clr-namespace:Kyanite.Modules.Note;assembly=Kyanite.Modules"
 	
 			 FontFamily="Unbounded">
-	
-	<Grid ColumnDefinitions="Auto, *">
-		<suki:SukiSideMenu Grid.Column="0">
 
-			<suki:SukiSideMenu.Items>
-				<ListBox Background="Transparent">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="test"/>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</suki:SukiSideMenu.Items>
+	<suki:SukiSideMenu ItemsSource="{Binding AllModules}" 
+                       SelectedItem="{Binding SelectedModule}">
+        <suki:SukiSideMenu.DataTemplates>
+            <DataTemplate DataType="noteModule:NoteViewModel">
+                <noteModule:NoteView />
+            </DataTemplate>
+        </suki:SukiSideMenu.DataTemplates>
 
-			<suki:SukiSideMenu.FooterContent>
-				<StackPanel Orientation="Horizontal">
-
-					<Button Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-							Command="{Binding CreateModuleCommand}"/>
-
-				</StackPanel>
-			</suki:SukiSideMenu.FooterContent>
-		</suki:SukiSideMenu>
+        <suki:SukiSideMenu.ItemTemplate>
+            <DataTemplate>
+                <suki:SukiSideMenuItem Header="{Binding Name}" />
+            </DataTemplate>
+        </suki:SukiSideMenu.ItemTemplate>
 		
-		<Grid Grid.Column="1" RowDefinitions="Auto,*">
-			<StackPanel Grid.Row="0"
-						Orientation="Horizontal"
-						IsEnabled="{Binding IsLoaded}">
-
-				<Button Content="Load Module"
-						Command="{Binding LoadModuleCommand}"/>
-
-				<Button Content="Save Module"
-						Command="{Binding SaveModuleCommand}"/>
-			</StackPanel>
-
-			<ContentControl Grid.Row="1"
-							Content="{Binding CurrentModule}">
-				<ContentControl.DataTemplates>
-					<DataTemplate DataType="noteModule:NoteViewModel">
-						<noteModule:NoteView />
-					</DataTemplate>
-				</ContentControl.DataTemplates>
-			</ContentControl>
-		</Grid>
-
-	</Grid>
+        <suki:SukiSideMenu.FooterContent>
+            <Button Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Command="{Binding CreateModuleCommand}"/>
+		</suki:SukiSideMenu.FooterContent>
+	</suki:SukiSideMenu>
 </UserControl>

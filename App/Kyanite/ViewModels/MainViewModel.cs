@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Modules;
 using System.Threading.Tasks;
@@ -10,12 +11,14 @@ public partial class MainViewModel : ViewModelBase
     readonly ModuleManager _moduleManager;
 
     [ObservableProperty] bool _isLoaded;
-    [ObservableProperty] Module _currentModule;
+    [ObservableProperty] Module _selectedModule;
+    public ObservableCollection<Module> AllModules { get; } = [];
 
     [ObservableProperty] bool _isPaneOpen = true;
 
     public MainViewModel(ModuleManager moduleManager)
     {
+        AllModules.Clear();
         _moduleManager = moduleManager;
         _ = PrepareModuleManager();
     }
@@ -23,28 +26,37 @@ public partial class MainViewModel : ViewModelBase
     async Task PrepareModuleManager()
     {
         await _moduleManager.Prepare();
+
+        AllModules.Clear();
+        foreach (var module in _moduleManager.Modules)
+            AllModules.Add(module);
+
         IsLoaded = true;
     }
 
     [RelayCommand]
     async Task CreateModule()
     {
-        await _moduleManager.CreateModule("Note");
+        var createdModule = await _moduleManager.CreateModule("Note");
+
+        AllModules.Clear();
+        foreach (var module in _moduleManager.Modules)
+            AllModules.Add(module);
+
+        SelectedModule = createdModule;
     }
 
-    [RelayCommand]
-    async Task LoadModule()
+    partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)
     {
-        var module = _moduleManager.Modules[0];
-        await _moduleManager.LoadModule(module);
-        CurrentModule = module;
+        _ = SaveOldAndLoadNew(oldValue, newValue);
     }
 
-    [RelayCommand]
-    async Task SaveModule()
+    async Task SaveOldAndLoadNew(Module? oldValue, Module? newValue)
     {
-        await _moduleManager.SaveModule(CurrentModule);
-    }
+        if (oldValue is not null)
+            await _moduleManager.SaveModule(oldValue);
 
-    [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
+        if (newValue is not null)
+            await _moduleManager.LoadModule(newValue);
+    }
 }

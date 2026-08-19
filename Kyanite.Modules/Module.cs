@@ -1,19 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using Kyanite.Database;
 
 namespace Kyanite.Modules;
 
 public abstract class Module : ObservableObject
 {
-    public Guid ModuleId { get; private set; }
+    public Guid ModuleId { get; }
+    public string Name { get; }
 
-    protected Module(Guid moduleId)
+    protected Module(ModuleInformation moduleInformation)
     {
-        ModuleId = moduleId;
+        ModuleId = moduleInformation.Id;
+        Name = moduleInformation.Name;
     }
 
     public void Refresh()
     {
-        OnPropertyChanged();
+        OnPropertyChanged(string.Empty);
     }
 }

@@ -28,7 +28,7 @@ public class ModuleManager
     
         foreach(var moduleInformation in moduleInformations)
         {
-            var module = ConvertTypeToModule(moduleInformation.Type, moduleInformation.Id);
+            var module = ConvertTypeToModule(moduleInformation.Type, moduleInformation);
             modules.Add(module);
         }
     }
@@ -52,7 +52,7 @@ public class ModuleManager
                 Value = string.Empty
             }, addedModule.Id);
 
-        var module = ConvertTypeToModule(type, addedModule.Id);
+        var module = ConvertTypeToModule(type, addedModule);
         modules.Add(module);
         return module;
     }
@@ -96,9 +96,9 @@ public class ModuleManager
     }
 
     //TODO: support custom modules
-    Module ConvertTypeToModule(string type, Guid moduleId) => type switch
+    Module ConvertTypeToModule(string type, ModuleInformation moduleInformation) => type switch
     {
-        "Note" => new NoteViewModel(moduleId),
+        "Note" => new NoteViewModel(moduleInformation),
         _ => throw new NotImplementedException($"Module type {type} is not implemented.")
     };
 }

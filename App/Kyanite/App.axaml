@@ -9,7 +9,7 @@
 			 xmlns:suki="clr-namespace:SukiUI;assembly=SukiUI">
 
     <Application.DataTemplates>
-        <viewLocators:ViewLocator/>
+        <viewLocators:MainViewLocator/>
     </Application.DataTemplates>
 
 	<Application.Resources>

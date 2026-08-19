@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using Kyanite.Database;
 
 namespace Kyanite.Modules.Note;
 
-public partial class NoteViewModel(Guid moduleId) : Module(moduleId)
+public partial class NoteViewModel(ModuleInformation moduleInformation) : Module(moduleInformation)
 {
     [Synchronize]
     [ObservableProperty]
-    string text = string.Empty;
+    string _text = string.Empty;
 }
