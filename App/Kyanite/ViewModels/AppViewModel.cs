@@ -15,10 +15,10 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
     void OpenApplication()
     {
         var desktop = (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
-        
+
         if (desktop.MainWindow!.IsVisible)
             return;
-        
+
         desktop.MainWindow = new MainWindow()
         {
             DataContext = _serviceProvider.GetRequiredService<MainViewModel>()
