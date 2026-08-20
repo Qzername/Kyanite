@@ -9,8 +9,6 @@ namespace Kyanite.ViewModels;
 
 internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewModelBase
 {
-    readonly IServiceProvider _serviceProvider = serviceProvider;
-
     [RelayCommand]
     void OpenApplication()
     {
@@ -21,7 +19,7 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
 
         desktop.MainWindow = new MainWindow()
         {
-            DataContext = _serviceProvider.GetRequiredService<MainViewModel>()
+            DataContext = serviceProvider.GetRequiredService<MainViewModel>()
         };
         desktop.MainWindow.Show();
     }

@@ -10,6 +10,8 @@ public class ModuleManager
     readonly List<Module> modules = [];
     public Module[] Modules => [.. modules];
 
+    public bool IsStackPrepared { get; private set; } = false;
+
     public ModuleManager(DatabaseStack databaseStack)
     {
         _databaseStack = databaseStack;
@@ -26,6 +28,8 @@ public class ModuleManager
             var module = ConvertTypeToModule(moduleInformation.Type, moduleInformation);
             modules.Add(module);
         }
+
+        IsStackPrepared = true;
     }
 
     public async Task<Module> CreateModule(string type)

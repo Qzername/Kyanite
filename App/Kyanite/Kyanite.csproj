@@ -20,7 +20,6 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="SukiUI" />
   </ItemGroup>
 
   <ItemGroup>

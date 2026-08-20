@@ -30,6 +30,6 @@
 	</TrayIcon.Icons>
 	
 	<Application.Styles>
-		<suki:SukiTheme ThemeColor="Blue" />
+		<FluentTheme />
     </Application.Styles>
 </Application>

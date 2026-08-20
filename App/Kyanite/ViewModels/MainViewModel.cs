@@ -11,26 +11,28 @@ public partial class MainViewModel : ViewModelBase
 {
     readonly ModuleManager _moduleManager;
 
-    [ObservableProperty] bool _isLoaded;
-    [ObservableProperty] Module _selectedModule;
-    public ObservableCollection<Module> AllModules { get; } = [];
-
+    [ObservableProperty] bool _isDataLoaded;
     [ObservableProperty] bool _isPaneOpen = true;
+
+    public ObservableCollection<Module> AllModules { get; } = [];
+    [ObservableProperty] Module _selectedModule;
 
     public MainViewModel(ModuleManager moduleManager)
     {
         AllModules.Clear();
         _moduleManager = moduleManager;
+
         _ = PrepareModuleManager();
     }
 
     async Task PrepareModuleManager()
     {
-        await _moduleManager.Prepare();
+        if (!_moduleManager.IsStackPrepared)
+            await _moduleManager.Prepare();
 
         AllModules.Replace(_moduleManager.Modules);
 
-        IsLoaded = true;
+        IsDataLoaded = true;
     }
 
     [RelayCommand]
@@ -52,6 +54,8 @@ public partial class MainViewModel : ViewModelBase
         await _moduleManager.DeleteModule(module);
         AllModules.Replace(_moduleManager.Modules);
     }
+
+    [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
 
     partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)
     {
