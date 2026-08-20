@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using Kyanite.Database;
 
 namespace Kyanite.Modules;

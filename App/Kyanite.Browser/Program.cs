@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Browser;
 using Kyanite;
-using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
 internal sealed partial class Program

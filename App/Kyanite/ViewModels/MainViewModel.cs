@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Modules;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -27,9 +28,7 @@ public partial class MainViewModel : ViewModelBase
     {
         await _moduleManager.Prepare();
 
-        AllModules.Clear();
-        foreach (var module in _moduleManager.Modules)
-            AllModules.Add(module);
+        AllModules.Replace(_moduleManager.Modules);
 
         IsLoaded = true;
     }
@@ -39,11 +38,19 @@ public partial class MainViewModel : ViewModelBase
     {
         var createdModule = await _moduleManager.CreateModule("Note");
 
-        AllModules.Clear();
-        foreach (var module in _moduleManager.Modules)
-            AllModules.Add(module);
+        AllModules.Replace(_moduleManager.Modules);
 
         SelectedModule = createdModule;
+    }
+
+    [RelayCommand]
+    async Task DeleteModule(object moduleObj)
+    {
+        if (moduleObj is not Module module)
+            throw new Exception("Provided object is not of a module type");
+
+        await _moduleManager.DeleteModule(module);
+        AllModules.Replace(_moduleManager.Modules);
     }
 
     partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)

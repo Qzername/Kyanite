@@ -69,7 +69,7 @@ public class LocalDataRepository : IDataRepository
 
         CheckForInitialization();
 
-        return sqliteConnection.ExecuteAsync(deleteQuery,  dataId);
+        return sqliteConnection.ExecuteAsync(deleteQuery, dataId);
     }
 
     void CheckForInitialization()

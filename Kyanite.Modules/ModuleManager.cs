@@ -1,11 +1,6 @@
 ﻿using Kyanite.Database;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Linq;
 using Kyanite.Modules.Note;
-using System.Diagnostics;
+using System.Reflection;
 
 namespace Kyanite.Modules;
 
@@ -13,7 +8,7 @@ public class ModuleManager
 {
     readonly DatabaseStack _databaseStack;
     readonly List<Module> modules = [];
-    public Module[] Modules => [..modules];
+    public Module[] Modules => [.. modules];
 
     public ModuleManager(DatabaseStack databaseStack)
     {
@@ -25,8 +20,8 @@ public class ModuleManager
         await _databaseStack.Prepare();
 
         var moduleInformations = await _databaseStack.ModuleRepository.GetAllAsync();
-    
-        foreach(var moduleInformation in moduleInformations)
+
+        foreach (var moduleInformation in moduleInformations)
         {
             var module = ConvertTypeToModule(moduleInformation.Type, moduleInformation);
             modules.Add(module);
@@ -44,7 +39,7 @@ public class ModuleManager
         var properties = typeof(NoteViewModel).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
         var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
-        foreach(var synchronizableProperty in synchronizableProperties)
+        foreach (var synchronizableProperty in synchronizableProperties)
             await _databaseStack.DataRepository.AddAsync(new DataInformation()
             {
                 Id = synchronizableProperty.Name,
@@ -67,7 +62,7 @@ public class ModuleManager
         foreach (var synchronizableProperty in synchronizableProperties)
         {
             var propertyData = data.FirstOrDefault(d => d.Id == synchronizableProperty.Name);
-            
+
             if (propertyData is null)
                 continue;
 
@@ -84,7 +79,7 @@ public class ModuleManager
 
         foreach (var synchronizableProperty in synchronizableProperties)
         {
-            DataInformation propertyData = new DataInformation()
+            DataInformation propertyData = new()
             {
                 Id = synchronizableProperty.Name,
                 Type = "string", //add more supported types
@@ -95,8 +90,17 @@ public class ModuleManager
         }
     }
 
+    public async Task DeleteModule(Module module)
+    {
+        if (!modules.Contains(module))
+            throw new Exception("Module not found");
+
+        await _databaseStack.ModuleRepository.DeleteAsync(module.ModuleId);
+        modules.Remove(module);
+    }
+
     //TODO: support custom modules
-    Module ConvertTypeToModule(string type, ModuleInformation moduleInformation) => type switch
+    static Module ConvertTypeToModule(string type, ModuleInformation moduleInformation) => type switch
     {
         "Note" => new NoteViewModel(moduleInformation),
         _ => throw new NotImplementedException($"Module type {type} is not implemented.")

@@ -71,16 +71,16 @@ public class LocalModuleRepository : IModuleRepository
     {
         const string deleteQuery = @"
             DELETE FROM Modules
-            WHERE Id = @Id;";
+            WHERE Id = @id;";
 
         CheckForInitialization();
 
-        await sqliteConnection.ExecuteAsync(deleteQuery, id);
+        await sqliteConnection.ExecuteAsync(deleteQuery, new { id });
     }
 
     void CheckForInitialization()
     {
-        if(sqliteConnection is null)
+        if (sqliteConnection is null)
             throw new Exception("SQLite connection is not initialized. Call Initialize() before using the repository.");
     }
 }

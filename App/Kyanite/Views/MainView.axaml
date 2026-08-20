@@ -22,7 +22,15 @@
 
         <suki:SukiSideMenu.ItemTemplate>
             <DataTemplate>
-                <suki:SukiSideMenuItem Header="{Binding Name}" />
+                <suki:SukiSideMenuItem Header="{Binding Name}">
+                    <suki:SukiSideMenuItem.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove" 
+                                      Command="{Binding $parent[suki:SukiSideMenu].DataContext.DeleteModuleCommand}" 
+                                      CommandParameter="{Binding}" />
+                        </ContextMenu>
+                    </suki:SukiSideMenuItem.ContextMenu>
+                </suki:SukiSideMenuItem>
             </DataTemplate>
         </suki:SukiSideMenu.ItemTemplate>
 		

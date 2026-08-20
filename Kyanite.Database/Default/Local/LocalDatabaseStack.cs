@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.Sqlite;
 
 namespace Kyanite.Database.Default.Local;
 
-public class LocalDatabaseStack(string databaseFilename = "./database.db") 
+public class LocalDatabaseStack(string databaseFilename = "./database.db")
     : DatabaseStack(new LocalModuleRepository(), new LocalDataRepository())
 {
     readonly string currentDbFilename = databaseFilename;

@@ -1,4 +1,5 @@
 ﻿namespace Kyanite.Database;
+
 public interface IDataRepository
 {
     public Task<DataInformation> AddAsync(DataInformation data, Guid moduleId);

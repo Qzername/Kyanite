@@ -8,7 +8,7 @@
              
 			 xmlns:hotMarkdown="clr-namespace:AvaloniaHotMarkdown;assembly=AvaloniaHotMarkdown">
 	<Panel Margin="10">
-		<hotMarkdown:HotMarkdownEditor IsReadOnly="False" IsSelectable="True" Background="Green"
+		<hotMarkdown:HotMarkdownEditor IsReadOnly="False" IsSelectable="True"
                                        Text="{Binding Text}"/>
 	</Panel>
 </UserControl>
