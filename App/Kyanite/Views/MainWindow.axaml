@@ -5,6 +5,7 @@
         xmlns:views="using:Kyanite.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Kyanite.Views.MainWindow"
+	   x:CompileBindings="False"
         
         ExtendClientAreaToDecorationsHint="True"
         Icon="/Assets/avalonia-logo.ico"
@@ -34,6 +35,17 @@
 
             <TextBlock VerticalAlignment="Center" Padding="5,0" Foreground="#0012DE" Text="Kyanite"/>
         </Panel>
-        <views:MainView />
+
+        <Panel>
+		   <views:MainView />
+
+             <Panel>
+                  <Panel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#99393939" ></Panel>
+                  <Panel Width="500" Height="400" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Black">
+                    <ContentControl Content="{Binding DialogService.CurrentDialog}"/>     
+                  </Panel>
+             </Panel>
+
+	   </Panel>
     </DockPanel>
 </Window>

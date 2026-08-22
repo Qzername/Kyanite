@@ -2,11 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:viewLocators="using:Kyanite.ViewLocators"
              x:Class="Kyanite.App"
-			 xmlns:vm="using:Kyanite.ViewModels"
-			 x:CompileBindings="False"
-             RequestedThemeVariant="Dark"
-			 
-			 xmlns:suki="clr-namespace:SukiUI;assembly=SukiUI">
+             xmlns:vm="using:Kyanite.ViewModels"
+		   x:CompileBindings="False"
+
+             RequestedThemeVariant="Dark">
 
     <Application.DataTemplates>
         <viewLocators:MainViewLocator/>

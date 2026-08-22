@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Dialog;
 using Kyanite.Modules;
 using System;
 using System.Collections.ObjectModel;
@@ -7,20 +8,25 @@ using System.Threading.Tasks;
 
 namespace Kyanite.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+
+internal partial class MainViewModel : ViewModelBase
 {
     readonly ModuleManager _moduleManager;
+
+    readonly DialogService _dialogService;
+    internal DialogService DialogService => _dialogService;
 
     [ObservableProperty] bool _isDataLoaded;
     [ObservableProperty] bool _isPaneOpen = true;
 
     public ObservableCollection<Module> AllModules { get; } = [];
-    [ObservableProperty] Module _selectedModule;
+    [ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(ModuleManager moduleManager)
+    public MainViewModel(ModuleManager moduleManager, DialogService dialogService)
     {
         AllModules.Clear();
         _moduleManager = moduleManager;
+        _dialogService = dialogService;
 
         _ = PrepareModuleManager();
     }
@@ -39,6 +45,8 @@ public partial class MainViewModel : ViewModelBase
     async Task CreateModule()
     {
         var createdModule = await _moduleManager.CreateModule("Note");
+
+       
 
         AllModules.Replace(_moduleManager.Modules);
 

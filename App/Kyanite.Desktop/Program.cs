@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using HotAvalonia;
 
 namespace Kyanite.Desktop;
 
@@ -17,6 +18,7 @@ internal sealed class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
 #if DEBUG
+            .UseHotReload()
             .WithDeveloperTools()
 #endif
             .WithInterFont()
