@@ -5,7 +5,7 @@ internal class DialogBuilder
 {
      string title = "Dialog";
      int width = 300, height = 200;
-     
+
      public DialogBuilder WithTitle(string title)
      {
           this.title = title;

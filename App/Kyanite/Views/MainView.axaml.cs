@@ -4,8 +4,8 @@ namespace Kyanite.Views;
 
 public partial class MainView : UserControl
 {
-    public MainView()
-    {
-        InitializeComponent();
-    }
+     public MainView()
+     {
+          InitializeComponent();
+     }
 }

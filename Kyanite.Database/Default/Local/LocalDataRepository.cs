@@ -5,76 +5,76 @@ namespace Kyanite.Database.Default.Local;
 
 public class LocalDataRepository : IDataRepository
 {
-    SqliteConnection? sqliteConnection;
+     SqliteConnection? sqliteConnection;
 
-    public void Initialize(SqliteConnection sqliteConnection)
-    {
-        this.sqliteConnection = sqliteConnection;
-    }
+     public void Initialize(SqliteConnection sqliteConnection)
+     {
+          this.sqliteConnection = sqliteConnection;
+     }
 
-    public async Task<DataInformation> AddAsync(DataInformation data, Guid moduleId)
-    {
-        string addQuery = @$"
+     public async Task<DataInformation> AddAsync(DataInformation data, Guid moduleId)
+     {
+          string addQuery = @$"
             INSERT INTO ""{moduleId}"" (Id, Type, Value)
             VALUES (@Id, @Type, @Value);";
 
-        CheckForInitialization();
+          CheckForInitialization();
 
-        await sqliteConnection.ExecuteAsync(addQuery, data);
+          await sqliteConnection.ExecuteAsync(addQuery, data);
 
-        return data;
-    }
+          return data;
+     }
 
-    public async Task<IEnumerable<DataInformation>> GetAllAsync(Guid moduleId)
-    {
-        string getAllQuery = @$"
+     public async Task<IEnumerable<DataInformation>> GetAllAsync(Guid moduleId)
+     {
+          string getAllQuery = @$"
             SELECT Id, Type, Value
             FROM ""{moduleId}"";";
 
-        CheckForInitialization();
+          CheckForInitialization();
 
-        return await sqliteConnection.QueryAsync<DataInformation>(getAllQuery);
-    }
+          return await sqliteConnection.QueryAsync<DataInformation>(getAllQuery);
+     }
 
-    public async Task<DataInformation> GetSingleAsync(string dataId, Guid moduleId)
-    {
-        string getSingleQuery = @$"
+     public async Task<DataInformation> GetSingleAsync(string dataId, Guid moduleId)
+     {
+          string getSingleQuery = @$"
             SELECT Id, Type, Value
             FROM ""{moduleId}""
             WHERE Id = @DataId;";
 
-        CheckForInitialization();
+          CheckForInitialization();
 
-        return await sqliteConnection.QuerySingleOrDefaultAsync<DataInformation>(getSingleQuery, dataId);
-    }
+          return await sqliteConnection.QuerySingleOrDefaultAsync<DataInformation>(getSingleQuery, dataId);
+     }
 
-    public async Task<DataInformation> UpdateAsync(DataInformation data, Guid moduleId)
-    {
-        string updateQuery = @$"
+     public async Task<DataInformation> UpdateAsync(DataInformation data, Guid moduleId)
+     {
+          string updateQuery = @$"
             UPDATE ""{moduleId}""
             SET Type = @Type, Value = @Value
             WHERE Id = @Id;";
 
-        CheckForInitialization();
+          CheckForInitialization();
 
-        await sqliteConnection.ExecuteAsync(updateQuery, data);
-        return data;
-    }
+          await sqliteConnection.ExecuteAsync(updateQuery, data);
+          return data;
+     }
 
-    public Task DeleteAsync(string dataId, Guid moduleId)
-    {
-        string deleteQuery = @$"
+     public Task DeleteAsync(string dataId, Guid moduleId)
+     {
+          string deleteQuery = @$"
             DELETE FROM ""{moduleId}""
             WHERE Id = @DataId;";
 
-        CheckForInitialization();
+          CheckForInitialization();
 
-        return sqliteConnection.ExecuteAsync(deleteQuery, dataId);
-    }
+          return sqliteConnection.ExecuteAsync(deleteQuery, dataId);
+     }
 
-    void CheckForInitialization()
-    {
-        if (sqliteConnection is null)
-            throw new Exception("SQLite connection is not initialized. Call Initialize() before using the repository.");
-    }
+     void CheckForInitialization()
+     {
+          if (sqliteConnection is null)
+               throw new Exception("SQLite connection is not initialized. Call Initialize() before using the repository.");
+     }
 }
