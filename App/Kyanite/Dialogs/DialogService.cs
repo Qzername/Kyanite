@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Kyanite.Dialog;
+namespace Kyanite.Dialogs;
 
 internal class DialogService : INotifyPropertyChanged
 {
@@ -24,5 +24,11 @@ internal class DialogService : INotifyPropertyChanged
     public void Show(Dialog dialog)
     {
         CurrentDialog = dialog;
+    }
+
+    public void Close()
+    {
+        CurrentDialog?.OnClose?.Invoke(CurrentDialog);
+        CurrentDialog = null;
     }
 }

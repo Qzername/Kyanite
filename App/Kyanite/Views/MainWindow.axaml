@@ -5,8 +5,10 @@
         xmlns:views="using:Kyanite.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Kyanite.Views.MainWindow"
-	   x:CompileBindings="False"
+	    x:CompileBindings="False"
         
+		xmlns:modulePicker="using:Kyanite.Controls.ModulePicker"
+		
         ExtendClientAreaToDecorationsHint="True"
         Icon="/Assets/avalonia-logo.ico"
         Title="Kyanite">
@@ -39,11 +41,21 @@
         <Panel>
 		   <views:MainView />
 
-             <Panel>
+			<Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
                   <Panel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#99393939" ></Panel>
                   <Panel Width="500" Height="400" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Black">
-                    <ContentControl Content="{Binding DialogService.CurrentDialog}"/>     
-                  </Panel>
+                    <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}" >
+						<!--TODO: make it not hardcoded-->
+						<ContentControl.DataTemplates>
+							<DataTemplate DataType="modulePicker:ModulePickerViewModel">
+								<modulePicker:ModulePickerView/>
+							</DataTemplate>
+						</ContentControl.DataTemplates>
+					</ContentControl>
+				  </Panel>
+
+				 <!--TODO: Make the button so that it will be in ModuleBuilder-->
+				 <Button Command="{Binding CloseDialogCommand}" Content="Close"/>
              </Panel>
 
 	   </Panel>
