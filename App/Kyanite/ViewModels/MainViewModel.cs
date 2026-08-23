@@ -46,7 +46,7 @@ internal partial class MainViewModel : ViewModelBase
     {
         var createdModule = await _moduleManager.CreateModule("Note");
 
-       
+
 
         AllModules.Replace(_moduleManager.Modules);
 

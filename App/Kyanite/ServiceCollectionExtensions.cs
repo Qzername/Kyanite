@@ -9,14 +9,14 @@ namespace Kyanite;
 
 internal static class ServiceCollectionExtensions
 {
-     internal static void AddCommonServices(this IServiceCollection collection)
-     {
-          collection.AddSingleton<DatabaseStack, LocalDatabaseStack>();
-          collection.AddSingleton<ModuleManager>();
-          collection.AddSingleton<DialogService>();
+    internal static void AddCommonServices(this IServiceCollection collection)
+    {
+        collection.AddSingleton<DatabaseStack, LocalDatabaseStack>();
+        collection.AddSingleton<ModuleManager>();
+        collection.AddSingleton<DialogService>();
 
-          collection.AddSingleton<AppViewModel>();
+        collection.AddSingleton<AppViewModel>();
 
-          collection.AddTransient<MainViewModel>();
-     }
+        collection.AddTransient<MainViewModel>();
+    }
 }

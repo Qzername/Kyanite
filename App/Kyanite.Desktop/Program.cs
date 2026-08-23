@@ -1,6 +1,6 @@
 ﻿using Avalonia;
-using System;
 using HotAvalonia;
+using System;
 
 namespace Kyanite.Desktop;
 

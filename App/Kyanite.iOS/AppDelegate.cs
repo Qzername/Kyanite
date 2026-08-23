@@ -1,7 +1,3 @@
-using Avalonia;
-using Avalonia.iOS;
-using Foundation;
-
 namespace Kyanite.iOS;
 // The UIApplicationDelegate for the application. This class is responsible for launching the 
 // User Interface of the application, as well as listening (and optionally responding) to 

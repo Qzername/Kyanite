@@ -1,8 +1,4 @@
-﻿using Android.App;
-using Android.Content.PM;
-using Avalonia.Android;
-
-namespace Kyanite.Android;
+﻿namespace Kyanite.Android;
 
 [Activity(
     Label = "Kyanite.Android",

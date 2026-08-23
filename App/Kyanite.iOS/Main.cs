@@ -1,5 +1,3 @@
-using UIKit;
-
 namespace Kyanite.iOS;
 
 public class Application
