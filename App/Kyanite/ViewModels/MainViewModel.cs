@@ -11,71 +11,71 @@ namespace Kyanite.ViewModels;
 
 internal partial class MainViewModel : ViewModelBase
 {
-     readonly ModuleManager _moduleManager;
+    readonly ModuleManager _moduleManager;
 
-     readonly DialogService _dialogService;
-     internal DialogService DialogService => _dialogService;
+    readonly DialogService _dialogService;
+    internal DialogService DialogService => _dialogService;
 
-     [ObservableProperty] bool _isDataLoaded;
-     [ObservableProperty] bool _isPaneOpen = true;
+    [ObservableProperty] bool _isDataLoaded;
+    [ObservableProperty] bool _isPaneOpen = true;
 
-     public ObservableCollection<Module> AllModules { get; } = [];
-     [ObservableProperty] Module? _selectedModule;
+    public ObservableCollection<Module> AllModules { get; } = [];
+    [ObservableProperty] Module? _selectedModule;
 
-     public MainViewModel(ModuleManager moduleManager, DialogService dialogService)
-     {
-          AllModules.Clear();
-          _moduleManager = moduleManager;
-          _dialogService = dialogService;
+    public MainViewModel(ModuleManager moduleManager, DialogService dialogService)
+    {
+        AllModules.Clear();
+        _moduleManager = moduleManager;
+        _dialogService = dialogService;
 
-          _ = PrepareModuleManager();
-     }
+        _ = PrepareModuleManager();
+    }
 
-     async Task PrepareModuleManager()
-     {
-          if (!_moduleManager.IsStackPrepared)
-               await _moduleManager.Prepare();
+    async Task PrepareModuleManager()
+    {
+        if (!_moduleManager.IsStackPrepared)
+            await _moduleManager.Prepare();
 
-          AllModules.Replace(_moduleManager.Modules);
+        AllModules.Replace(_moduleManager.Modules);
 
-          IsDataLoaded = true;
-     }
+        IsDataLoaded = true;
+    }
 
-     [RelayCommand]
-     async Task CreateModule()
-     {
-          var createdModule = await _moduleManager.CreateModule("Note");
+    [RelayCommand]
+    async Task CreateModule()
+    {
+        var createdModule = await _moduleManager.CreateModule("Note");
 
+       
 
+        AllModules.Replace(_moduleManager.Modules);
 
-          AllModules.Replace(_moduleManager.Modules);
+        SelectedModule = createdModule;
+    }
 
-          SelectedModule = createdModule;
-     }
+    [RelayCommand]
+    async Task DeleteModule(object moduleObj)
+    {
+        if (moduleObj is not Module module)
+            throw new Exception("Provided object is not of a module type");
 
-     [RelayCommand]
-     async Task DeleteModule(object moduleObj)
-     {
-          if (moduleObj is not Module module)
-               throw new Exception("Provided object is not of a module type");
+        await _moduleManager.DeleteModule(module);
+        AllModules.Replace(_moduleManager.Modules);
+    }
 
-          await _moduleManager.DeleteModule(module);
-          AllModules.Replace(_moduleManager.Modules);
-     }
+    [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
 
-     [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
+    partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)
+    {
+        _ = SaveOldAndLoadNew(oldValue, newValue);
+    }
 
-     partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)
-     {
-          _ = SaveOldAndLoadNew(oldValue, newValue);
-     }
+    async Task SaveOldAndLoadNew(Module? oldValue, Module? newValue)
+    {
+        if (oldValue is not null)
+            await _moduleManager.SaveModule(oldValue);
 
-     async Task SaveOldAndLoadNew(Module? oldValue, Module? newValue)
-     {
-          if (oldValue is not null)
-               await _moduleManager.SaveModule(oldValue);
-
-          if (newValue is not null)
-               await _moduleManager.LoadModule(newValue);
-     }
+        if (newValue is not null)
+            await _moduleManager.LoadModule(newValue);
+    }
 }

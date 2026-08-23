@@ -10,10 +10,10 @@ namespace Kyanite.Database.Default.GoogleDrive;
  */
 public class GoogleDriveDatabaseStack() : LocalDatabaseStack(databasePath)
 {
-     const string databasePath = "./database.db";
+    const string databasePath = "./database.db";
 
-     public override Task<bool> Prepare()
-     {
-          return base.Prepare();
-     }
+    public override Task<bool> Prepare()
+    {
+        return base.Prepare();
+    }
 }

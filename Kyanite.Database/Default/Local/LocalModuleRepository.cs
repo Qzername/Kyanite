@@ -5,82 +5,82 @@ namespace Kyanite.Database.Default.Local;
 
 public class LocalModuleRepository : IModuleRepository
 {
-     SqliteConnection? sqliteConnection;
+    SqliteConnection? sqliteConnection;
 
-     public void Initialize(SqliteConnection sqliteConnection)
-     {
-          this.sqliteConnection = sqliteConnection;
-     }
+    public void Initialize(SqliteConnection sqliteConnection)
+    {
+        this.sqliteConnection = sqliteConnection;
+    }
 
-     public async Task<ModuleInformation> AddAsync(ModuleInformation module)
-     {
-          const string insertQuery = @"
+    public async Task<ModuleInformation> AddAsync(ModuleInformation module)
+    {
+        const string insertQuery = @"
             INSERT INTO Modules (Id, Name, Type)
             VALUES (@Id, @Name, @Type);";
 
-          CheckForInitialization();
+        CheckForInitialization();
 
-          var moduleWithId = module with { Id = Guid.NewGuid() };
+        var moduleWithId = module with { Id = Guid.NewGuid() };
 
-          string createModuleTableQuery = $@"
+        string createModuleTableQuery = $@"
             CREATE TABLE IF NOT EXISTS ""{moduleWithId.Id}"" (
             Id TEXT PRIMARY KEY,
             Type TEXT NOT NULL,
             Value TEXT NOT NULL
         );";
 
-          await sqliteConnection.ExecuteAsync(insertQuery, moduleWithId);
-          await sqliteConnection.ExecuteAsync(createModuleTableQuery, moduleWithId);
+        await sqliteConnection.ExecuteAsync(insertQuery, moduleWithId);
+        await sqliteConnection.ExecuteAsync(createModuleTableQuery, moduleWithId);
 
-          return moduleWithId;
-     }
+        return moduleWithId;
+    }
 
-     public async Task<IEnumerable<ModuleInformation>> GetAllAsync()
-     {
-          CheckForInitialization();
+    public async Task<IEnumerable<ModuleInformation>> GetAllAsync()
+    {
+        CheckForInitialization();
 
-          var modules = await sqliteConnection.QueryAsync<ModuleInformation>("SELECT * FROM Modules;");
+        var modules = await sqliteConnection.QueryAsync<ModuleInformation>("SELECT * FROM Modules;");
 
-          return modules;
-     }
+        return modules;
+    }
 
-     public async Task<ModuleInformation> GetSingleAsync(Guid id)
-     {
-          CheckForInitialization();
+    public async Task<ModuleInformation> GetSingleAsync(Guid id)
+    {
+        CheckForInitialization();
 
-          var module = await sqliteConnection.QuerySingleAsync<ModuleInformation>("SELECT * FROM Modules WHERE Id = @Id;", new { Id = id });
+        var module = await sqliteConnection.QuerySingleAsync<ModuleInformation>("SELECT * FROM Modules WHERE Id = @Id;", new { Id = id });
 
-          return module;
-     }
+        return module;
+    }
 
-     public async Task<ModuleInformation> UpdateAsync(ModuleInformation module)
-     {
-          string updateQuery = @$"
+    public async Task<ModuleInformation> UpdateAsync(ModuleInformation module)
+    {
+        string updateQuery = @$"
             UPDATE Modules
             SET Name = @Name, Type = @Type
             WHERE Id = @Id;";
 
-          CheckForInitialization();
+        CheckForInitialization();
 
-          await sqliteConnection.ExecuteAsync(updateQuery, module);
+        await sqliteConnection.ExecuteAsync(updateQuery, module);
 
-          return module;
-     }
+        return module;
+    }
 
-     public async Task DeleteAsync(Guid id)
-     {
-          const string deleteQuery = @"
+    public async Task DeleteAsync(Guid id)
+    {
+        const string deleteQuery = @"
             DELETE FROM Modules
             WHERE Id = @id;";
 
-          CheckForInitialization();
+        CheckForInitialization();
 
-          await sqliteConnection.ExecuteAsync(deleteQuery, new { id });
-     }
+        await sqliteConnection.ExecuteAsync(deleteQuery, new { id });
+    }
 
-     void CheckForInitialization()
-     {
-          if (sqliteConnection is null)
-               throw new Exception("SQLite connection is not initialized. Call Initialize() before using the repository.");
-     }
+    void CheckForInitialization()
+    {
+        if (sqliteConnection is null)
+            throw new Exception("SQLite connection is not initialized. Call Initialize() before using the repository.");
+    }
 }

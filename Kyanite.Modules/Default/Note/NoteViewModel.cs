@@ -5,7 +5,7 @@ namespace Kyanite.Modules.Note;
 
 public partial class NoteViewModel(ModuleInformation moduleInformation) : Module(moduleInformation)
 {
-     [Synchronize]
-     [ObservableProperty]
-     string _text = string.Empty;
+    [Synchronize]
+    [ObservableProperty]
+    string _text = string.Empty;
 }

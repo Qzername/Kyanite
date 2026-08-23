@@ -10,42 +10,42 @@ namespace Kyanite;
 
 public partial class App : Application
 {
-     public override void Initialize()
-     {
-          AvaloniaXamlLoader.Load(this);
-     }
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
 
-     public override void OnFrameworkInitializationCompleted()
-     {
-          var collection = new ServiceCollection();
-          collection.AddCommonServices();
+    public override void OnFrameworkInitializationCompleted()
+    {
+        var collection = new ServiceCollection();
+        collection.AddCommonServices();
 
-          var services = collection.BuildServiceProvider();
+        var services = collection.BuildServiceProvider();
 
-          DataContext = services.GetRequiredService<AppViewModel>();
-          var mainVm = services.GetRequiredService<MainViewModel>();
+        DataContext = services.GetRequiredService<AppViewModel>();
+        var mainVm = services.GetRequiredService<MainViewModel>();
 
-          if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-          {
-               desktop.MainWindow = new MainWindow
-               {
-                    DataContext = mainVm
-               };
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.MainWindow = new MainWindow
+            {
+                DataContext = mainVm
+            };
 
-               desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-          }
-          else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
-          {
-               singleViewFactoryApplicationLifetime.MainViewFactory = () => new MainView { DataContext = mainVm };
-          }
-          else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-          {
-               singleViewPlatform.MainView = new MainView
-               {
-                    DataContext = mainVm
-               };
-          }
+            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        }
+        else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+        {
+            singleViewFactoryApplicationLifetime.MainViewFactory = () => new MainView { DataContext = mainVm };
+        }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+        {
+            singleViewPlatform.MainView = new MainView
+            {
+                DataContext = mainVm
+            };
+        }
 
-          base.OnFrameworkInitializationCompleted();
-     }
+        base.OnFrameworkInitializationCompleted();
+    }
 }
