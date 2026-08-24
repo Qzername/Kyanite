@@ -6,8 +6,8 @@
              x:Class="Kyanite.Views.MainView"
              x:DataType="vm:MainViewModel"
 			 
-			 xmlns:noteModule="clr-namespace:Kyanite.Modules.Note;assembly=Kyanite.Modules"
-	
+			 xmlns:viewLocators="using:Kyanite.ViewLocators"
+			 
 			 FontFamily="Unbounded">
 
     <SplitView IsPaneOpen="{Binding IsPaneOpen}"
@@ -48,9 +48,7 @@
         <SplitView.Content>
             <ContentControl Content="{Binding SelectedModule}" >
                 <ContentControl.DataTemplates>
-                    <DataTemplate DataType="noteModule:NoteViewModel">
-                        <noteModule:NoteView/>
-                    </DataTemplate>
+					<viewLocators:ModuleViewLocator/>
                 </ContentControl.DataTemplates>
             </ContentControl>
         </SplitView.Content>

@@ -1,14 +1,18 @@
 ﻿using Kyanite.Database;
-using Kyanite.Modules.Note;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Kyanite.Modules;
 
 public class ModuleManager
 {
+    const string DefaultModuleNamespace = "Kyanite.Modules.Default";
+
     readonly DatabaseStack _databaseStack;
     readonly List<Module> modules = [];
     public Module[] Modules => [.. modules];
+
+    public Dictionary<string, Type> ModuleTypes { get; private set; } = new();  
 
     public bool IsStackPrepared { get; private set; } = false;
 
@@ -19,39 +23,62 @@ public class ModuleManager
 
     public async Task Prepare()
     {
+        LoadModuleTypesFromAssembly();
+        await LoadSavedModulesFromDatabase();
+
+        IsStackPrepared = true;
+    }
+
+    void LoadModuleTypesFromAssembly()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+
+        var foundModules = from t in Assembly.GetExecutingAssembly().GetTypes()
+                           where typeof(Module).IsAssignableFrom(t) && 
+                                 t != typeof(Module) && 
+                                 t.Namespace is not null && 
+                                 t.Namespace.StartsWith(DefaultModuleNamespace)
+                           select t;
+
+        foreach (var moduleType in foundModules)
+            ModuleTypes[moduleType.Name.Replace("ViewModel", string.Empty)] = moduleType;
+    }
+
+    async Task LoadSavedModulesFromDatabase()
+    {
         await _databaseStack.Prepare();
 
         var moduleInformations = await _databaseStack.ModuleRepository.GetAllAsync();
 
         foreach (var moduleInformation in moduleInformations)
-        {
-            var module = ConvertTypeToModule(moduleInformation.Type, moduleInformation);
-            modules.Add(module);
-        }
-
-        IsStackPrepared = true;
+            modules.Add(ConvertInformationToModule(moduleInformation));
     }
 
-    public async Task<Module> CreateModule(string type)
+    public async Task<Module> CreateModule(string name, string type)
     {
+        type = type.Replace("ViewModel", string.Empty);
+
+        if (!ModuleTypes.TryGetValue(type, out Type? value))
+            throw new Exception($"Wrong module name: {type}, module is not registered in ModuleManager");
+
         var addedModule = await _databaseStack.ModuleRepository.AddAsync(new ModuleInformation()
         {
-            Name = type,
+            Name = name,
             Type = type
         });
 
-        var properties = typeof(NoteViewModel).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var properties = value.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
         var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
         foreach (var synchronizableProperty in synchronizableProperties)
             await _databaseStack.DataRepository.AddAsync(new DataInformation()
             {
                 Id = synchronizableProperty.Name,
-                Type = "string", //add more supported types
+                Type = "string", //TODO: add more supported types
                 Value = string.Empty
             }, addedModule.Id);
 
-        var module = ConvertTypeToModule(type, addedModule);
+        var module = ConvertInformationToModule(addedModule);
         modules.Add(module);
         return module;
     }
@@ -60,7 +87,7 @@ public class ModuleManager
     {
         var data = await _databaseStack.DataRepository.GetAllAsync(module.ModuleId);
 
-        var properties = typeof(NoteViewModel).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var properties = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
         var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
         foreach (var synchronizableProperty in synchronizableProperties)
@@ -78,7 +105,7 @@ public class ModuleManager
 
     public async Task SaveModule(Module module)
     {
-        var properties = typeof(NoteViewModel).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var properties = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
         var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
         foreach (var synchronizableProperty in synchronizableProperties)
@@ -103,10 +130,10 @@ public class ModuleManager
         modules.Remove(module);
     }
 
-    //TODO: support custom modules
-    static Module ConvertTypeToModule(string type, ModuleInformation moduleInformation) => type switch
+    Module ConvertInformationToModule(ModuleInformation moduleInformation)
     {
-        "Note" => new NoteViewModel(moduleInformation),
-        _ => throw new NotImplementedException($"Module type {type} is not implemented.")
-    };
+        var moduleType = ModuleTypes[moduleInformation.Type] ?? throw new Exception("Module type does not exist in ModuleManager registry");
+        var instance = Activator.CreateInstance(moduleType, moduleInformation) ?? throw new Exception("Something went wrong with creating module instance");
+        return (Module)instance;
+    }
 }

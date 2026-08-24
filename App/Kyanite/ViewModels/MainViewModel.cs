@@ -5,11 +5,9 @@ using Kyanite.Dialogs;
 using Kyanite.Modules;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Kyanite.ViewModels;
-
 
 internal partial class MainViewModel : ViewModelBase
 {
@@ -48,22 +46,22 @@ internal partial class MainViewModel : ViewModelBase
     {
         DialogService.Show(new DialogBuilder()
             .WithTitle("Create dialog")
-            .WithSize(400,300)
-            .WithViewModel(new ModulePickerViewModel())
+            .WithSize(400, 300)
+            .WithViewModel(new ModulePickerViewModel(_moduleManager))
             .SetOnClose((dialog) =>
             {
                 var modulePickerVM = (ModulePickerViewModel)dialog.ViewModel;
-                _ = FinalizeCreateModule(modulePickerVM.SelectedModule);
+                _ = FinalizeCreateModule(modulePickerVM.ModuleName, modulePickerVM.SelectedModule);
             })
             .Build());
     }
 
-    async Task FinalizeCreateModule(string selectedModule) 
+    async Task FinalizeCreateModule(string moduleName, string selectedModule)
     {
         if (string.IsNullOrEmpty(selectedModule))
             return;
 
-        var createdModule = await _moduleManager.CreateModule("Note");
+        var createdModule = await _moduleManager.CreateModule(moduleName, selectedModule);
 
         AllModules.Replace(_moduleManager.Modules);
 
@@ -82,7 +80,8 @@ internal partial class MainViewModel : ViewModelBase
 
     [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
 
-    [RelayCommand] void CloseDialog()
+    [RelayCommand]
+    void CloseDialog()
     {
         DialogService.Close();
     }

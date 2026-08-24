@@ -3,7 +3,7 @@
              xmlns:viewLocators="using:Kyanite.ViewLocators"
              x:Class="Kyanite.App"
              xmlns:vm="using:Kyanite.ViewModels"
-		   x:CompileBindings="False"
+		     x:CompileBindings="False"
 
              RequestedThemeVariant="Dark">
 

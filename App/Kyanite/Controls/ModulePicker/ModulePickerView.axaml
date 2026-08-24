@@ -6,6 +6,8 @@
 			 x:CompileBindings="False"
              x:Class="Kyanite.Controls.ModulePicker.ModulePickerView">
 	<StackPanel>
+		<TextBlock Text="Module name:"/>
+		<TextBox Text="{Binding ModuleName}"/>
 		<TextBlock Text="Selected module:"/>
 		<ComboBox 
 			ItemsSource="{Binding ModuleList}"
