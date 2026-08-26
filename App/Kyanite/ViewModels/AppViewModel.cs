@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Database;
 using Kyanite.Modules;
 using Kyanite.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,9 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
             var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
             await moduleManager.SaveModule(mainViewModel.SelectedModule);
         }
+
+        DatabaseStack databaseStack = serviceProvider.GetRequiredService<DatabaseStack>();
+        await databaseStack.OnWindowClosing();
 
         if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.Shutdown();

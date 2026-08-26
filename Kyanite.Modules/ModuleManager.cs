@@ -4,22 +4,17 @@ using System.Reflection;
 
 namespace Kyanite.Modules;
 
-public class ModuleManager
+public class ModuleManager(DatabaseStack databaseStack)
 {
     const string DefaultModuleNamespace = "Kyanite.Modules.Default";
 
-    readonly DatabaseStack _databaseStack;
+    readonly DatabaseStack _databaseStack = databaseStack;
     readonly List<Module> modules = [];
     public Module[] Modules => [.. modules];
 
-    public Dictionary<string, Type> ModuleTypes { get; private set; } = new();  
+    public Dictionary<string, Type> ModuleTypes { get; private set; } = [];  
 
     public bool IsStackPrepared { get; private set; } = false;
-
-    public ModuleManager(DatabaseStack databaseStack)
-    {
-        _databaseStack = databaseStack;
-    }
 
     public async Task Prepare()
     {

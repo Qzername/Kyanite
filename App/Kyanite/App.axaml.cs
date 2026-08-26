@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Kyanite.Database;
 using Kyanite.ViewModels;
 using Kyanite.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,12 @@ public partial class App : Application
             desktop.MainWindow = new MainWindow
             {
                 DataContext = mainVm
+            };
+
+            desktop.MainWindow.Closing += async (sender, e) =>
+            {
+                var databaseStack = services.GetRequiredService<DatabaseStack>();
+                await databaseStack.OnWindowClosing();
             };
 
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
