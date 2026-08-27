@@ -4,6 +4,7 @@ using Kyanite.Modules;
 using System;
 
 namespace Kyanite.ViewLocators;
+
 public class ModuleViewLocator : IDataTemplate
 {
     public Control? Build(object? param)
@@ -24,8 +25,9 @@ public class ModuleViewLocator : IDataTemplate
         if (type is not null)
             return (Control)Activator.CreateInstance(type)!;
 
-        return new TextBlock { 
-            Text = "Module not found: " + name 
+        return new TextBlock
+        {
+            Text = "Module not found: " + name
         };
     }
 

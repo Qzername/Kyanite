@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Kyanite.Views.InitialConfiguration.InitialConfigurationView"
+		   x:CompileBindings="False">
+	<Panel>
+		<TextBlock Text="Welcome to Kyanite" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="50"/>
+
+		<Panel HorizontalAlignment="Center" VerticalAlignment="Center"
+			  Width="500" Height="600" Background="Gray">
+			<ContentControl Content="{Binding CurrentPageViewModel}"/>
+
+			<DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+				<Button DockPanel.Dock="Right" Content="Next"
+					   Command="{Binding GoToNextPageCommand}"/>
+				<Button DockPanel.Dock="Left" Content="Previous"
+					   Command="{Binding GoToPreviousPageCommand}"/>
+			</DockPanel>
+		</Panel>
+	</Panel>
+</UserControl>

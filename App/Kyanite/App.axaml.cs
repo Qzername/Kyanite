@@ -24,13 +24,13 @@ public partial class App : Application
         var services = collection.BuildServiceProvider();
 
         DataContext = services.GetRequiredService<AppViewModel>();
-        var mainVm = services.GetRequiredService<MainViewModel>();
+        var shellViewModel = services.GetRequiredService<ShellViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = mainVm
+                DataContext = shellViewModel
             };
 
             desktop.MainWindow.Closing += async (sender, e) =>
@@ -43,13 +43,13 @@ public partial class App : Application
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
         {
-            singleViewFactoryApplicationLifetime.MainViewFactory = () => new MainView { DataContext = mainVm };
+            singleViewFactoryApplicationLifetime.MainViewFactory = () => new ShellView { DataContext = shellViewModel };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = new MainView
+            singleViewPlatform.MainView = new ShellView
             {
-                DataContext = mainVm
+                DataContext = shellViewModel
             };
         }
 

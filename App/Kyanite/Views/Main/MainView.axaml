@@ -1,14 +1,14 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vm="using:Kyanite.ViewModels"
+             xmlns:vm="using:Kyanite.ViewModels.Main"
              d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kyanite.Views.MainView"
+             x:Class="Kyanite.Views.Main.MainView"
              x:DataType="vm:MainViewModel"
 			 
-			 xmlns:viewLocators="using:Kyanite.ViewLocators"
-			 
-			 FontFamily="Unbounded">
+             xmlns:viewLocators="using:Kyanite.ViewLocators"
+             	 
+             FontFamily="Unbounded">
 
     <SplitView IsPaneOpen="{Binding IsPaneOpen}"
                DisplayMode="CompactInline"
@@ -17,6 +17,10 @@
                OpenPaneLength="200">
         <SplitView.Pane>
             <DockPanel>
+			  <Button DockPanel.Dock="Bottom"
+					Content="Reset initialization" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+					Command="{Binding ResetInitializationCommand}"/>
+			  
                 <Button DockPanel.Dock="Bottom" 
                         Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                         Command="{Binding CreateModuleCommand}"/>

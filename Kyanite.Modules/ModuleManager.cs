@@ -1,5 +1,4 @@
 ﻿using Kyanite.Database;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace Kyanite.Modules;
@@ -12,7 +11,7 @@ public class ModuleManager(DatabaseStack databaseStack)
     readonly List<Module> modules = [];
     public Module[] Modules => [.. modules];
 
-    public Dictionary<string, Type> ModuleTypes { get; private set; } = [];  
+    public Dictionary<string, Type> ModuleTypes { get; private set; } = [];
 
     public bool IsStackPrepared { get; private set; } = false;
 
@@ -29,9 +28,9 @@ public class ModuleManager(DatabaseStack databaseStack)
         var assembly = Assembly.GetExecutingAssembly();
 
         var foundModules = from t in Assembly.GetExecutingAssembly().GetTypes()
-                           where typeof(Module).IsAssignableFrom(t) && 
-                                 t != typeof(Module) && 
-                                 t.Namespace is not null && 
+                           where typeof(Module).IsAssignableFrom(t) &&
+                                 t != typeof(Module) &&
+                                 t.Namespace is not null &&
                                  t.Namespace.StartsWith(DefaultModuleNamespace)
                            select t;
 

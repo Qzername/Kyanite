@@ -19,7 +19,7 @@ internal partial class ModulePickerViewModel : ViewModelBase
         if (!moduleManager.IsStackPrepared)
             throw new Exception("Module manager is not initialized, even though it is expected to be");
 
-        string[] moduleTypeNames = [..moduleManager.ModuleTypes.Keys];
+        string[] moduleTypeNames = [.. moduleManager.ModuleTypes.Keys];
         ModuleList = new ObservableCollection<string>(moduleTypeNames);
     }
 }

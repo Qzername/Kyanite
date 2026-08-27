@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Database;
 using Kyanite.Modules;
+using Kyanite.ViewModels.Main;
 using Kyanite.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -10,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Kyanite.ViewModels;
 
+/// <summary>
+/// viewmodel for entire application
+/// </summary>
 internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewModelBase
 {
     [RelayCommand]
@@ -22,7 +26,7 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
 
         desktop.MainWindow = new MainWindow()
         {
-            DataContext = serviceProvider.GetRequiredService<MainViewModel>()
+            DataContext = serviceProvider.GetRequiredService<ShellViewModel>()
         };
         desktop.MainWindow.Show();
     }
@@ -32,8 +36,8 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
     {
         //save current module if any
         var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
-        
-        if(mainViewModel.SelectedModule is not null)
+
+        if (mainViewModel.SelectedModule is not null)
         {
             var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
             await moduleManager.SaveModule(mainViewModel.SelectedModule);

@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace Kyanite.Views;
 
-public partial class MainView : UserControl
+public partial class ShellView : UserControl
 {
-    public MainView()
+    public ShellView()
     {
         InitializeComponent();
     }

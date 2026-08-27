@@ -3,18 +3,19 @@ using CommunityToolkit.Mvvm.Input;
 using Kyanite.Controls.ModulePicker;
 using Kyanite.Dialogs;
 using Kyanite.Modules;
+using Kyanite.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace Kyanite.ViewModels;
+namespace Kyanite.ViewModels.Main;
 
 internal partial class MainViewModel : ViewModelBase
 {
+    readonly IServiceProvider _serviceProvider;
     readonly ModuleManager _moduleManager;
-
     readonly DialogService _dialogService;
-    internal DialogService DialogService => _dialogService;
 
     [ObservableProperty] bool _isDataLoaded;
     [ObservableProperty] bool _isPaneOpen = true;
@@ -22,9 +23,11 @@ internal partial class MainViewModel : ViewModelBase
     public ObservableCollection<Module> AllModules { get; } = [];
     [ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(ModuleManager moduleManager, DialogService dialogService)
+    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, DialogService dialogService)
     {
         AllModules.Clear();
+
+        _serviceProvider = serviceProvider;
         _moduleManager = moduleManager;
         _dialogService = dialogService;
 
@@ -44,7 +47,7 @@ internal partial class MainViewModel : ViewModelBase
     [RelayCommand]
     void CreateModule()
     {
-        DialogService.Show(new DialogBuilder()
+        _dialogService.Show(new DialogBuilder()
             .WithTitle("Create dialog")
             .WithSize(400, 300)
             .WithViewModel(new ModulePickerViewModel(_moduleManager))
@@ -54,6 +57,21 @@ internal partial class MainViewModel : ViewModelBase
                 _ = FinalizeCreateModule(modulePickerVM.ModuleName, modulePickerVM.SelectedModule);
             })
             .Build());
+    }
+
+    [RelayCommand]
+    void ResetInitialization()
+    {
+        var appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+
+        appSettingsService.Save(appSettingsService.CurrentAppSettings with
+        {
+            DatabaseinformationInitialized = false,
+            DatabaseInformation = [],
+        });
+
+        var shellViewModel = _serviceProvider.GetRequiredService<ShellViewModel>();
+        shellViewModel.UpdateView();
     }
 
     async Task FinalizeCreateModule(string moduleName, string selectedModule)
@@ -80,11 +98,6 @@ internal partial class MainViewModel : ViewModelBase
 
     [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
 
-    [RelayCommand]
-    void CloseDialog()
-    {
-        DialogService.Close();
-    }
 
     partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)
     {
