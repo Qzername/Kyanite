@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Kyanite.Database;
+using Kyanite.Exceptions;
+using Kyanite.Services;
 using Kyanite.ViewModels;
 using Kyanite.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,8 +37,12 @@ public partial class App : Application
 
             desktop.MainWindow.Closing += async (sender, e) =>
             {
-                var databaseStack = services.GetRequiredService<DatabaseStack>();
-                await databaseStack.OnWindowClosing();
+                var databaseStackProvider = services.GetRequiredService<DatabaseStackProvider>();
+
+                if (databaseStackProvider.ActiveStack is null)
+                    throw new ActiveStackNotInitializedExpection();
+
+                await databaseStackProvider.ActiveStack.OnWindowClosing();
             };
 
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;

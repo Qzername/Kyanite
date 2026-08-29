@@ -45,16 +45,7 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
     {
         if (Page + 1 >= TotalPages)
         {
-            if (_appSettingsService.CurrentAppSettings is null)
-                throw new AppSettingsNotInitialized();
-
-            _appSettingsService.Save(_appSettingsService.CurrentAppSettings with
-            {
-                DatabaseinformationInitialized = true
-            });
-
             _shellViewModel.UpdateView();
-
             return;
         }
 
@@ -81,15 +72,28 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
                 break;
 
             case Pages.ProvidePrepareData:
-                var vm = pickDatabaseStackViewModel.GetPickedStack().InitializationViewModel;
+                var vm = pickDatabaseStackViewModel.GetPickedStack().CreateInitializationViewModel();
                 CurrentPageViewModel = vm;
                 break;
 
             case Pages.Finitialization:
                 var currentStack = pickDatabaseStackViewModel.GetPickedStack();
 
-                currentStack.Prepare();
+                if (CurrentPageViewModel is not DatabaseInitializationViewModelBase initVm)
+                    throw new Exception("Current ViewModel expected to be of type: " + nameof(DatabaseInitializationViewModelBase));
+
+                currentStack.Prepare(initVm.GetData());
                 _databaseStackProvider.SetStack(currentStack);
+
+                if (_appSettingsService.CurrentAppSettings is null)
+                    throw new AppSettingsNotInitializedException();
+
+                _appSettingsService.Save(_appSettingsService.CurrentAppSettings with
+                {
+                    DatabaseInformation = initVm.GetData(),
+                    DatabaseStackType = currentStack.GetType().Name,
+                    DatabaseinformationInitialized = true
+                });
 
                 CurrentPageViewModel = finishedPageViewModel;
                 break;

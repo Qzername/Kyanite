@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Controls.ModulePicker;
 using Kyanite.Dialogs;
+using Kyanite.Exceptions;
 using Kyanite.Modules;
 using Kyanite.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,8 +37,14 @@ internal partial class MainViewModel : ViewModelBase
 
     async Task PrepareModuleManager()
     {
+        DatabaseStackProvider stackProvider = _serviceProvider.GetRequiredService<DatabaseStackProvider>();
+        AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+
+        if (stackProvider.ActiveStack is null)
+            throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
+
         if (!_moduleManager.IsStackPrepared)
-            await _moduleManager.Prepare();
+            await _moduleManager.Prepare(stackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
 
         AllModules.Replace(_moduleManager.Modules);
 
@@ -64,9 +71,13 @@ internal partial class MainViewModel : ViewModelBase
     {
         var appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
 
+        if (appSettingsService.CurrentAppSettings is null)
+            throw new AppSettingsNotInitializedException();
+
         appSettingsService.Save(appSettingsService.CurrentAppSettings with
         {
             DatabaseinformationInitialized = false,
+            DatabaseStackType = null,
             DatabaseInformation = [],
         });
 

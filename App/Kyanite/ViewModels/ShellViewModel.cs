@@ -40,7 +40,7 @@ internal partial class ShellViewModel : ViewModelBase
     public void UpdateView()
     {
         if (_appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitialized();
+            throw new AppSettingsNotInitializedException();
 
         if (_appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
             CurrentViewModel = _serviceProvider.GetRequiredService<MainViewModel>();

@@ -10,12 +10,9 @@ public class LocalDatabaseStack()
 
     public override string FriendlyName => "Local";
 
-    readonly LocalInitializationViewModel initializationViewModel = new();
-    public override DatabaseInitializationViewModelBase InitializationViewModel => initializationViewModel;
-
     SqliteConnection connection;
 
-    public override async Task<bool> Prepare()
+    public override async Task<bool> Prepare(Dictionary<string, string> data)
     {
         const string createModuleListTableQuery = @"
               CREATE TABLE IF NOT EXISTS Modules (
@@ -35,4 +32,7 @@ public class LocalDatabaseStack()
 
         return true;
     }
+
+    public override DatabaseInitializationViewModelBase CreateInitializationViewModel()
+        => new LocalInitializationViewModel();
 }

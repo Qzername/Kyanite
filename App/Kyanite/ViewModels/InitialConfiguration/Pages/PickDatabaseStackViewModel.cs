@@ -2,6 +2,7 @@
 using Kyanite.Database;
 using Kyanite.Database.Default.GoogleDrive;
 using Kyanite.Database.Default.Local;
+using Kyanite.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +28,11 @@ internal partial class PickDatabaseStackViewModel : ViewModelBase
 
     void LoadStacks()
     {
-        List<DatabaseStack> stacks = new();
+        List<DatabaseStack> stacks = [];
 
         foreach (var stackNameAndType in _databaseStackLoader.DatabaseStackTypes)
         {
-            var instance = Activator.CreateInstance(stackNameAndType.Value) ?? throw new Exception("DatabaseStack must contain parameterless constructor");
+            var instance = Activator.CreateInstance(stackNameAndType.Value) ?? throw new MissingParameterlessConstructorException();
             stacks.Add((DatabaseStack)instance);
         }
 

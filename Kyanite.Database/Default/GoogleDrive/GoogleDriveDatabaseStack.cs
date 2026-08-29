@@ -7,20 +7,25 @@ public class GoogleDriveDatabaseStack() : LocalDatabaseStack()
 {
     public override string FriendlyName => "Google Drive";
 
-    readonly GoogleDriveInitializationViewModel initializationViewModel = new();
-    public override DatabaseInitializationViewModelBase InitializationViewModel => initializationViewModel;
 
-    public override async Task<bool> Prepare()
+    string _apiLink = string.Empty;
+
+    public override async Task<bool> Prepare(Dictionary<string, string> data)
     {
+        if (!data.TryGetValue("Link", out string? value))
+            throw new Exception("Stack does not contain necessary data to initialize");
+
+        _apiLink = value;
+
         await DownloadDatabaseFile("database.db", DatabaseFilename);
-        return await base.Prepare();
+        return await base.Prepare(data);
     }
 
     async Task DownloadDatabaseFile(string fileName, string savePath)
     {
         using var client = new HttpClient();
 
-        string requestUrl = $"{initializationViewModel.Link}?filename={fileName}";
+        string requestUrl = $"{_apiLink}?filename={fileName}";
         var response = await client.GetAsync(requestUrl);
 
         if (!response.IsSuccessStatusCode)
@@ -57,6 +62,9 @@ public class GoogleDriveDatabaseStack() : LocalDatabaseStack()
         };
 
         string jsonPayload = JsonSerializer.Serialize(payload);
-        await client.PostAsync(initializationViewModel.Link, new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json"));
+        await client.PostAsync(_apiLink, new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json"));
     }
+
+    public override DatabaseInitializationViewModelBase CreateInitializationViewModel()
+        => new GoogleDriveInitializationViewModel();
 }

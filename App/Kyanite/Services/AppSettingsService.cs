@@ -7,7 +7,6 @@ namespace Kyanite.Services;
 
 internal class AppSettingsService
 {
-    readonly string SettingsFile = "settings.json";
     readonly string AppDataDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Kyanite"
