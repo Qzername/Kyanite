@@ -4,13 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Kyanite.Views.InitialConfiguration.InitialConfigurationView"
-		   x:CompileBindings="False">
+		   x:CompileBindings="False"
+		   
+		   xmlns:viewLocators="using:Kyanite.ViewLocators">
 	<Panel>
 		<TextBlock Text="Welcome to Kyanite" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="50"/>
 
 		<Panel HorizontalAlignment="Center" VerticalAlignment="Center"
-			  Width="500" Height="600" Background="Gray">
-			<ContentControl Content="{Binding CurrentPageViewModel}"/>
+			  Width="800" Height="600" Background="Gray">
+			<ContentControl Content="{Binding CurrentPageViewModel}">
+				<ContentControl.DataTemplates>
+					<viewLocators:MainViewLocator/>
+					<viewLocators:DatabaseInitializationViewLocator/>
+				</ContentControl.DataTemplates>
+			</ContentControl>
 
 			<DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
 				<Button DockPanel.Dock="Right" Content="Next"

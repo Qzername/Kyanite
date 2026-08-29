@@ -14,8 +14,8 @@ internal static class ServiceCollectionExtensions
     internal static void AddCommonServices(this IServiceCollection collection)
     {
         collection.AddSingleton<AppSettingsService>();
-
-        collection.AddSingleton<DatabaseStack, GoogleDriveDatabaseStack>();
+        collection.AddSingleton<DatabaseStackLoader>();
+        collection.AddSingleton<DatabaseStackProvider>();
         collection.AddSingleton<ModuleManager>();
         collection.AddSingleton<DialogService>();
 

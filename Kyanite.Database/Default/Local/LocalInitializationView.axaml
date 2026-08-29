@@ -3,10 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kyanite.Views.InitialConfiguration.Pages.PickDatabaseStackView">
-	<StackPanel>
-		<TextBlock Text="Pick your database stack"/>
-		<ComboBox ItemsSource="{Binding AvailableStacks}"
-				SelectedItem="{Binding PickedDatabaseStack}"/>
-	</StackPanel>
+             x:Class="Kyanite.Database.Default.Local.LocalInitializationView">
+  Welcome to Avalonia!
 </UserControl>

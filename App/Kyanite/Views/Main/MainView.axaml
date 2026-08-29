@@ -52,7 +52,7 @@
         <SplitView.Content>
             <ContentControl Content="{Binding SelectedModule}" >
                 <ContentControl.DataTemplates>
-					<viewLocators:ModuleViewLocator/>
+				<viewLocators:ModuleViewLocator/>
                 </ContentControl.DataTemplates>
             </ContentControl>
         </SplitView.Content>

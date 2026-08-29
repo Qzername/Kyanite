@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Database;
 using Kyanite.Exceptions;
 using Kyanite.Services;
 using Kyanite.ViewModels.InitialConfiguration.Pages;
@@ -9,20 +10,34 @@ namespace Kyanite.ViewModels.InitialConfiguration;
 
 internal partial class InitialConfigurationViewModel : ViewModelBase
 {
+    public enum Pages
+    {
+        PickStack,
+        ProvidePrepareData,
+        Finitialization
+    }
+
     const int TotalPages = 3;
 
     [ObservableProperty] int _page;
-    [ObservableProperty] ViewModelBase? _currentPageViewModel;
+    [ObservableProperty] ObservableObject? _currentPageViewModel;
 
     readonly ShellViewModel _shellViewModel;
     readonly AppSettingsService _appSettingsService;
+    readonly DatabaseStackProvider _databaseStackProvider;
 
-    public InitialConfigurationViewModel(ShellViewModel shellViewModel, AppSettingsService appSettingsService)
+    readonly PickDatabaseStackViewModel pickDatabaseStackViewModel;
+    readonly FinishedPageViewModel finishedPageViewModel = new();
+
+    public InitialConfigurationViewModel(ShellViewModel shellViewModel, AppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader, DatabaseStackProvider databaseStackProvider)
     {
         _shellViewModel = shellViewModel;
         _appSettingsService = appSettingsService;
+        _databaseStackProvider = databaseStackProvider;
 
-        CurrentPageViewModel = new PickDatabaseStackViewModel();
+        pickDatabaseStackViewModel = new(databaseStackLoader);
+
+        CurrentPageViewModel = pickDatabaseStackViewModel;
     }
 
     [RelayCommand]
@@ -57,12 +72,29 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
 
     partial void OnPageChanged(int value)
     {
-        CurrentPageViewModel = value switch
+        Pages page = (Pages)value;
+
+        switch(page)
         {
-            0 => new PickDatabaseStackViewModel(),
-            1 => null,
-            2 => new FinishedPageViewModel(),
-            _ => throw new Exception("Unexpected page value")
-        };
+            case Pages.PickStack:
+                CurrentPageViewModel = pickDatabaseStackViewModel;
+                break;
+
+            case Pages.ProvidePrepareData:
+                var vm = pickDatabaseStackViewModel.GetPickedStack().InitializationViewModel;
+                CurrentPageViewModel = vm;
+                break;
+
+            case Pages.Finitialization:
+                var currentStack = pickDatabaseStackViewModel.GetPickedStack();
+
+                currentStack.Prepare();
+                _databaseStackProvider.SetStack(currentStack);
+
+                CurrentPageViewModel = finishedPageViewModel;
+                break;
+
+            default: throw new Exception("Unexpected page value");
+        }
     }
 }

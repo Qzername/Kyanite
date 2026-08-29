@@ -5,19 +5,22 @@ namespace Kyanite.Database.Default.GoogleDrive;
 
 public class GoogleDriveDatabaseStack() : LocalDatabaseStack()
 {
-    const string scriptUrl = "[URL TO SCRIPT.JS]";
+    public override string FriendlyName => "Google Drive";
+
+    readonly GoogleDriveInitializationViewModel initializationViewModel = new();
+    public override DatabaseInitializationViewModelBase InitializationViewModel => initializationViewModel;
 
     public override async Task<bool> Prepare()
     {
-        await DownloadDatabaseFile("database.db", currentDbFilename);
+        await DownloadDatabaseFile("database.db", DatabaseFilename);
         return await base.Prepare();
     }
 
-    static async Task DownloadDatabaseFile(string fileName, string savePath)
+    async Task DownloadDatabaseFile(string fileName, string savePath)
     {
         using var client = new HttpClient();
 
-        string requestUrl = $"{scriptUrl}?filename={fileName}";
+        string requestUrl = $"{initializationViewModel.Link}?filename={fileName}";
         var response = await client.GetAsync(requestUrl);
 
         if (!response.IsSuccessStatusCode)
@@ -42,18 +45,18 @@ public class GoogleDriveDatabaseStack() : LocalDatabaseStack()
 
         string tempFilePath = Path.GetTempPath() + "kyanite_database.db";
 
-        File.Copy(currentDbFilename, tempFilePath);
+        File.Copy(DatabaseFilename, tempFilePath);
         byte[] fileBytes = File.ReadAllBytes(tempFilePath);
         string base64Content = Convert.ToBase64String(fileBytes);
         File.Delete(tempFilePath);
 
         var payload = new
         {
-            filename = Path.GetFileName(currentDbFilename),
+            filename = Path.GetFileName(DatabaseFilename),
             content = base64Content
         };
 
         string jsonPayload = JsonSerializer.Serialize(payload);
-        await client.PostAsync(scriptUrl, new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json"));
+        await client.PostAsync(initializationViewModel.Link, new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json"));
     }
 }

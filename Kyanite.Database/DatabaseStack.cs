@@ -5,7 +5,8 @@ public abstract class DatabaseStack(IModuleRepository moduleRepository, IDataRep
     public readonly IModuleRepository ModuleRepository = moduleRepository;
     public readonly IDataRepository DataRepository = dataRepository;
 
-
+    public abstract string FriendlyName { get; }
+    
     /// <summary>
     /// called to do every necessary preparation for the database to be ready to use
     /// </summary>
@@ -15,4 +16,6 @@ public abstract class DatabaseStack(IModuleRepository moduleRepository, IDataRep
     {
         return Task.CompletedTask;
     }
+
+    public abstract DatabaseInitializationViewModelBase InitializationViewModel { get; }
 }

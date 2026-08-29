@@ -3,10 +3,15 @@ using Microsoft.Data.Sqlite;
 
 namespace Kyanite.Database.Default.Local;
 
-public class LocalDatabaseStack(string databaseFilename = "./database.db")
+public class LocalDatabaseStack()
     : DatabaseStack(new LocalModuleRepository(), new LocalDataRepository())
 {
-    protected readonly string currentDbFilename = databaseFilename;
+    protected const string DatabaseFilename = "./database.db";
+
+    public override string FriendlyName => "Local";
+
+    readonly LocalInitializationViewModel initializationViewModel = new();
+    public override DatabaseInitializationViewModelBase InitializationViewModel => initializationViewModel;
 
     SqliteConnection connection;
 
@@ -19,7 +24,7 @@ public class LocalDatabaseStack(string databaseFilename = "./database.db")
                   Type TEXT NOT NULL
               );";
 
-        connection = new SqliteConnection($"Data Source={currentDbFilename}");
+        connection = new SqliteConnection($"Data Source={DatabaseFilename}");
         SqlMapper.AddTypeHandler(new GuidHandler());
         await connection.OpenAsync();
 

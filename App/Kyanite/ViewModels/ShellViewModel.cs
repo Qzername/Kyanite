@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Database;
 using Kyanite.Dialogs;
 using Kyanite.Exceptions;
 using Kyanite.Services;
@@ -44,6 +45,11 @@ internal partial class ShellViewModel : ViewModelBase
         if (_appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
             CurrentViewModel = _serviceProvider.GetRequiredService<MainViewModel>();
         else
-            CurrentViewModel = new InitialConfigurationViewModel(this, _appSettingsService);
+            CurrentViewModel = new InitialConfigurationViewModel(
+                shellViewModel: this, 
+                _appSettingsService,
+                _serviceProvider.GetRequiredService<DatabaseStackLoader>(),
+                _serviceProvider.GetRequiredService<DatabaseStackProvider>()
+            );
     }
 }
