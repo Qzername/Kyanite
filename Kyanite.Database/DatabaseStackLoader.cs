@@ -21,11 +21,11 @@ public class DatabaseStackLoader
         var assembly = Assembly.GetExecutingAssembly();
 
         var foundStacks = from t in Assembly.GetExecutingAssembly().GetTypes()
-                           where typeof(DatabaseStack).IsAssignableFrom(t) &&
-                                 t != typeof(DatabaseStack) &&
-                                 t.Namespace is not null &&
-                                 t.Namespace.StartsWith(DefaultDatabaseStackNamespace)
-                           select t;
+                          where typeof(DatabaseStack).IsAssignableFrom(t) &&
+                                t != typeof(DatabaseStack) &&
+                                t.Namespace is not null &&
+                                t.Namespace.StartsWith(DefaultDatabaseStackNamespace)
+                          select t;
 
         foreach (var databaseStackType in foundStacks)
             DatabaseStackTypes[databaseStackType.Name.Replace("ViewModel", string.Empty)] = databaseStackType;

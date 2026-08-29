@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Kyanite.Database;
-using Kyanite.Modules;
 using System;
 
 namespace Kyanite.ViewLocators;

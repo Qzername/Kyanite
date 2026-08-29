@@ -2,6 +2,6 @@
 
 namespace Kyanite.Exceptions;
 
-internal class ActiveStackNotInitializedExpection :Exception
+internal class ActiveStackNotInitializedExpection : Exception
 {
 }

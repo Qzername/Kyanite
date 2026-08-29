@@ -12,7 +12,7 @@ internal class DatabaseStackProvider
     {
         if (appSettingsService.CurrentAppSettings is null)
             throw new AppSettingsNotInitializedException();
-        
+
         if (!appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
             return;
 

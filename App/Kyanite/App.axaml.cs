@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Kyanite.Database;
 using Kyanite.Exceptions;
 using Kyanite.Services;
 using Kyanite.ViewModels;

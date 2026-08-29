@@ -65,7 +65,7 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
     {
         Pages page = (Pages)value;
 
-        switch(page)
+        switch (page)
         {
             case Pages.PickStack:
                 CurrentPageViewModel = pickDatabaseStackViewModel;

@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kyanite.Database;
-using Kyanite.Database.Default.GoogleDrive;
-using Kyanite.Database.Default.Local;
 using Kyanite.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -14,7 +12,7 @@ internal partial class PickDatabaseStackViewModel : ViewModelBase
     readonly DatabaseStackLoader _databaseStackLoader;
 
     //todo: make it versitile 
-    public string[] AvailableStacks => [..loadedDatabaseStacks.Select(x => x.FriendlyName)];
+    public string[] AvailableStacks => [.. loadedDatabaseStacks.Select(x => x.FriendlyName)];
     [ObservableProperty] string _pickedDatabaseStack = string.Empty;
 
     DatabaseStack[] loadedDatabaseStacks;
