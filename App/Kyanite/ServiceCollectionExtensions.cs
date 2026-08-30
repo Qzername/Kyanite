@@ -13,8 +13,11 @@ internal static class ServiceCollectionExtensions
     internal static void AddCommonServices(this IServiceCollection collection)
     {
         collection.AddSingleton<AppSettingsService>();
+
         collection.AddSingleton<DatabaseStackLoader>();
         collection.AddSingleton<DatabaseStackProvider>();
+
+        collection.AddSingleton<NotificationServiceProvider>();
         collection.AddSingleton<ModuleManager>();
         collection.AddSingleton<DialogService>();
 

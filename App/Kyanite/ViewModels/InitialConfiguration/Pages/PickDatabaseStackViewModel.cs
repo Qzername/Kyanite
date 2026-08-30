@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kyanite.Database;
 using Kyanite.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,18 @@ namespace Kyanite.ViewModels.InitialConfiguration.Pages;
 internal partial class PickDatabaseStackViewModel : ViewModelBase
 {
     readonly DatabaseStackLoader _databaseStackLoader;
+    readonly IServiceProvider _serviceProvider;
 
     //todo: make it versitile 
     public string[] AvailableStacks => [.. loadedDatabaseStacks.Select(x => x.FriendlyName)];
     [ObservableProperty] string _pickedDatabaseStack = string.Empty;
 
-    DatabaseStack[] loadedDatabaseStacks;
+    DatabaseStack[] loadedDatabaseStacks = [];
 
-    public PickDatabaseStackViewModel(DatabaseStackLoader databaseStackLoader)
+    public PickDatabaseStackViewModel(IServiceProvider serviceProvider, DatabaseStackLoader databaseStackLoader)
     {
         _databaseStackLoader = databaseStackLoader;
+        _serviceProvider = serviceProvider;
 
         LoadStacks();
     }
@@ -30,7 +33,7 @@ internal partial class PickDatabaseStackViewModel : ViewModelBase
 
         foreach (var stackNameAndType in _databaseStackLoader.DatabaseStackTypes)
         {
-            var instance = Activator.CreateInstance(stackNameAndType.Value) ?? throw new MissingParameterlessConstructorException();
+            var instance = ActivatorUtilities.CreateInstance(_serviceProvider, stackNameAndType.Value) ?? throw new MissingParameterlessConstructorException();
             stacks.Add((DatabaseStack)instance);
         }
 

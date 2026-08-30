@@ -144,6 +144,13 @@ public class ModuleManager()
         modules.Remove(module);
     }
 
+    public void ClearData()
+    {
+        IsStackPrepared = false;
+        modules.Clear();
+        ModuleTypes.Clear();
+    }
+
     Module ConvertInformationToModule(ModuleInformation moduleInformation)
     {
         var moduleType = ModuleTypes[moduleInformation.Type] ?? throw new Exception("Module type does not exist in ModuleManager registry");

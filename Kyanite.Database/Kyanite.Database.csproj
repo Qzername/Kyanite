@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Kyanite.Core\Kyanite.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Default\GoogleDrive\GoogleDriveInitializationView.axaml.cs">
       <DependentUpon>GoogleDriveInitializationView.axaml</DependentUpon>
     </Compile>

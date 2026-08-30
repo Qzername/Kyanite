@@ -17,6 +17,7 @@ internal partial class MainViewModel : ViewModelBase
     readonly IServiceProvider _serviceProvider;
     readonly ModuleManager _moduleManager;
     readonly DialogService _dialogService;
+    readonly DatabaseStackProvider _databaseStackProvider;
 
     [ObservableProperty] bool _isDataLoaded;
     [ObservableProperty] bool _isPaneOpen = true;
@@ -24,27 +25,27 @@ internal partial class MainViewModel : ViewModelBase
     public ObservableCollection<Module> AllModules { get; } = [];
     [ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, DialogService dialogService)
+    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, DialogService dialogService, DatabaseStackProvider databaseStackProvider)
     {
         AllModules.Clear();
 
         _serviceProvider = serviceProvider;
         _moduleManager = moduleManager;
         _dialogService = dialogService;
+        _databaseStackProvider = databaseStackProvider;
 
         _ = PrepareModuleManager();
     }
 
     async Task PrepareModuleManager()
     {
-        DatabaseStackProvider stackProvider = _serviceProvider.GetRequiredService<DatabaseStackProvider>();
         AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
 
-        if (stackProvider.ActiveStack is null)
+        if (_databaseStackProvider.ActiveStack is null)
             throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
 
         if (!_moduleManager.IsStackPrepared)
-            await _moduleManager.Prepare(stackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
+            await _moduleManager.Prepare(_databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
 
         AllModules.Replace(_moduleManager.Modules);
 
@@ -80,6 +81,10 @@ internal partial class MainViewModel : ViewModelBase
             DatabaseStackType = null,
             DatabaseInformation = [],
         });
+
+        _databaseStackProvider.ActiveStack?.OnRemoved();
+        AllModules.Clear();
+        _moduleManager.ClearData();
 
         var shellViewModel = _serviceProvider.GetRequiredService<ShellViewModel>();
         shellViewModel.UpdateView();

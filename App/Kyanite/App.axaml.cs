@@ -12,6 +12,8 @@ namespace Kyanite;
 
 public partial class App : Application
 {
+    INotificationService? notificationService;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -22,10 +24,16 @@ public partial class App : Application
         var collection = new ServiceCollection();
         collection.AddCommonServices();
 
-        var services = collection.BuildServiceProvider();
+        var serviceProvider = collection.BuildServiceProvider();
 
-        DataContext = services.GetRequiredService<AppViewModel>();
-        var shellViewModel = services.GetRequiredService<ShellViewModel>();
+        if (notificationService is not null)
+        {
+            var notificationServiceProvider = serviceProvider.GetRequiredService<NotificationServiceProvider>();
+            notificationServiceProvider.SetService(notificationService);
+        }
+
+        DataContext = serviceProvider.GetRequiredService<AppViewModel>();
+        var shellViewModel = serviceProvider.GetRequiredService<ShellViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -36,7 +44,7 @@ public partial class App : Application
 
             desktop.MainWindow.Closing += async (sender, e) =>
             {
-                var databaseStackProvider = services.GetRequiredService<DatabaseStackProvider>();
+                var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
 
                 if (databaseStackProvider.ActiveStack is null)
                     throw new ActiveStackNotInitializedExpection();
@@ -59,5 +67,10 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    public void RegisterNotificationService(INotificationService notificationService)
+    {
+        this.notificationService = notificationService;
     }
 }

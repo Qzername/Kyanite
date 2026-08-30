@@ -46,6 +46,7 @@ internal partial class ShellViewModel : ViewModelBase
             CurrentViewModel = _serviceProvider.GetRequiredService<MainViewModel>();
         else
             CurrentViewModel = new InitialConfigurationViewModel(
+                _serviceProvider,
                 shellViewModel: this,
                 _appSettingsService,
                 _serviceProvider.GetRequiredService<DatabaseStackLoader>(),

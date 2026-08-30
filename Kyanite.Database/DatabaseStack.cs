@@ -18,5 +18,10 @@ public abstract class DatabaseStack(IModuleRepository moduleRepository, IDataRep
         return Task.CompletedTask;
     }
 
+    public virtual void OnRemoved()
+    {
+
+    }
+
     public abstract DatabaseInitializationViewModelBase CreateInitializationViewModel();
 }

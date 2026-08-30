@@ -1,6 +1,9 @@
-﻿namespace Kyanite.Android;
+﻿using Android.Runtime;
+using Avalonia;
+using Avalonia.Android;
 
-[Application]
+namespace Kyanite.Android;
+
 public class Application : AvaloniaAndroidApplication<App>
 {
     protected Application(nint javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)

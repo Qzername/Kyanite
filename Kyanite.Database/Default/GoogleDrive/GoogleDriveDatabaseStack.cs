@@ -1,9 +1,10 @@
 ﻿using Kyanite.Database.Default.Local;
+using Kyanite.Services;
 using System.Text.Json;
 
 namespace Kyanite.Database.Default.GoogleDrive;
 
-public class GoogleDriveDatabaseStack() : LocalDatabaseStack()
+public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationServiceProvider) : LocalDatabaseStack()
 {
     public override string FriendlyName => "Google Drive";
 
@@ -63,6 +64,9 @@ public class GoogleDriveDatabaseStack() : LocalDatabaseStack()
 
         string jsonPayload = JsonSerializer.Serialize(payload);
         await client.PostAsync(_apiLink, new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json"));
+
+        if (notificationServiceProvider.ActiveService is not null)
+            notificationServiceProvider.ActiveService.Show("Kyanite - Google Drive", "Database has been saved safely on Google Drive");
     }
 
     public override DatabaseInitializationViewModelBase CreateInitializationViewModel()

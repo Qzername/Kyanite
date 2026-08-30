@@ -1,5 +1,6 @@
 ﻿using Kyanite.Database;
 using Kyanite.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Kyanite.Services;
@@ -8,7 +9,7 @@ internal class DatabaseStackProvider
 {
     public DatabaseStack? ActiveStack { get; private set; }
 
-    public DatabaseStackProvider(AppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader)
+    public DatabaseStackProvider(IServiceProvider serviceProvider, AppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader)
     {
         if (appSettingsService.CurrentAppSettings is null)
             throw new AppSettingsNotInitializedException();
@@ -20,7 +21,7 @@ internal class DatabaseStackProvider
             throw new Exception("DatabaseStackType expected to be set in appSettings");
 
         var stackType = databaseStackLoader.DatabaseStackTypes[appSettingsService.CurrentAppSettings.DatabaseStackType];
-        var instance = Activator.CreateInstance(stackType);
+        var instance = ActivatorUtilities.CreateInstance(serviceProvider, stackType);
         SetStack((DatabaseStack)instance);
     }
 

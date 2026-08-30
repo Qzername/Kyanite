@@ -29,13 +29,13 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
     readonly PickDatabaseStackViewModel pickDatabaseStackViewModel;
     readonly FinishedPageViewModel finishedPageViewModel = new();
 
-    public InitialConfigurationViewModel(ShellViewModel shellViewModel, AppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader, DatabaseStackProvider databaseStackProvider)
+    public InitialConfigurationViewModel(IServiceProvider serviceProvider, ShellViewModel shellViewModel, AppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader, DatabaseStackProvider databaseStackProvider)
     {
         _shellViewModel = shellViewModel;
         _appSettingsService = appSettingsService;
         _databaseStackProvider = databaseStackProvider;
 
-        pickDatabaseStackViewModel = new(databaseStackLoader);
+        pickDatabaseStackViewModel = new(serviceProvider, databaseStackLoader);
 
         CurrentPageViewModel = pickDatabaseStackViewModel;
     }
@@ -82,7 +82,6 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
                 if (CurrentPageViewModel is not DatabaseInitializationViewModelBase initVm)
                     throw new Exception("Current ViewModel expected to be of type: " + nameof(DatabaseInitializationViewModelBase));
 
-                currentStack.Prepare(initVm.GetData());
                 _databaseStackProvider.SetStack(currentStack);
 
                 if (_appSettingsService.CurrentAppSettings is null)
