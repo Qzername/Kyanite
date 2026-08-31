@@ -8,7 +8,6 @@ public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationSe
 {
     public override string FriendlyName => "Google Drive";
 
-
     string _apiLink = string.Empty;
 
     public override async Task<bool> Prepare(Dictionary<string, string> data)

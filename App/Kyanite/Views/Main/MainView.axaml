@@ -6,6 +6,7 @@
              x:Class="Kyanite.Views.Main.MainView"
              x:DataType="vm:MainViewModel"
 			 
+		   xmlns:controls="using:Kyanite.Controls"
              xmlns:viewLocators="using:Kyanite.ViewLocators"
              	 
              FontFamily="Unbounded">
@@ -17,35 +18,40 @@
                OpenPaneLength="200">
         <SplitView.Pane>
             <DockPanel>
-			  <Button DockPanel.Dock="Bottom"
-					Content="Reset initialization" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-					Command="{Binding ResetInitializationCommand}"/>
+			   <Button DockPanel.Dock="Bottom"
+			  		Content="Reset initialization" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+			  		Command="{Binding ResetInitializationCommand}"/>
+			   
+                 <Button DockPanel.Dock="Bottom" 
+                         Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                         Command="{Binding CreateModuleCommand}"/>
 			  
-                <Button DockPanel.Dock="Bottom" 
-                        Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding CreateModuleCommand}"/>
-			
-                <Button DockPanel.Dock="Top"
-                        Content="☰" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding TogglePaneCommand}" />
+                 <Button DockPanel.Dock="Top"
+                         Content="☰" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                         Command="{Binding TogglePaneCommand}" />
 
-                <ListBox Background="Transparent"
-                         ItemsSource="{Binding AllModules}"
-                         SelectedItem="{Binding SelectedModule}">
-                    <ListBox.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Remove" 
-                                      Command="{Binding DeleteModuleCommand}" 
-                                      CommandParameter="{Binding SelectedModule}" />
-                        </ContextMenu>
-                    </ListBox.ContextMenu>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-
+			  <Grid>
+				  <ListBox Background="Transparent"
+				    ItemsSource="{Binding AllModules}"
+				    SelectedItem="{Binding SelectedModule}">
+					  <ListBox.ContextMenu>
+						  <ContextMenu>
+							  <MenuItem Header="Remove"
+									  Command="{Binding DeleteModuleCommand}"
+									  CommandParameter="{Binding SelectedModule}" />
+						  </ContextMenu>
+					  </ListBox.ContextMenu>
+					  <ListBox.ItemTemplate>
+						  <DataTemplate>
+							  <TextBlock Text="{Binding Name}" />
+						  </DataTemplate>
+					  </ListBox.ItemTemplate>
+				  </ListBox>
+				  
+				  <controls:LoadingCircle HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              IsVisible="{Binding !IsDataLoaded}"/>
+			  </Grid>
             </DockPanel>
         </SplitView.Pane>
 
