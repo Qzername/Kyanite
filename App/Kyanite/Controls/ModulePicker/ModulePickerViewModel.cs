@@ -10,7 +10,6 @@ internal partial class ModulePickerViewModel : ViewModelBase
 {
     [ObservableProperty] string _moduleName = string.Empty;
 
-    //TODO: make it not hardcoded
     public ObservableCollection<string> ModuleList { get; }
     [ObservableProperty] string _selectedModule = string.Empty;
 

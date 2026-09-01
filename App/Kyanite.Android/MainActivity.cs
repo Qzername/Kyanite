@@ -1,12 +1,4 @@
-﻿using Android;
-using Android.App;
-using Android.Content.PM;
-using Android.OS;
-using AndroidX.Core.App;
-using AndroidX.Core.Content;
-using Avalonia.Android;
-
-namespace Kyanite.Android;
+﻿namespace Kyanite.Android;
 
 [Activity(
     Label = "Kyanite.Android",

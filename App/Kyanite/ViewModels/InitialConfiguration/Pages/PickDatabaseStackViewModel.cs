@@ -13,7 +13,6 @@ internal partial class PickDatabaseStackViewModel : ViewModelBase
     readonly DatabaseStackLoader _databaseStackLoader;
     readonly IServiceProvider _serviceProvider;
 
-    //todo: make it versitile 
     public string[] AvailableStacks => [.. loadedDatabaseStacks.Select(x => x.FriendlyName)];
     [ObservableProperty] string _pickedDatabaseStack = string.Empty;
 

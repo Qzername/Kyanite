@@ -22,7 +22,7 @@ internal static class ServiceCollectionExtensions
         collection.AddSingleton<DialogService>();
 
         collection.AddSingleton<AppViewModel>();
-        collection.AddSingleton<ShellViewModel>();
+        collection.AddSingleton<ShellViewModelProvider>();
 
         collection.AddTransient<MainViewModel>();
     }

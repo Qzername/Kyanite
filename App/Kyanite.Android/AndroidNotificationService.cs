@@ -1,9 +1,4 @@
-﻿using Android.App;
-using Android.Content;
-using AndroidX.Core.App;
-using Kyanite.Services;
-
-namespace Kyanite.Android;
+﻿namespace Kyanite.Android;
 
 internal class AndroidNotificationService : INotificationService
 {

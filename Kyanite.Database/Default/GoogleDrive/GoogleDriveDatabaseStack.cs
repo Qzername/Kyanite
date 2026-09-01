@@ -50,10 +50,14 @@ public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationSe
 
         string tempFilePath = Path.GetTempPath() + "kyanite_database.db";
 
+        //copy file since database is locked by LocalDatabaseStack
         File.Copy(DatabaseFilename, tempFilePath);
         byte[] fileBytes = File.ReadAllBytes(tempFilePath);
         string base64Content = Convert.ToBase64String(fileBytes);
         File.Delete(tempFilePath);
+
+        //we will download database again later anyway
+        base.OnRemoved();
 
         var payload = new
         {

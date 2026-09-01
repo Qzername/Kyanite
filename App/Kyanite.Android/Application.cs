@@ -1,8 +1,4 @@
-﻿using Android.Runtime;
-using Avalonia;
-using Avalonia.Android;
-
-namespace Kyanite.Android;
+﻿namespace Kyanite.Android;
 
 public class Application : AvaloniaAndroidApplication<App>
 {

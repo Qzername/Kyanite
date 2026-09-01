@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Kyanite.Exceptions;
 using Kyanite.Services;
 using Kyanite.ViewModels;
 using Kyanite.Views;
@@ -32,26 +31,14 @@ public partial class App : Application
             notificationServiceProvider.SetService(notificationService);
         }
 
-        DataContext = serviceProvider.GetRequiredService<AppViewModel>();
-        var shellViewModel = serviceProvider.GetRequiredService<ShellViewModel>();
+        var appViewModel = serviceProvider.GetRequiredService<AppViewModel>();
+        DataContext = appViewModel;
+
+        var shellViewModel = serviceProvider.GetRequiredService<ShellViewModelProvider>().CreateOrGetShell();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = shellViewModel
-            };
-
-            desktop.MainWindow.Closing += async (sender, e) =>
-            {
-                var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-
-                if (databaseStackProvider.ActiveStack is null)
-                    throw new ActiveStackNotInitializedExpection();
-
-                await databaseStackProvider.ActiveStack.OnWindowClosing();
-            };
-
+            appViewModel.OpenApplication();
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)

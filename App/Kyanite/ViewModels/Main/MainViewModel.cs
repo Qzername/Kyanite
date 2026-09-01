@@ -57,7 +57,7 @@ internal partial class MainViewModel : ViewModelBase
     {
         _dialogService.Show(new DialogBuilder()
             .WithTitle("Create dialog")
-            .WithSize(400, 300)
+            .WithSize(200, 300)
             .WithViewModel(new ModulePickerViewModel(_moduleManager))
             .SetOnClose((dialog) =>
             {
@@ -86,7 +86,7 @@ internal partial class MainViewModel : ViewModelBase
         AllModules.Clear();
         _moduleManager.ClearData();
 
-        var shellViewModel = _serviceProvider.GetRequiredService<ShellViewModel>();
+        var shellViewModel = _serviceProvider.GetRequiredService<ShellViewModelProvider>().CreateOrGetShell();
         shellViewModel.UpdateView();
     }
 
