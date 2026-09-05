@@ -25,8 +25,9 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
                 if (vm.ToDoElementName is null)
                     return;
 
-                ToDoElements.Add(new ToDoElement() { 
-                    Name = vm.ToDoElementName 
+                ToDoElements.Add(new ToDoElement()
+                {
+                    Name = vm.ToDoElementName
                 });
             })
             .Build());

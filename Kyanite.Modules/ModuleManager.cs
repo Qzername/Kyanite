@@ -14,7 +14,7 @@ public class ModuleManager()
     public Dictionary<string, Type> ModuleTypes { get; private set; } = [];
 
     public bool IsStackPrepared { get; private set; } = false;
-    
+
     IServiceProvider? _serviceProvider;
     DatabaseStack? databaseStack;
     Dictionary<string, string> databaseStackData = [];
@@ -124,7 +124,7 @@ public class ModuleManager()
         foreach (var synchronizableField in synchronizableFields)
         {
             var value = synchronizableField.GetValue(module);
-            DataInformation fieldData = CreateDataInformation(synchronizableField.Name, value); 
+            DataInformation fieldData = CreateDataInformation(synchronizableField.Name, value);
             await databaseStack.DataRepository.UpdateAsync(fieldData, module.ModuleId);
         }
     }
@@ -150,7 +150,7 @@ public class ModuleManager()
 
     Module ConvertInformationToModule(ModuleInformation moduleInformation)
     {
-        if(_serviceProvider is null)
+        if (_serviceProvider is null)
             throw new Exception("Service provider is not available");
 
         var moduleType = ModuleTypes[moduleInformation.Type] ?? throw new Exception("Module type does not exist in ModuleManager registry");

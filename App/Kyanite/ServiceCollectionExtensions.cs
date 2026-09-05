@@ -1,5 +1,5 @@
-﻿using Kyanite.Database;
-using Kyanite.Core.Dialogs;
+﻿using Kyanite.Core.Dialogs;
+using Kyanite.Database;
 using Kyanite.Modules;
 using Kyanite.Services;
 using Kyanite.ViewModels;
@@ -24,7 +24,7 @@ internal static class ServiceCollectionExtensions
         collection.AddSingleton<ModuleManager>();
         collection.AddSingleton<IDialogService, DialogService>();
         collection.AddSingleton<NotificationServiceProvider>();
-   
+
         // --- app ---
 
         collection.AddSingleton<AppViewModel>();

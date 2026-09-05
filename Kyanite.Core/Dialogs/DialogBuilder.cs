@@ -2,6 +2,7 @@
 using Kyanite.ViewModels;
 
 namespace Kyanite.Core.Dialogs;
+
 public class DialogBuilder
 {
     string title = "Dialog";

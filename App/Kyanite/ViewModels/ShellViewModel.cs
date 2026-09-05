@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Kyanite.Database;
 using Kyanite.Core.Dialogs;
+using Kyanite.Database;
 using Kyanite.Exceptions;
 using Kyanite.Services;
 using Kyanite.ViewModels.InitialConfiguration;
