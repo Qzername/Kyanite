@@ -1,5 +1,6 @@
 ﻿using Kyanite.Database;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Kyanite.Modules;
 
@@ -13,12 +14,14 @@ public class ModuleManager()
     public Dictionary<string, Type> ModuleTypes { get; private set; } = [];
 
     public bool IsStackPrepared { get; private set; } = false;
-
+    
+    IServiceProvider? _serviceProvider;
     DatabaseStack? databaseStack;
     Dictionary<string, string> databaseStackData = [];
 
-    public async Task Prepare(DatabaseStack databaseStack, Dictionary<string, string> databaseStackData)
+    public async Task Prepare(IServiceProvider serviceProvider, DatabaseStack databaseStack, Dictionary<string, string> databaseStackData)
     {
+        _serviceProvider = serviceProvider;
         this.databaseStack = databaseStack;
         this.databaseStackData = databaseStackData;
 
@@ -72,18 +75,17 @@ public class ModuleManager()
             Type = type
         });
 
-        var properties = value.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-        var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
-
-        foreach (var synchronizableProperty in synchronizableProperties)
-            await databaseStack.DataRepository.AddAsync(new DataInformation()
-            {
-                Id = synchronizableProperty.Name,
-                Type = "string", //TODO: add more supported types
-                Value = string.Empty
-            }, addedModule.Id);
-
         var module = ConvertInformationToModule(addedModule);
+
+        var fields = value.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var synchronizableFields = fields.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
+
+        foreach (var synchronizableField in synchronizableFields)
+        {
+            var defaultFieldValue = synchronizableField.GetValue(module);
+            var dataInformation = CreateDataInformation(synchronizableField.Name, defaultFieldValue);
+            await databaseStack.DataRepository.AddAsync(dataInformation, addedModule.Id);
+        }
         modules.Add(module);
         return module;
     }
@@ -95,17 +97,17 @@ public class ModuleManager()
 
         var data = await databaseStack.DataRepository.GetAllAsync(module.ModuleId);
 
-        var properties = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-        var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
+        var fields = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var synchronizableFields = fields.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
-        foreach (var synchronizableProperty in synchronizableProperties)
+        foreach (var synchronizableField in synchronizableFields)
         {
-            var propertyData = data.FirstOrDefault(d => d.Id == synchronizableProperty.Name);
+            var fieldData = data.FirstOrDefault(d => d.Id == synchronizableField.Name);
 
-            if (propertyData is null)
+            if (fieldData is null)
                 continue;
 
-            synchronizableProperty.SetValue(module, propertyData.Value);
+            synchronizableField.SetValue(module, CreateObjectFromDataInformation(fieldData));
         }
 
         module.Refresh();
@@ -116,19 +118,14 @@ public class ModuleManager()
         if (databaseStack is null)
             throw new Exception("Module manager needs to be prepared before usage");
 
-        var properties = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-        var synchronizableProperties = properties.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
+        var fields = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        var synchronizableFields = fields.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
 
-        foreach (var synchronizableProperty in synchronizableProperties)
+        foreach (var synchronizableField in synchronizableFields)
         {
-            DataInformation propertyData = new()
-            {
-                Id = synchronizableProperty.Name,
-                Type = "string", //add more supported types
-                Value = synchronizableProperty.GetValue(module)?.ToString() ?? string.Empty
-            };
-
-            await databaseStack.DataRepository.UpdateAsync(propertyData, module.ModuleId);
+            var value = synchronizableField.GetValue(module);
+            DataInformation fieldData = CreateDataInformation(synchronizableField.Name, value); 
+            await databaseStack.DataRepository.UpdateAsync(fieldData, module.ModuleId);
         }
     }
 
@@ -153,8 +150,35 @@ public class ModuleManager()
 
     Module ConvertInformationToModule(ModuleInformation moduleInformation)
     {
+        if(_serviceProvider is null)
+            throw new Exception("Service provider is not available");
+
         var moduleType = ModuleTypes[moduleInformation.Type] ?? throw new Exception("Module type does not exist in ModuleManager registry");
-        var instance = Activator.CreateInstance(moduleType, moduleInformation) ?? throw new Exception("Something went wrong with creating module instance");
+        var instance = NativeActivator.CreateInstance(moduleType, _serviceProvider, moduleInformation) ?? throw new Exception("Something went wrong with creating module instance");
         return (Module)instance;
+    }
+
+    DataInformation CreateDataInformation(string id, object? value)
+        => new()
+        {
+            Id = id,
+            Type = value?.GetType().AssemblyQualifiedName ?? typeof(object).AssemblyQualifiedName!,
+            Value = JsonSerializer.Serialize(value, value?.GetType() ?? typeof(object))
+        };
+
+    public object? CreateObjectFromDataInformation(DataInformation dataInfo)
+    {
+        if (dataInfo is null)
+            return null;
+
+        if (string.IsNullOrEmpty(dataInfo.Type))
+            return null;
+
+        Type? type = Type.GetType(dataInfo.Type);
+
+        if (type is null)
+            throw new InvalidOperationException($"Could not find type '{dataInfo.Type}'.");
+
+        return JsonSerializer.Deserialize(dataInfo.Value, type);
     }
 }

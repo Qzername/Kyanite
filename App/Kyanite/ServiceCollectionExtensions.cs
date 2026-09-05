@@ -1,5 +1,5 @@
 ﻿using Kyanite.Database;
-using Kyanite.Dialogs;
+using Kyanite.Core.Dialogs;
 using Kyanite.Modules;
 using Kyanite.Services;
 using Kyanite.ViewModels;
@@ -14,12 +14,18 @@ internal static class ServiceCollectionExtensions
     {
         collection.AddSingleton<AppSettingsService>();
 
+        // --- database ---
+
         collection.AddSingleton<DatabaseStackLoader>();
         collection.AddSingleton<DatabaseStackProvider>();
 
-        collection.AddSingleton<NotificationServiceProvider>();
+        // --- modules --- 
+
         collection.AddSingleton<ModuleManager>();
-        collection.AddSingleton<DialogService>();
+        collection.AddSingleton<IDialogService, DialogService>();
+        collection.AddSingleton<NotificationServiceProvider>();
+   
+        // --- app ---
 
         collection.AddSingleton<AppViewModel>();
         collection.AddSingleton<ShellViewModelProvider>();

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace Kyanite.Dialogs;
+namespace Kyanite.Core.Dialogs;
 
-internal class DialogService : INotifyPropertyChanged
+public class DialogService : IDialogService
 {
     private Dialog? _currentDialog;
 

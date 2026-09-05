@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Controls.ModulePicker;
-using Kyanite.Dialogs;
+using Kyanite.Core.Dialogs;
 using Kyanite.Exceptions;
 using Kyanite.Modules;
 using Kyanite.Services;
@@ -16,7 +16,7 @@ internal partial class MainViewModel : ViewModelBase
 {
     readonly IServiceProvider _serviceProvider;
     readonly ModuleManager _moduleManager;
-    readonly DialogService _dialogService;
+    readonly IDialogService _dialogService;
     readonly DatabaseStackProvider _databaseStackProvider;
 
     [ObservableProperty] bool _isDataLoaded;
@@ -25,7 +25,7 @@ internal partial class MainViewModel : ViewModelBase
     public ObservableCollection<Module> AllModules { get; } = [];
     [ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, DialogService dialogService, DatabaseStackProvider databaseStackProvider)
+    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider)
     {
         AllModules.Clear();
 
@@ -45,7 +45,7 @@ internal partial class MainViewModel : ViewModelBase
             throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
 
         if (!_moduleManager.IsStackPrepared)
-            await _moduleManager.Prepare(_databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
+            await _moduleManager.Prepare(_serviceProvider, _databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
 
         AllModules.Replace(_moduleManager.Modules);
 

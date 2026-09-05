@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Database;
-using Kyanite.Dialogs;
+using Kyanite.Core.Dialogs;
 using Kyanite.Exceptions;
 using Kyanite.Services;
 using Kyanite.ViewModels.InitialConfiguration;
@@ -18,11 +18,11 @@ internal partial class ShellViewModel : ViewModelBase
 {
     [ObservableProperty] ViewModelBase? _currentViewModel;
 
-    public DialogService DialogService { get; }
+    public IDialogService DialogService { get; }
     readonly IServiceProvider _serviceProvider;
     readonly AppSettingsService _appSettingsService;
 
-    public ShellViewModel(IServiceProvider serviceProvider, AppSettingsService appSettingsService, DialogService dialogService)
+    public ShellViewModel(IServiceProvider serviceProvider, AppSettingsService appSettingsService, IDialogService dialogService)
     {
         _serviceProvider = serviceProvider;
         _appSettingsService = appSettingsService;
