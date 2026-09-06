@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Kyanite.Modules.Default.Kanban.KanbanView">
+
+    <StackPanel Orientation="Horizontal">
+        <ItemsControl ItemsSource="{Binding Columns}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="5"
+                            Padding="5"
+                            Background="DimGray"
+                            DragDrop.AllowDrop="True">
+
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}"
+                                       FontWeight="Bold"
+                                       Margin="5"/>
+
+                            <ItemsControl ItemsSource="{Binding Items}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Red"
+                                                BorderThickness="1"
+                                                Background="Gray"
+                                                Margin="5"
+                                                Padding="5"
+                                                PointerPressed="Task_PointerPressed">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}"/>
+                                                <TextBlock Text="{Binding Description}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" 
+                                        Content="Add"
+                                        Command="{Binding AddTaskCommand}"/>
+                                <TextBox PlaceholderText="Enter task name..."
+                                         Text="{Binding NewItemName}"/>
+                            </DockPanel>
+
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBox Width="150" PlaceholderText="Enter column name..."
+                     Text="{Binding NewColumnName}"/>
+            <Button Content="Add"
+                    Command="{Binding AddColumnCommand}"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
