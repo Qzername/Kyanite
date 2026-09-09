@@ -1,4 +1,9 @@
-﻿namespace Kyanite.Android;
+﻿using Android.App;
+using Android.Content;
+using AndroidX.Core.App;
+using Kyanite.Services;
+
+namespace Kyanite.Android;
 
 internal class AndroidNotificationService : INotificationService
 {
@@ -25,7 +30,7 @@ internal class AndroidNotificationService : INotificationService
     public void Show(string title, string message)
     {
         var builder = new NotificationCompat.Builder(_context, CHANNEL_ID)
-            .SetSmallIcon(Android.Resource.Drawable.notification_icon_background)
+            .SetSmallIcon(Android.Resource.Drawable.avalonia_anim)
             .SetContentTitle(title)
             .SetContentText(message)
             .SetPriority(NotificationCompat.PriorityHigh)

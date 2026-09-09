@@ -7,7 +7,6 @@
         x:Class="Kyanite.Views.MainWindow"
 	   x:CompileBindings="False"
         
-        xmlns:viewLocators="using:Kyanite.ViewLocators"
         xmlns:modulePicker="using:Kyanite.Controls.ModulePicker"
 		
         ExtendClientAreaToDecorationsHint="True"
@@ -41,24 +40,6 @@
 
         <Panel>
 		   <views:ShellView />
-
-		   <!--Dialog system-->
-		   <!--TODO: move it to another control-->
-			<Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
-                  <Panel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#99393939" ></Panel>
-                  <Panel Width="{Binding DialogService.CurrentDialog.Width}" Height="{Binding DialogService.CurrentDialog.Height}" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Black">
-                    <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}" >
-						<!--TODO: make it not hardcoded-->
-						<ContentControl.DataTemplates>        
-                            <viewLocators:MainViewLocator/>
-						</ContentControl.DataTemplates>
-					</ContentControl>
-				  </Panel>
-
-				 <!--TODO: Make the button so that it will be in ModuleBuilder-->
-				 <Button Command="{Binding CloseDialogCommand}" Content="Close"/>
-             </Panel>
-
-	   </Panel>
+	    </Panel>
     </DockPanel>
 </Window>

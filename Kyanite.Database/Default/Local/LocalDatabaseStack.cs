@@ -7,7 +7,7 @@ namespace Kyanite.Database.Default.Local;
 public class LocalDatabaseStack()
     : DatabaseStack(new LocalModuleRepository(), new LocalDataRepository())
 {
-    protected const string DatabaseFilename = "./database.db";
+    protected const string DatabaseFilename = "database.db";
 
     public override string FriendlyName => "Local";
 
@@ -22,7 +22,7 @@ public class LocalDatabaseStack()
                   Type TEXT NOT NULL
               );";
 
-        connection = new SqliteConnection($"Data Source={DatabaseFilename}");
+        connection = new SqliteConnection($"Data Source={GetFilepath()}");
         SqlMapper.AddTypeHandler(new GuidHandler());
 
         await connection.OpenAsync();
@@ -48,7 +48,7 @@ public class LocalDatabaseStack()
 
             SqliteConnection.ClearAllPools();
 
-            File.Delete(DatabaseFilename);
+            File.Delete(GetFilepath());
         }
         catch (Exception ex)
         {
@@ -58,4 +58,12 @@ public class LocalDatabaseStack()
 
     public override DatabaseInitializationViewModelBase CreateInitializationViewModel()
         => new LocalInitializationViewModel();
+
+    protected string GetFilepath()
+    {
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var path = Path.Combine(appData, DatabaseFilename);
+
+        return path;
+    }
 }

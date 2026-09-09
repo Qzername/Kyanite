@@ -1,7 +1,15 @@
-﻿namespace Kyanite.Android;
+﻿using Android;
+using Android.App;
+using Android.Content.PM;
+using Android.OS;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
+using Avalonia.Android;
+
+namespace Kyanite.Android;
 
 [Activity(
-    Label = "Kyanite.Android",
+    Label = "Kyanite",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,

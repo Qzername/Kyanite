@@ -4,6 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Kyanite.Views.ShellView"
-		   x:CompileBindings="False">
-	<ContentControl Content="{Binding CurrentViewModel}"/>
+
+            xmlns:viewLocators="using:Kyanite.ViewLocators"
+		   
+            x:CompileBindings="False">
+    <Panel>
+	    <ContentControl Content="{Binding CurrentViewModel}"/>
+        
+		<!--Dialog system-->
+		<!--TODO: move it to another control-->
+		<Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <Panel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#99393939" ></Panel>
+            <Panel Width="{Binding DialogService.CurrentDialog.Width}" Height="{Binding DialogService.CurrentDialog.Height}" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Black">
+            <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}" >
+			    <ContentControl.DataTemplates>        
+                    <viewLocators:MainViewLocator/>
+			    </ContentControl.DataTemplates>
+		    </ContentControl>
+		    </Panel>
+
+		    <!--TODO: Make the button so that it will be in ModuleBuilder-->
+		    <Button Command="{Binding CloseDialogCommand}" Content="Close"/>
+        </Panel>
+    </Panel>
 </UserControl>

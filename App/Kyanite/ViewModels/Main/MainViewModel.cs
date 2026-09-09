@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Controls.ErrorInformation;
 using Kyanite.Controls.ModulePicker;
 using Kyanite.Core.Dialogs;
 using Kyanite.Exceptions;
@@ -8,6 +9,7 @@ using Kyanite.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Kyanite.ViewModels.Main;
@@ -27,6 +29,7 @@ internal partial class MainViewModel : ViewModelBase
 
     public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider)
     {
+
         AllModules.Clear();
 
         _serviceProvider = serviceProvider;
@@ -34,22 +37,48 @@ internal partial class MainViewModel : ViewModelBase
         _dialogService = dialogService;
         _databaseStackProvider = databaseStackProvider;
 
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            var exception = e.ExceptionObject as Exception;
+
+            _dialogService.Show(new DialogBuilder()
+                .WithViewModel(new ErrorInformationViewModel(exception.Message))
+                .Build());
+        };
+
+        TaskScheduler.UnobservedTaskException += (sender, e) =>
+        {
+            _dialogService.Show(new DialogBuilder()
+                .WithViewModel(new ErrorInformationViewModel(e.Exception.Message))
+                .Build());
+            e.SetObserved();
+        };
+
         _ = PrepareModuleManager();
     }
 
     async Task PrepareModuleManager()
     {
-        AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+        try
+        {
+            AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
 
-        if (_databaseStackProvider.ActiveStack is null)
-            throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
+            if (_databaseStackProvider.ActiveStack is null)
+                throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
 
-        if (!_moduleManager.IsStackPrepared)
-            await _moduleManager.Prepare(_serviceProvider, _databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
+            if (!_moduleManager.IsStackPrepared)
+                await _moduleManager.Prepare(_serviceProvider, _databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
 
-        AllModules.Replace(_moduleManager.Modules);
+            AllModules.Replace(_moduleManager.Modules);
 
-        IsDataLoaded = true;
+            IsDataLoaded = true;
+        }
+        catch(Exception ex)
+        {
+            _dialogService.Show(new DialogBuilder()
+                .WithViewModel(new ErrorInformationViewModel(ex.Message))
+                .Build());
+        }
     }
 
     [RelayCommand]

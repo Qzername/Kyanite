@@ -17,7 +17,7 @@ public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationSe
 
         _apiLink = value;
 
-        await DownloadDatabaseFile("database.db", DatabaseFilename);
+        await DownloadDatabaseFile("database.db", GetFilepath());
         return await base.Prepare(data);
     }
 
@@ -61,7 +61,7 @@ public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationSe
 
         var payload = new
         {
-            filename = Path.GetFileName(DatabaseFilename),
+            filename = Path.GetFileName(GetFilepath()),
             content = base64Content
         };
 
