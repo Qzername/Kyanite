@@ -10,7 +10,7 @@
         xmlns:modulePicker="using:Kyanite.Controls.ModulePicker"
 		
         ExtendClientAreaToDecorationsHint="True"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/kyanite-logo.ico"
         Title="Kyanite">
 
     <Window.Styles>
