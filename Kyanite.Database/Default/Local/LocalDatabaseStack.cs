@@ -22,7 +22,7 @@ public class LocalDatabaseStack()
                   Type TEXT NOT NULL
               );";
 
-        connection = new SqliteConnection($"Data Source={GetFilepath()}");
+        connection = new SqliteConnection($"Data Source={GetFilePath()}");
         SqlMapper.AddTypeHandler(new GuidHandler());
 
         await connection.OpenAsync();
@@ -48,7 +48,7 @@ public class LocalDatabaseStack()
 
             SqliteConnection.ClearAllPools();
 
-            File.Delete(GetFilepath());
+            File.Delete(GetFilePath());
         }
         catch (Exception ex)
         {
@@ -59,7 +59,7 @@ public class LocalDatabaseStack()
     public override DatabaseInitializationViewModelBase CreateInitializationViewModel()
         => new LocalInitializationViewModel();
 
-    protected string GetFilepath()
+    protected static string GetFilePath()
     {
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var path = Path.Combine(appData, DatabaseFilename);

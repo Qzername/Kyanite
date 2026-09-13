@@ -29,30 +29,12 @@ internal partial class MainViewModel : ViewModelBase
 
     public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider)
     {
-
         AllModules.Clear();
 
         _serviceProvider = serviceProvider;
         _moduleManager = moduleManager;
         _dialogService = dialogService;
         _databaseStackProvider = databaseStackProvider;
-
-        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
-        {
-            var exception = e.ExceptionObject as Exception;
-
-            _dialogService.Show(new DialogBuilder()
-                .WithViewModel(new ErrorInformationViewModel(exception.Message))
-                .Build());
-        };
-
-        TaskScheduler.UnobservedTaskException += (sender, e) =>
-        {
-            _dialogService.Show(new DialogBuilder()
-                .WithViewModel(new ErrorInformationViewModel(e.Exception.Message))
-                .Build());
-            e.SetObserved();
-        };
 
         _ = PrepareModuleManager();
     }
@@ -86,7 +68,7 @@ internal partial class MainViewModel : ViewModelBase
     {
         _dialogService.Show(new DialogBuilder()
             .WithTitle("Create dialog")
-            .WithSize(200, 300)
+            .WithSize(400, 300)
             .WithViewModel(new ModulePickerViewModel(_moduleManager))
             .SetOnClose((dialog) =>
             {

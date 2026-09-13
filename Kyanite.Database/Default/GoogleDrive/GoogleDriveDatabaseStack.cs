@@ -17,7 +17,7 @@ public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationSe
 
         _apiLink = value;
 
-        await DownloadDatabaseFile("database.db", GetFilepath());
+        await DownloadDatabaseFile("database.db", GetFilePath());
         return await base.Prepare(data);
     }
 
@@ -51,7 +51,7 @@ public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationSe
         string tempFilePath = Path.GetTempPath() + "kyanite_database.db";
 
         //copy file since database is locked by LocalDatabaseStack
-        File.Copy(DatabaseFilename, tempFilePath);
+        File.Copy(GetFilePath(), tempFilePath);
         byte[] fileBytes = File.ReadAllBytes(tempFilePath);
         string base64Content = Convert.ToBase64String(fileBytes);
         File.Delete(tempFilePath);
@@ -61,7 +61,7 @@ public class GoogleDriveDatabaseStack(NotificationServiceProvider notificationSe
 
         var payload = new
         {
-            filename = Path.GetFileName(GetFilepath()),
+            filename = Path.GetFileName(GetFilePath()),
             content = base64Content
         };
 
