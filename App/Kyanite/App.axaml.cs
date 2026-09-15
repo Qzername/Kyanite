@@ -11,7 +11,7 @@ namespace Kyanite;
 
 public partial class App : Application
 {
-    INotificationService? notificationService;
+    NotificationServiceProvider _notificationServiceProvider;
 
     public override void Initialize()
     {
@@ -25,11 +25,7 @@ public partial class App : Application
 
         var serviceProvider = collection.BuildServiceProvider();
 
-        if (notificationService is not null)
-        {
-            var notificationServiceProvider = serviceProvider.GetRequiredService<NotificationServiceProvider>();
-            notificationServiceProvider.SetService(notificationService);
-        }
+        _notificationServiceProvider = serviceProvider.GetRequiredService<NotificationServiceProvider>();
 
         var appViewModel = serviceProvider.GetRequiredService<AppViewModel>();
         DataContext = appViewModel;
@@ -58,6 +54,6 @@ public partial class App : Application
 
     public void RegisterNotificationService(INotificationService notificationService)
     {
-        this.notificationService = notificationService;
+        _notificationServiceProvider.SetService(notificationService);
     }
 }

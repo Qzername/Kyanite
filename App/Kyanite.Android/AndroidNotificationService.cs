@@ -30,7 +30,7 @@ internal class AndroidNotificationService : INotificationService
     public void Show(string title, string message)
     {
         var builder = new NotificationCompat.Builder(_context, CHANNEL_ID)
-            .SetSmallIcon(Android.Resource.Drawable.avalonia_anim)
+            .SetSmallIcon(Android.Resource.Drawable.notification_tile_bg)
             .SetContentTitle(title)
             .SetContentText(message)
             .SetPriority(NotificationCompat.PriorityHigh)

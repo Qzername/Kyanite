@@ -64,6 +64,15 @@ internal partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    async Task ManuallySynchronizeDatabase()
+    {
+        if (_databaseStackProvider.ActiveStack is null) 
+            return;
+
+        await _databaseStackProvider.ActiveStack.OnWindowClosing();
+    }
+
+    [RelayCommand]
     void CreateModule()
     {
         _dialogService.Show(new DialogBuilder()
