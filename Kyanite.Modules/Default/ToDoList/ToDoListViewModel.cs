@@ -14,55 +14,64 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
     [RelayCommand]
     void ToggleComplete(ToDoElement element)
     {
-        element.IsCompleted = !element.IsCompleted;
 
-        int currentIndex = ToDoElements.IndexOf(element);
-        if (currentIndex < 0) return;
+        element.CompletedAt = element.IsCompleted ? DateTime.Now : null;
 
-        if (element.IsCompleted)
-        {
-            int lastIndex = ToDoElements.Count - 1;
-            if (currentIndex != lastIndex)
-            {
-                ToDoElements.Move(currentIndex, lastIndex);
-            }
-        }
-        else
-        {
-            if (currentIndex != 0)
-            {
-                ToDoElements.Move(currentIndex, 0);
-            }
-        }
+        ApplySorting();
     }
 
     [RelayCommand]
     void OpenAddNewDialog()
     {
-        dialogService.Show(new DialogBuilder()
+        var dialog = new DialogBuilder()
             .WithTitle("Add new ToDo element")
             .WithSize(1067, 200)
             .WithViewModel(new AddNewToDoElementViewModel())
-            .SetOnClose(dialog =>
-            {
-                var vm = (AddNewToDoElementViewModel)dialog.ViewModel;
+            .SetOnClose(OnAddDialogClosed)
+            .Build();
+        dialogService.Show(dialog);
+    }
+    private void OnAddDialogClosed(Dialog dialog)
+    {
+        if (dialog.ViewModel is not AddNewToDoElementViewModel { ToDoElementName: { Length: > 0} name })
+        {
+            return;
+        }
 
-                if (string.IsNullOrWhiteSpace(vm.ToDoElementName))
-                    return;
+        if (string.IsNullOrWhiteSpace(name)) { return; }
+        ToDoElements.Insert(0, new ToDoElement { Name = name.Trim() });
+    }
 
-                var newElement = new ToDoElement()
-                {
-                    Name = vm.ToDoElementName
-                };
-
-                ToDoElements.Insert(0, newElement);
-            })
-            .Build());
+    [RelayCommand]
+    private void TogglePin(ToDoElement element)
+    {
+        element.IsPinned = !element.IsPinned;
+        ApplySorting();
     }
 
     [RelayCommand]
     void RemoveToDoElement(ToDoElement element)
     {
         ToDoElements.Remove(element);
+    }
+
+    private void ApplySorting()
+    {
+        var sorted = ToDoElements
+        .OrderByDescending(e => e.IsPinned)
+        .ThenBy(e => e.IsCompleted)
+        .ThenByDescending(e => e.DisplayDate)
+        .ToList();
+
+        for (int targetIndex = 0; targetIndex < sorted.Count; targetIndex++)
+        {
+            var item = sorted[targetIndex];
+            int currentIndex = ToDoElements.IndexOf(item);
+
+            if (currentIndex != targetIndex)
+            {
+                ToDoElements.Move(currentIndex, targetIndex);
+            }
+        }
     }
 }
