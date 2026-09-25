@@ -38,7 +38,7 @@
             <Button Content="Create new element"
                     Command="{Binding OpenAddNewDialogCommand}"/>
 
-            <TextBlock Text="TODO :" FontWeight="Bold" Margin="0,10,0,10" />
+            <TextBlock Text="TODO:" FontWeight="Bold" Margin="0,10,0,10" />
 
             <ItemsControl ItemsSource="{Binding ToDoElements}">
                 <ItemsControl.ItemTemplate>

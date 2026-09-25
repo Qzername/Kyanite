@@ -14,9 +14,7 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
     [RelayCommand]
     void ToggleComplete(ToDoElement element)
     {
-
         element.CompletedAt = element.IsCompleted ? DateTime.Now : null;
-
         ApplySorting();
     }
 
@@ -29,21 +27,12 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
             .WithViewModel(new AddNewToDoElementViewModel())
             .SetOnClose(OnAddDialogClosed)
             .Build();
-        dialogService.Show(dialog);
-    }
-    private void OnAddDialogClosed(Dialog dialog)
-    {
-        if (dialog.ViewModel is not AddNewToDoElementViewModel { ToDoElementName: { Length: > 0} name })
-        {
-            return;
-        }
 
-        if (string.IsNullOrWhiteSpace(name)) { return; }
-        ToDoElements.Insert(0, new ToDoElement { Name = name.Trim() });
+        dialogService.Show(dialog);
     }
 
     [RelayCommand]
-    private void TogglePin(ToDoElement element)
+    void TogglePin(ToDoElement element)
     {
         element.IsPinned = !element.IsPinned;
         ApplySorting();
@@ -55,13 +44,28 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
         ToDoElements.Remove(element);
     }
 
-    private void ApplySorting()
+    void OnAddDialogClosed(Dialog dialog)
+    {
+        if (dialog.ViewModel is not AddNewToDoElementViewModel vm || 
+            string.IsNullOrEmpty(vm.ToDoElementName))
+            return;
+
+        if (string.IsNullOrWhiteSpace(vm.ToDoElementName))
+            return; 
+
+        ToDoElements.Insert(0, new ToDoElement 
+        { 
+            Name = vm.ToDoElementName.Trim() 
+        });
+    }
+
+    void ApplySorting()
     {
         var sorted = ToDoElements
-        .OrderByDescending(e => e.IsPinned)
-        .ThenBy(e => e.IsCompleted)
-        .ThenByDescending(e => e.DisplayDate)
-        .ToList();
+            .OrderByDescending(e => e.IsPinned)
+            .ThenBy(e => e.IsCompleted)
+            .ThenByDescending(e => e.DisplayDate)
+            .ToList();
 
         for (int targetIndex = 0; targetIndex < sorted.Count; targetIndex++)
         {
@@ -69,9 +73,7 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
             int currentIndex = ToDoElements.IndexOf(item);
 
             if (currentIndex != targetIndex)
-            {
                 ToDoElements.Move(currentIndex, targetIndex);
-            }
         }
     }
 }
