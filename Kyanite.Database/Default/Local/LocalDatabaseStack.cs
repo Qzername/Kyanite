@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
-using System.Diagnostics;
 
 namespace Kyanite.Database.Default.Local;
 
@@ -37,23 +36,16 @@ public class LocalDatabaseStack()
 
     public override async void OnRemoved()
     {
-        try
+        if (connection is not null)
         {
-            if (connection is not null)
-            {
-                await connection.CloseAsync();
-                await connection.DisposeAsync();
-                connection = null;
-            }
-
-            SqliteConnection.ClearAllPools();
-
-            File.Delete(GetFilePath());
+            await connection.CloseAsync();
+            await connection.DisposeAsync();
+            connection = null;
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex);
-        }
+
+        SqliteConnection.ClearAllPools();
+
+        File.Delete(GetFilePath());
     }
 
     public override DatabaseInitializationViewModelBase CreateInitializationViewModel()

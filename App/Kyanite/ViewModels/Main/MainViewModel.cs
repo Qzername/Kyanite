@@ -9,7 +9,6 @@ using Kyanite.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Kyanite.ViewModels.Main;
@@ -39,34 +38,10 @@ internal partial class MainViewModel : ViewModelBase
         _ = PrepareModuleManager();
     }
 
-    async Task PrepareModuleManager()
-    {
-        try
-        {
-            AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
-
-            if (_databaseStackProvider.ActiveStack is null)
-                throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
-
-            if (!_moduleManager.IsStackPrepared)
-                await _moduleManager.Prepare(_serviceProvider, _databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
-
-            AllModules.Replace(_moduleManager.Modules);
-
-            IsDataLoaded = true;
-        }
-        catch(Exception ex)
-        {
-            _dialogService.Show(new DialogBuilder()
-                .WithViewModel(new ErrorInformationViewModel(ex.Message))
-                .Build());
-        }
-    }
-
     [RelayCommand]
     async Task ManuallySynchronizeDatabase()
     {
-        if (_databaseStackProvider.ActiveStack is null) 
+        if (_databaseStackProvider.ActiveStack is null)
             return;
 
         await _databaseStackProvider.ActiveStack.OnWindowClosing();
@@ -110,18 +85,6 @@ internal partial class MainViewModel : ViewModelBase
         shellViewModel.UpdateView();
     }
 
-    async Task FinalizeCreateModule(string moduleName, string selectedModule)
-    {
-        if (string.IsNullOrEmpty(selectedModule))
-            return;
-
-        var createdModule = await _moduleManager.CreateModule(moduleName, selectedModule);
-
-        AllModules.Replace(_moduleManager.Modules);
-
-        SelectedModule = createdModule;
-    }
-
     [RelayCommand]
     async Task DeleteModule(object moduleObj)
     {
@@ -140,6 +103,18 @@ internal partial class MainViewModel : ViewModelBase
         _ = SaveOldAndLoadNew(oldValue, newValue);
     }
 
+    async Task FinalizeCreateModule(string moduleName, string selectedModule)
+    {
+        if (string.IsNullOrEmpty(selectedModule))
+            return;
+
+        var createdModule = await _moduleManager.CreateModule(moduleName, selectedModule);
+
+        AllModules.Replace(_moduleManager.Modules);
+
+        SelectedModule = createdModule;
+    }
+
     async Task SaveOldAndLoadNew(Module? oldValue, Module? newValue)
     {
         if (oldValue is not null)
@@ -147,5 +122,29 @@ internal partial class MainViewModel : ViewModelBase
 
         if (newValue is not null)
             await _moduleManager.LoadModule(newValue);
+    }
+
+    async Task PrepareModuleManager()
+    {
+        try
+        {
+            AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+
+            if (_databaseStackProvider.ActiveStack is null)
+                throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
+
+            if (!_moduleManager.IsStackPrepared)
+                await _moduleManager.Prepare(_serviceProvider, _databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
+
+            AllModules.Replace(_moduleManager.Modules);
+
+            IsDataLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            _dialogService.Show(new DialogBuilder()
+                .WithViewModel(new ErrorInformationViewModel(ex.Message))
+                .Build());
+        }
     }
 }

@@ -34,7 +34,10 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
 
         desktop.MainWindow.Closed += async (sender, e) =>
         {
+            var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
+            var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
             var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
+
 
             //app is not configured; close the app
             if (databaseStackProvider.ActiveStack is null)
@@ -43,13 +46,15 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
                 return;
             }
 
+            if (shellViewModelProvider.TryRetriveShellCurrentViewModel(out MainViewModel mainViewModel) &&
+                mainViewModel.SelectedModule is not null)
+                await moduleManager.SaveModule(mainViewModel.SelectedModule);
+
             await databaseStackProvider.ActiveStack.OnWindowClosing();
 
+            moduleManager.ClearData();
             shellProvider.DisposeShell();
             desktop.MainWindow = null;
-
-            var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
-            moduleManager.ClearData();
         };
 
         desktop.MainWindow.Show();

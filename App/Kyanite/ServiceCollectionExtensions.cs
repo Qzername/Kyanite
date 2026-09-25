@@ -30,7 +30,7 @@ internal static class ServiceCollectionExtensions
         collection.AddSingleton<ShellViewModelProvider>();
 
         collection.AddTransient<MainViewModel>();
-        
+
         return collection;
     }
 }

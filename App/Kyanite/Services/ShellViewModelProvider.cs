@@ -24,6 +24,20 @@ internal class ShellViewModelProvider
         return shellViewModel;
     }
 
+    public bool TryRetriveShellCurrentViewModel<T>(out T viewModel) where T : ViewModelBase
+    {
+        viewModel = default!;
+
+        if (shellViewModel is null)
+            return false;
+
+        if (shellViewModel.CurrentViewModel is not T)
+            return false;
+
+        viewModel = (T)shellViewModel.CurrentViewModel;
+        return true;
+    }
+
     public void DisposeShell()
     {
         shellViewModel = null;
