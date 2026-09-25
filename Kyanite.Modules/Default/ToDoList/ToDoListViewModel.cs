@@ -21,14 +21,12 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
     [RelayCommand]
     void OpenAddNewDialog()
     {
-        var dialog = new DialogBuilder()
+        dialogService.CreateBuilder()
             .WithTitle("Add new ToDo element")
             .WithSize(1067, 200)
             .WithViewModel(new AddNewToDoElementViewModel())
-            .SetOnClose(OnAddDialogClosed)
-            .Build();
-
-        dialogService.Show(dialog);
+            .AddButton("Close", OnAddDialogClosed)
+            .BuildAndShow();
     }
 
     [RelayCommand]
@@ -46,16 +44,16 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
 
     void OnAddDialogClosed(Dialog dialog)
     {
-        if (dialog.ViewModel is not AddNewToDoElementViewModel vm || 
+        if (dialog.ViewModel is not AddNewToDoElementViewModel vm ||
             string.IsNullOrEmpty(vm.ToDoElementName))
             return;
 
         if (string.IsNullOrWhiteSpace(vm.ToDoElementName))
-            return; 
+            return;
 
-        ToDoElements.Insert(0, new ToDoElement 
-        { 
-            Name = vm.ToDoElementName.Trim() 
+        ToDoElements.Insert(0, new ToDoElement
+        {
+            Name = vm.ToDoElementName.Trim()
         });
     }
 

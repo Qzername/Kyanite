@@ -50,16 +50,17 @@ internal partial class MainViewModel : ViewModelBase
     [RelayCommand]
     void CreateModule()
     {
-        _dialogService.Show(new DialogBuilder()
+        _dialogService.CreateBuilder()
             .WithTitle("Create dialog")
             .WithSize(400, 300)
             .WithViewModel(new ModulePickerViewModel(_moduleManager))
-            .SetOnClose((dialog) =>
+            .AddButton("Close",
+            (dialog) =>
             {
                 var modulePickerVM = (ModulePickerViewModel)dialog.ViewModel;
                 _ = FinalizeCreateModule(modulePickerVM.ModuleName, modulePickerVM.SelectedModule);
             })
-            .Build());
+            .BuildAndShow();
     }
 
     [RelayCommand]
@@ -142,9 +143,9 @@ internal partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _dialogService.Show(new DialogBuilder()
+            _dialogService.CreateBuilder()
                 .WithViewModel(new ErrorInformationViewModel(ex.Message))
-                .Build());
+                .BuildAndShow();
         }
     }
 }

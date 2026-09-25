@@ -65,7 +65,7 @@
                                 <Button Classes="pinBtn"
                                         Classes.pinned="{Binding IsPinned}"
                                         DockPanel.Dock="Left"
-                                        Content="📌"
+                                        Content="😂"
                                         VerticalAlignment="Center"
                                         Margin="0,0,4,0"
                                         Command="{Binding #RootView.DataContext.TogglePinCommand}"

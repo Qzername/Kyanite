@@ -14,17 +14,35 @@
 		<!--Dialog system-->
 		<!--TODO: move it to another control-->
 		<Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
-            <Panel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#99393939" ></Panel>
-            <Panel Width="{Binding DialogService.CurrentDialog.Width}" Height="{Binding DialogService.CurrentDialog.Height}" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Black">
-            <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}" >
-			    <ContentControl.DataTemplates>        
-                    <viewLocators:MainViewLocator/>
-			    </ContentControl.DataTemplates>
-		    </ContentControl>
-		    </Panel>
+            <Panel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#99393939"/>
 
-		    <!--TODO: Make the button so that it will be in ModuleBuilder-->
-		    <Button Command="{Binding CloseDialogCommand}" Content="Close"/>
+            <DockPanel  VerticalAlignment="Center"
+                       HorizontalAlignment="Center" 
+                       Background="Black"
+                       
+                       Width="{Binding DialogService.CurrentDialog.Width}" 
+                       Height="{Binding DialogService.CurrentDialog.Height}" >
+               
+                <StackPanel DockPanel.Dock="Bottom" 
+                            HorizontalAlignment="Center" 
+                            Orientation="Horizontal">
+
+                    <ItemsControl ItemsSource="{Binding DialogService.CurrentDialog.Buttons}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding Command}" 
+                                        Content="{Binding Content}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}" >
+			        <ContentControl.DataTemplates>        
+                        <viewLocators:MainViewLocator/>
+			        </ContentControl.DataTemplates>
+		        </ContentControl>
+		    </DockPanel>
         </Panel>
     </Panel>
 </UserControl>

@@ -8,4 +8,5 @@ public interface IDialogService : INotifyPropertyChanged
 
     void Show(Dialog dialog);
     void Close();
+    DialogBuilder CreateBuilder();
 }

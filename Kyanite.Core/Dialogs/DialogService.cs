@@ -4,8 +4,7 @@ namespace Kyanite.Core.Dialogs;
 
 public class DialogService : IDialogService
 {
-    private Dialog? _currentDialog;
-
+    Dialog? _currentDialog;
     public Dialog? CurrentDialog
     {
         get => _currentDialog;
@@ -21,14 +20,8 @@ public class DialogService : IDialogService
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void Show(Dialog dialog)
-    {
-        CurrentDialog = dialog;
-    }
+    public void Show(Dialog dialog) => CurrentDialog = dialog;
+    public void Close() => CurrentDialog = null;
 
-    public void Close()
-    {
-        CurrentDialog?.OnClose?.Invoke(CurrentDialog);
-        CurrentDialog = null;
-    }
+    public DialogBuilder CreateBuilder() => new DialogBuilder(this);
 }

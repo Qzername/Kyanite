@@ -9,7 +9,7 @@ internal partial class ToDoElement : ObservableObject
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(DisplayDate))] 
+    [NotifyPropertyChangedFor(nameof(DisplayDate))]
     DateTime? _completedAt;
 
     [ObservableProperty] bool _isCompleted;
