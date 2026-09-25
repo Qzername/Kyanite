@@ -11,7 +11,7 @@ namespace Kyanite;
 
 public partial class App : Application
 {
-    NotificationServiceProvider _notificationServiceProvider;
+    NotificationServiceProvider _notificationServiceProvider = new();
 
     public override void Initialize()
     {
@@ -21,7 +21,9 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var collection = new ServiceCollection();
-        collection.AddCommonServices();
+        collection
+            .AddSingleton(_notificationServiceProvider)
+            .AddCommonServices();
 
         var serviceProvider = collection.BuildServiceProvider();
 

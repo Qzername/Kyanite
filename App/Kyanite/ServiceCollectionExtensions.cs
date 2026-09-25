@@ -10,7 +10,7 @@ namespace Kyanite;
 
 internal static class ServiceCollectionExtensions
 {
-    internal static void AddCommonServices(this IServiceCollection collection)
+    internal static IServiceCollection AddCommonServices(this IServiceCollection collection)
     {
         collection.AddSingleton<AppSettingsService>();
 
@@ -23,7 +23,6 @@ internal static class ServiceCollectionExtensions
 
         collection.AddSingleton<ModuleManager>();
         collection.AddSingleton<IDialogService, DialogService>();
-        collection.AddSingleton<NotificationServiceProvider>();
 
         // --- app ---
 
@@ -31,5 +30,7 @@ internal static class ServiceCollectionExtensions
         collection.AddSingleton<ShellViewModelProvider>();
 
         collection.AddTransient<MainViewModel>();
+        
+        return collection;
     }
 }
