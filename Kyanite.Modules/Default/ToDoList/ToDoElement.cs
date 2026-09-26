@@ -17,15 +17,19 @@ internal partial class ToDoElement : ObservableObject
     [ObservableProperty] bool _isPinned;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsOverdue))] 
+    [NotifyPropertyChangedFor(nameof(IsOverdue))]
     DateTime? _dueDate;
 
     [ObservableProperty] DateTime _createdAt;
 
+    public bool DueSoonNotified { get; set; }
+    public bool OverdueNotified { get; set; }
 
     public DateTime DisplayDate => CompletedAt ?? CreatedAt;
 
     public bool IsOverdue => !IsCompleted
                          && DueDate.HasValue
                          && DueDate.Value < DateTime.Now;
+
+    public void RefreshOverdueStatus() => OnPropertyChanged(nameof(IsOverdue));
 }

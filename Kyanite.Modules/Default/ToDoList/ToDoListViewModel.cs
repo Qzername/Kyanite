@@ -3,19 +3,69 @@ using CommunityToolkit.Mvvm.Input;
 using Kyanite.Core.Dialogs;
 using Kyanite.Database;
 using Kyanite.Modules.Default.ToDoList.Dialogs;
+using Kyanite.Services;
 using System.Collections.ObjectModel;
 
 namespace Kyanite.Modules.Default.ToDoList;
 
-internal partial class ToDoListViewModel(ModuleInformation moduleInformation, IDialogService dialogService) : Module(moduleInformation)
+internal partial class ToDoListViewModel : Module
 {
+    readonly IDialogService _dialogService;
+    readonly NotificationServiceProvider _notificationServiceProvider;
+    readonly DispatcherTimer _overdueCheckTimer;
+
     [Synchronize] ObservableCollection<ToDoElement> _toDoElements = new();
     public ObservableCollection<ToDoElement> ToDoElements => _toDoElements;
+
+    public ToDoListViewModel(
+        ModuleInformation moduleInformation,
+        IDialogService dialogService,
+        NotificationServiceProvider notificationServiceProvider)
+        : base(moduleInformation)
+    {
+        _dialogService = dialogService;
+        _notificationServiceProvider = notificationServiceProvider;
+        _overdueCheckTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMinutes(1),
+            IsEnabled = true
+        };
+
+        _overdueCheckTimer.Tick += (_, _) =>
+        {
+            foreach (var element in _toDoElements)
+            {
+                element.RefreshOverdueStatus();
+
+                if (element.IsCompleted || element.DueDate is null)
+                    continue;
+
+                var remaining = element.DueDate.Value - DateTime.Now;
+
+                /*if (!element.DueSoonNotified && remaining > TimeSpan.Zero && remaining <= TimeSpan.FromMinutes(15))
+                {
+                    ShowNotification("Reminder", $"\"{element.Name}\" is due in 15 minutes.");
+                    element.DueSoonNotified = true;
+                }
+
+                if (!element.OverdueNotified && remaining <= TimeSpan.Zero)
+                {
+                    ShowNotification("Overdue", $"\"{element.Name}\" is overdue.");
+                    element.OverdueNotified = true;
+                }*/
+            }
+        };
+    }
+
+    /* This should work but idk why it doesnt show popup maybe some api stuff that i preffer not get into right now you can check it 
+    void ShowNotification(string title, string message)
+    {
+        _notificationServiceProvider.ActiveService.Show(title, message);
+    }*/
 
     [RelayCommand]
     void ToggleComplete(ToDoElement element)
     {
-        element.IsCompleted = !element.IsCompleted;
         element.CompletedAt = element.IsCompleted ? DateTime.Now : null;
         ApplySorting();
     }
@@ -30,8 +80,7 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
             .SetOnClose(OnAddDialogClosed)
             .Build();
 
-        dialogService.Show(dialog);
-        ApplySorting();
+        _dialogService.Show(dialog);
     }
 
     [RelayCommand]
@@ -57,16 +106,16 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
         var dueTime = vm.DueTime;
 
         if (dueDate == null) dueDate = DateTime.Today + TimeSpan.FromHours(24);
-
         if (dueTime == null) dueTime = TimeSpan.Zero;
 
-        ToDoElements.Insert(0, new ToDoElement 
-        { 
-            Name = (vm.ToDoElementName.Trim()),
+        ToDoElements.Insert(0, new ToDoElement
+        {
+            Name = vm.ToDoElementName.Trim(),
             DueDate = dueDate.Value.Date + dueTime.Value,
             CreatedAt = DateTime.Now
-
         });
+
+        ApplySorting();
     }
 
     void ApplySorting()
@@ -74,7 +123,7 @@ internal partial class ToDoListViewModel(ModuleInformation moduleInformation, ID
         var sorted = ToDoElements
             .OrderByDescending(e => e.IsPinned)
             .ThenBy(e => e.IsCompleted)
-            .ThenByDescending(e => e.DueDate)
+            .ThenByDescending(e => e.DisplayDate)
             .ToList();
 
         for (int targetIndex = 0; targetIndex < sorted.Count; targetIndex++)
