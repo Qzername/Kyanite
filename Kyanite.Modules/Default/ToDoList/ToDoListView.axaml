@@ -31,14 +31,38 @@
         <Style Selector="Button.pinBtn.pinned">
             <Setter Property="Opacity" Value="1.0"/>
         </Style>
+
+        <Style Selector="TextBlock.dateText.overdue">
+            <Setter Property="Foreground" Value="#E53935"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
     </UserControl.Styles>
 
     <ScrollViewer>
-        <StackPanel Margin="10">
+        <StackPanel Margin="10" Grid.IsSharedSizeScope="True">
             <Button Content="Create new element"
                     Command="{Binding OpenAddNewDialogCommand}"/>
 
             <TextBlock Text="TODO:" FontWeight="Bold" Margin="0,10,0,10" />
+
+            <Border Padding="6,4" Margin="0,0,0,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="" Width="24" />
+                    <TextBlock Grid.Column="1" Text="Task" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2" Text="DueDate" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <TextBlock Grid.Column="3" Text="Date" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <TextBlock Grid.Column="4" Text="Remove" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+            </Border>
 
             <ItemsControl ItemsSource="{Binding ToDoElements}">
                 <ItemsControl.ItemTemplate>
@@ -48,36 +72,53 @@
                                 BorderBrush="Gray"
                                 BorderThickness="1"
                                 Padding="6,4">
-                            <DockPanel LastChildFill="True">
-                                <Button DockPanel.Dock="Right"
-                                        Content="Remove"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding #RootView.DataContext.RemoveToDoElementCommand}"
-                                        CommandParameter="{Binding}"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
+                                </Grid.ColumnDefinitions>
 
-                                <TextBlock Classes="dateText"
-                                           Classes.completed="{Binding IsCompleted}"
-                                           DockPanel.Dock="Right"
-                                           Text="{Binding DisplayDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
-                                           VerticalAlignment="Center"
-                                           Margin="0,0,12,0"/>
+                                <Button Grid.Column="0"
+                                          Classes="pinBtn"
+                                          Classes.pinned="{Binding IsPinned}"
+                                          Content="📌"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,4,0"
+                                          Command="{Binding #RootView.DataContext.TogglePinCommand}"
+                                          CommandParameter="{Binding}"/>
 
-                                <Button Classes="pinBtn"
-                                        Classes.pinned="{Binding IsPinned}"
-                                        DockPanel.Dock="Left"
-                                        Content="📌"
-                                        VerticalAlignment="Center"
-                                        Margin="0,0,4,0"
-                                        Command="{Binding #RootView.DataContext.TogglePinCommand}"
-                                        CommandParameter="{Binding}"/>
-
-                                <CheckBox Classes="todoCheck"
+                                <CheckBox Grid.Column="1"
+                                          Classes="todoCheck"
                                           VerticalAlignment="Center"
                                           IsChecked="{Binding IsCompleted}" 
                                           Content="{Binding Name}"
                                           Command="{Binding #RootView.DataContext.ToggleCompleteCommand}"
                                           CommandParameter="{Binding}"/>
-                            </DockPanel>
+
+                                <TextBlock Grid.Column="2"
+                                           Classes="dateText"
+                                           Classes.completed="{Binding IsCompleted}"
+                                           Classes.overdue="{Binding IsOverdue}"
+                                           Text="{Binding DueDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,12,0"/>
+
+                                <TextBlock Grid.Column="3"
+                                           Classes="dateText"
+                                           Classes.completed="{Binding IsCompleted}"
+                                           Text="{Binding DisplayDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,12,0"/>
+
+                                <Button Grid.Column="4"
+                                        Content="Remove"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding #RootView.DataContext.RemoveToDoElementCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

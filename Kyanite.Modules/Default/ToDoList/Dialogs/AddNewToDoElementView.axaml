@@ -4,6 +4,32 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.AddNewToDoElementView">
-    <TextBox PlaceholderText="New ToDo Element name..."
-            Text="{Binding ToDoElementName}"/>
+    <StackPanel Margin="16" Spacing="12">
+        <TextBox PlaceholderText="Task name..."
+                 Text="{Binding ToDoElementName}"/>
+
+        <Grid ColumnDefinitions="*,*">
+            <CalendarDatePicker Grid.Column="0"
+                        SelectedDate="{Binding DueDate}"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,0,6,0"/>
+
+            <TimePicker Grid.Column="1"
+                        SelectedTime="{Binding DueTime}"
+                        UseSeconds="False"
+                        ClockIdentifier="24HourClock"
+                        HorizontalAlignment="Stretch"
+                        Margin="6,0,0,0"/>
+
+            <!-- <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding AvailablePriorities}"
+                      SelectedItem="{Binding Priority}"
+                      HorizontalAlignment="Stretch"
+                      Margin="6,0,0,0"/>
+            -->
+        </Grid>
+
+        <TextBox PlaceholderText="Tags (comma-separated, e.g. Work, Home)..."
+                 Text="{Binding TagsInput}"/>
+    </StackPanel>
 </UserControl>

@@ -4,16 +4,28 @@ namespace Kyanite.Modules.Default.ToDoList;
 
 internal partial class ToDoElement : ObservableObject
 {
-    public string Name { get; set; } = string.Empty;
-
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    [ObservableProperty] string _name = string.Empty;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(DisplayDate))] 
+    [NotifyPropertyChangedFor(nameof(DisplayDate))]
     DateTime? _completedAt;
 
-    [ObservableProperty] bool _isCompleted;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsOverdue))]
+    bool _isCompleted;
+
     [ObservableProperty] bool _isPinned;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsOverdue))] 
+    DateTime? _dueDate;
+
+    [ObservableProperty] DateTime _createdAt;
+
+
     public DateTime DisplayDate => CompletedAt ?? CreatedAt;
+
+    public bool IsOverdue => !IsCompleted
+                         && DueDate.HasValue
+                         && DueDate.Value < DateTime.Now;
 }
