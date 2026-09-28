@@ -1,5 +1,4 @@
-﻿
-using Kyanite.ViewModels;
+﻿using Kyanite.ViewModels;
 
 namespace Kyanite.Core.Dialogs;
 
@@ -12,7 +11,7 @@ public class DialogBuilder(IDialogService dialogService)
 
     ViewModelBase? viewModel;
 
-    List<RawButtonInfo> buttons = [];
+    readonly List<RawButtonInfo> buttons = [];
 
     public DialogBuilder WithTitle(string title)
     {

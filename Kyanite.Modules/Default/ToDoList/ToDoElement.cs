@@ -12,15 +12,31 @@ internal partial class ToDoElement : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsOverdue))]
-    bool _isCompleted;
+    bool _isCompleted = false;
 
-    [ObservableProperty] bool _isPinned;
+    [ObservableProperty] bool _isPinned = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsOverdue))]
     DateTime? _dueDate;
 
     [ObservableProperty] DateTime _createdAt;
+
+    partial void OnIsCompletedChanged(bool value)
+    {
+        CompletedAt = value ? DateTime.Now : null;
+        if (!value)
+        {
+            DueSoonNotified = false;
+            OverdueNotified = false;
+        }
+    }
+
+    partial void OnDueDateChanged(DateTime? value)
+    {
+        DueSoonNotified = false;
+        OverdueNotified = false;
+    }
 
     public bool DueSoonNotified { get; set; }
     public bool OverdueNotified { get; set; }

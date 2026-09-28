@@ -1,37 +1,65 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.AddNewToDoElementView">
-    <StackPanel Margin="16" Spacing="12">
-        <TextBox PlaceholderText="Task name..."
-                 Text="{Binding ToDoElementName}"/>
-
-        <Grid ColumnDefinitions="*,*">
-            <CalendarDatePicker Grid.Column="0"
-                        SelectedDate="{Binding DueDate}"
-                        HorizontalAlignment="Stretch"
-                        Margin="0,0,6,0"/>
-
-            <TimePicker Grid.Column="1"
-                        SelectedTime="{Binding DueTime}"
-                        UseSeconds="False"
-                        ClockIdentifier="24HourClock"
-                        HorizontalAlignment="Stretch"
-                        Margin="6,0,0,0"/>
-        </Grid>
-        <Grid ColumnDefinitions="*,*">
-            <ComboBox Grid.Column="1"
-                    PlaceholderText="Priority"
-                    ItemsSource="{Binding AvailablePriorities}"
-                    SelectedItem="{Binding Priority}"
-                    HorizontalAlignment="Stretch"
-                    Margin="6,0,0,0"/>
+             xmlns:vm="using:Kyanite.Modules.Default.ToDoList.Dialogs"
+             x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.AddNewToDoElementView"
+             x:DataType="vm:AddNewToDoElementViewModel">
+    
+    <Border Background="#1E1E1E" Padding="24">
+        <Grid RowDefinitions="Auto, Auto, Auto, *, Auto">
             
-            <TextBox Grid.Column="0"    
-                    PlaceholderText="Tags (comma-separated, e.g. Work, Home)..."
-                    Text="{Binding TagsInput}"/>
+            <StackPanel Grid.Row="0" Spacing="6" Margin="0,0,0,16">
+                <TextBlock Text="Task Name" FontWeight="SemiBold" Foreground="#E0E0E0"/>
+                <TextBox Text="{Binding ToDoElementName}" 
+                         PlaceholderText="Enter task name..." 
+                         Background="#2D2D2D" Foreground="White" BorderBrush="#3E3E3E" Padding="8,6"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1" ColumnDefinitions="*, 16, *" Margin="0,0,0,16">
+                
+                <StackPanel Grid.Column="0" Spacing="6">
+                    <TextBlock Text="Due Date" FontWeight="SemiBold" Foreground="#E0E0E0"/>
+                    <DatePicker SelectedDate="{Binding DueDate}" 
+                                Background="#2D2D2D" Foreground="White" BorderBrush="#3E3E3E"
+                                HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="2" Spacing="6">
+                    <TextBlock Text="Due Time (Optional)" FontWeight="SemiBold" Foreground="#E0E0E0"/>
+                    <TimePicker SelectedTime="{Binding DueTime}"
+                                UseSeconds="False"
+                                ClockIdentifier="24HourClock"
+                                Background="#2D2D2D" Foreground="White" BorderBrush="#3E3E3E"
+                                HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="2" ColumnDefinitions="*, 16, *" Margin="0,0,0,16">
+                <StackPanel Grid.Column="0" Spacing="6">
+                    <TextBlock Text="Tags" FontWeight="SemiBold" Foreground="#E0E0E0"/>
+                    <TextBox PlaceholderText="e.g. Work, Home"
+                             Background="#2D2D2D" Foreground="White" BorderBrush="#3E3E3E" Padding="8,6"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="2" Spacing="6">
+                    <TextBlock Text="Priority" FontWeight="SemiBold" Foreground="#E0E0E0"/>
+                    <ComboBox HorizontalAlignment="Stretch" PlaceholderText="Select priority..."
+                              Background="#2D2D2D" Foreground="White" BorderBrush="#3E3E3E" Padding="8,6">
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="3" Height="20"/>
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                <Button Content="Cancel" 
+                        Command="{Binding CancelCommand}"
+                        Background="Transparent" Foreground="#E0E0E0" BorderBrush="#3E3E3E"
+                        Padding="16,8"/>
+                <Button Content="Add" 
+                        Command="{Binding AddCommand}"
+                        Classes="accent" 
+                        Padding="16,8"/>
+            </StackPanel>
         </Grid>
-    </StackPanel>
+    </Border>
 </UserControl>

@@ -5,19 +5,21 @@ using Kyanite.Database;
 using Kyanite.Modules.Default.ToDoList.Dialogs;
 using Kyanite.Services;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace Kyanite.Modules.Default.ToDoList;
 
-internal partial class ToDoListViewModel : Module
+internal partial class ToDoListViewModel : Module, IDisposable
 {
     readonly IDialogService _dialogService;
-    readonly NotificationServiceProvider _notificationServiceProvider;
-    readonly DispatcherTimer _overdueCheckTimer;
+    readonly ToDoReminderService _reminderService;
+    bool _isSorting;
 
-    [Synchronize] ToDoSettings _settings = new();
+    [Synchronize] readonly ToDoSettings _settings = new();
     public ToDoSettings Settings => _settings;
 
-    [Synchronize] ObservableCollection<ToDoElement> _toDoElements = new();
+    [Synchronize] readonly ObservableCollection<ToDoElement> _toDoElements = [];
     public ObservableCollection<ToDoElement> ToDoElements => _toDoElements;
 
     public ToDoListViewModel(
@@ -27,73 +29,58 @@ internal partial class ToDoListViewModel : Module
         : base(moduleInformation)
     {
         _dialogService = dialogService;
-        _notificationServiceProvider = notificationServiceProvider;
-        _overdueCheckTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMinutes(1),
-            IsEnabled = true
-        };
+        _reminderService = new ToDoReminderService(notificationServiceProvider);
+        _reminderService.Start(_toDoElements, Settings);
 
-        _overdueCheckTimer.Tick += (_, _) =>
-        {
-            foreach (var element in _toDoElements)
-            {
-                element.RefreshOverdueStatus();
-
-                if (!Settings.EnableNotifications || element.IsCompleted || element.DueDate is null)
-                    continue;
-
-                if (Settings.NotifyOnOverdue && !element.OverdueNotified && element.IsOverdue)
-                {
-                    ShowNotification("Overdue", $"\"{element.Name}\" is overdue.");
-                    element.OverdueNotified = true;
-                    element.DueSoonNotified = true; // Prevent due soon notification after overdue notification
-                }
-
-                if (!element.DueSoonNotified && element.IsDueSoon(Settings.DueSoonThresholdMinutes))
-                {
-                    ShowNotification("Reminder", $"\"{element.Name}\" is due in {Settings.DueSoonThresholdMinutes} minutes.");
-                    element.DueSoonNotified = true;
-                }
-            }
-        };
+        HookCollectionEvents(_toDoElements);
+        ApplySorting();
     }
 
+    public void Dispose()
+    {
+        UnhookCollectionEvents(_toDoElements);
+        _reminderService.Dispose();
+    }
 
     [RelayCommand]
     void OpenSettingsDialog()
     {
         _dialogService.CreateBuilder()
             .WithTitle("To-Do Settings")
-            .WithSize(420, 260)
-            .WithViewModel(new ToDoSettingsViewModel(Settings))
-            .AddButton("Add", OnSettingsDialogClosed)
+            .WithSize(600, 350)
+            .WithViewModel(new ToDoSettingsViewModel(_dialogService, Settings, OnSettingsSaved))
             .BuildAndShow();
     }
 
     [RelayCommand]
-    void ToggleComplete(ToDoElement element)
-    {
-        element.CompletedAt = element.IsCompleted ? DateTime.Now : null;
-        ApplySorting();
-    }
+    void ToggleComplete() => RequestSorting();
 
     [RelayCommand]
     void OpenAddNewDialog()
     {
         _dialogService.CreateBuilder()
             .WithTitle("Add new ToDo element")
-            .WithSize(1067, 200)
-            .WithViewModel(new AddNewToDoElementViewModel())
-            .AddButton("Close", OnAddDialogClosed)
+            .WithSize(1050, 350)
+            .WithViewModel(new AddNewToDoElementViewModel(_dialogService, OnAddNewElement))
             .BuildAndShow();
+    }
+
+    void OnSettingsSaved(ToDoSettings newSettings)
+    {
+        Settings.CopyFrom(newSettings);
+    }
+
+    void OnAddNewElement(ToDoElement newElement)
+    {
+        ToDoElements.Insert(0, newElement);
+        RequestSorting();
     }
 
     [RelayCommand]
     void TogglePin(ToDoElement element)
     {
         element.IsPinned = !element.IsPinned;
-        ApplySorting();
+        RequestSorting();
     }
 
     [RelayCommand]
@@ -102,55 +89,86 @@ internal partial class ToDoListViewModel : Module
         ToDoElements.Remove(element);
     }
 
-    /* This should work when you change .net version to proper one */
-    void ShowNotification(string title, string message)
+    void HookCollectionEvents(ObservableCollection<ToDoElement> collection)
     {
-        _notificationServiceProvider.ActiveService?.Show(title, message);
-    }
-
-    void OnSettingsDialogClosed(Dialog dialog)
-    {
-        if (dialog.ViewModel is not ToDoSettingsViewModel vm)
-            return;
-        Settings.EnableNotifications = vm.EnableNotifications;
-        Settings.NotifyOnOverdue = vm.NotifyOnOverdue;
-        Settings.DueSoonThresholdMinutes = vm.DueSoonThresholdMinutes;
-    }
-
-    void OnAddDialogClosed(Dialog dialog)
-    {
-        if (dialog.ViewModel is not AddNewToDoElementViewModel vm ||
-            string.IsNullOrWhiteSpace(vm.ToDoElementName))
-            return;
-
-        var dueDate = vm.DueDate ?? DateTime.Today + TimeSpan.FromHours(24);
-        var dueTime = vm.DueTime ?? TimeSpan.Zero;
-
-        ToDoElements.Insert(0, new ToDoElement
+        collection.CollectionChanged += OnToDoElementsCollectionChanged;
+        foreach (var item in collection)
         {
-            Name = vm.ToDoElementName.Trim(),
-            DueDate = dueDate.Date + dueTime,
-            CreatedAt = DateTime.Now
-        });
+            item.PropertyChanged += OnElementPropertyChanged;
+        }
+    }
 
-        ApplySorting();
+    void UnhookCollectionEvents(ObservableCollection<ToDoElement> collection)
+    {
+        collection.CollectionChanged -= OnToDoElementsCollectionChanged;
+        foreach (var item in collection)
+        {
+            item.PropertyChanged -= OnElementPropertyChanged;
+        }
+    }
+
+    void OnToDoElementsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == NotifyCollectionChangedAction.Move)
+            return;
+
+        if (e.OldItems is not null)
+        {
+            foreach (ToDoElement item in e.OldItems)
+                item.PropertyChanged -= OnElementPropertyChanged;
+        }
+
+        if (e.NewItems is not null)
+        {
+            foreach (ToDoElement item in e.NewItems)
+                item.PropertyChanged += OnElementPropertyChanged;
+        }
+
+        RequestSorting();
+    }
+
+    void OnElementPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_isSorting) return;
+
+        if (e.PropertyName is nameof(ToDoElement.IsCompleted)
+            or nameof(ToDoElement.IsPinned)
+            or nameof(ToDoElement.DisplayDate))
+        {
+            RequestSorting();
+        }
+    }
+
+    void RequestSorting()
+    {
+        Dispatcher.UIThread.Post(ApplySorting, DispatcherPriority.Background);
     }
 
     void ApplySorting()
     {
-        var sorted = ToDoElements
-            .OrderByDescending(e => e.IsPinned)
-            .ThenBy(e => e.IsCompleted)
-            .ThenByDescending(e => e.DisplayDate)
-            .ToList();
+        if (_isSorting) return;
+        _isSorting = true;
 
-        for (int targetIndex = 0; targetIndex < sorted.Count; targetIndex++)
+        try
         {
-            var item = sorted[targetIndex];
-            int currentIndex = ToDoElements.IndexOf(item);
+            var sorted = ToDoElements
+                .OrderByDescending(e => e.IsPinned)
+                .ThenBy(e => e.IsCompleted)
+                .ThenByDescending(e => e.DisplayDate)
+                .ToList();
 
-            if (currentIndex != targetIndex)
-                ToDoElements.Move(currentIndex, targetIndex);
+            for (int targetIndex = 0; targetIndex < sorted.Count; targetIndex++)
+            {
+                var item = sorted[targetIndex];
+                int currentIndex = ToDoElements.IndexOf(item);
+
+                if (currentIndex != targetIndex)
+                    ToDoElements.Move(currentIndex, targetIndex);
+            }
+        }
+        finally
+        {
+            _isSorting = false;
         }
     }
 }

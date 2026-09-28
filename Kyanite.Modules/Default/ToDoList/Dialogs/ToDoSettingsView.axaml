@@ -6,20 +6,30 @@
 
     <StackPanel Margin="16" Spacing="12">
         <CheckBox Content="Enable notifications"
-                  IsChecked="{Binding EnableNotifications}"/>
+                  IsChecked="{Binding SettingsDraft.EnableNotifications}"/>
 
         <CheckBox Content="Enable notifications for overdue tasks"
-                  IsChecked="{Binding NotifyOnOverdue}"
-                  IsEnabled="{Binding EnableNotifications}"/>
+                  IsChecked="{Binding SettingsDraft.NotifyOnOverdue}"
+                  IsEnabled="{Binding SettingsDraft.EnableNotifications}"/>
 
         <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
             <TextBlock Text="Notification timer before overdue :" 
                        VerticalAlignment="Center"/>
             <NumericUpDown Grid.Column="1" 
-                           Value="{Binding DueSoonThresholdMinutes}" 
+                           Value="{Binding SettingsDraft.DueSoonThresholdMinutes}" 
                            Minimum="1" Maximum="1440"
-                           IsEnabled="{Binding EnableNotifications}"
+                           IsEnabled="{Binding SettingsDraft.EnableNotifications}"
                            Width="120"/>
         </Grid>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,20,0,0">
+            <Button Content="Cancel" 
+                    Command="{Binding CancelCommand}"
+                    Background="Transparent" Foreground="#E0E0E0" BorderBrush="#3E3E3E"
+                    Padding="16,8"/>
+            <Button Content="Save" 
+                    Command="{Binding SaveCommand}"
+                    Classes="accent" 
+                    Padding="16,8"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>
