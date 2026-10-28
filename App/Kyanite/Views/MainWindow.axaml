@@ -1,45 +1,55 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="using:Kyanite.Views"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Kyanite.Views.MainWindow"
-	   x:CompileBindings="False"
-        
-        xmlns:modulePicker="using:Kyanite.Controls.ModulePicker"
-		
-        ExtendClientAreaToDecorationsHint="True"
-        Icon="/Assets/kyanite-logo.ico"
-        Title="Kyanite">
+<Window
+    x:Class="Kyanite.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:Kyanite.Views"
+    Title="Kyanite"
+    Width="1366"
+    Height="768"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:CompileBindings="False"
+    ExtendClientAreaToDecorationsHint="True"
+    Icon="/Assets/kyanite-logo.ico"
+    mc:Ignorable="d">
 
     <Window.Styles>
-        <!-- Hide default title bar -->
-        <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel > TextBlock">
+        <!--  Hide default title bar  -->
+        <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel &gt; TextBlock">
             <Setter Property="IsVisible" Value="False" />
         </Style>
-        <!-- Hide full screen button (not the maximalize window) -->
+
+        <!--  Hide full screen button (not the maximalize window)  -->
         <Style Selector="WindowDrawnDecorations /template/ Button#PART_FullScreenButton">
             <Setter Property="IsVisible" Value="False" />
         </Style>
+
         <Style Selector="WindowDrawnDecorations /template/ StackPanel#PART_OverlayPanel">
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <!-- this fixes gap between last button and edge-->
-            <Setter Property="Width" Value="138"/>
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <!--  this fixes gap between last button and edge  -->
+            <Setter Property="Width" Value="138" />
         </Style>
     </Window.Styles>
 
     <DockPanel>
-        <Panel DockPanel.Dock="Top"
-               Height="30" Background="#0F0E0F"
-               WindowDecorationProperties.ElementRole="TitleBar">
+        <Panel
+            Height="30"
+            Background="#0F0E0F"
+            DockPanel.Dock="Top"
+            WindowDecorationProperties.ElementRole="TitleBar">
 
-            <TextBlock VerticalAlignment="Center" Padding="5,0" Foreground="#0012DE" Text="Kyanite"/>
+            <TextBlock
+                Padding="5,0"
+                VerticalAlignment="Center"
+                Foreground="#0012DE"
+                Text="Kyanite" />
         </Panel>
 
         <Panel>
-		   <views:ShellView />
-	    </Panel>
+            <views:ShellView />
+        </Panel>
     </DockPanel>
 </Window>
