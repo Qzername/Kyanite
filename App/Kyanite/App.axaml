@@ -1,15 +1,14 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:viewLocators="using:Kyanite.ViewLocators"
-             x:Class="Kyanite.App"
-             xmlns:vm="using:Kyanite.ViewModels"
-		     x:CompileBindings="False"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:viewLocators="using:Kyanite.ViewLocators"
+	x:Class="Kyanite.App"
+	xmlns:vm="using:Kyanite.ViewModels"
+	x:CompileBindings="False"
+	RequestedThemeVariant="Dark">
 
-             RequestedThemeVariant="Dark">
-
-    <Application.DataTemplates>
-        <viewLocators:MainViewLocator/>
-    </Application.DataTemplates>
+	<Application.DataTemplates>
+		<viewLocators:MainViewLocator />
+	</Application.DataTemplates>
 
 	<Application.Resources>
 		<FontFamily x:Key="Unbounded">avares://Kyanite/Assets#Unbounded</FontFamily>
@@ -18,17 +17,17 @@
 	<TrayIcon.Icons>
 		<TrayIcons>
 			<TrayIcon Command="{Binding OpenApplicationCommand}" Icon="/Assets/kyanite-logo.ico"
-					  ToolTipText="Whiteboard">
+				ToolTipText="Whiteboard">
 				<TrayIcon.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding CloseApplicationCommand}" Header="Close application"/>
+						<NativeMenuItem Command="{Binding CloseApplicationCommand}" Header="Close application" />
 					</NativeMenu>
 				</TrayIcon.Menu>
 			</TrayIcon>
 		</TrayIcons>
 	</TrayIcon.Icons>
-	
+
 	<Application.Styles>
-		<FluentTheme />
-    </Application.Styles>
+		<PleasantTheme />
+	</Application.Styles>
 </Application>

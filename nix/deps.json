@@ -25,6 +25,16 @@
     "hash": "sha256-6wx06tjSKWQOlX2czdp6Wh0nuwVapx5qf/s8Qj5we40="
   },
   {
+    "pname": "Avalonia.Controls.ColorPicker",
+    "version": "12.1.1",
+    "hash": "sha256-hJasqDLGy2goQpqoOBeGkyq4IVMI4CK9QGKh6n+zgb4="
+  },
+  {
+    "pname": "Avalonia.Controls.DataGrid",
+    "version": "12.1.0",
+    "hash": "sha256-ivrjda3meZJMpoCglss5cYXxeldsR8li76tILwNQO/g="
+  },
+  {
     "pname": "Avalonia.Desktop",
     "version": "12.1.2",
     "hash": "sha256-wsNZFYW6jH9D8fx54xwAEsbpjqGsxzwbGlj+MVf2ZHo="
@@ -273,6 +283,26 @@
     "pname": "Microsoft.Win32.SystemEvents",
     "version": "4.7.0",
     "hash": "sha256-GHxnD1Plb32GJWVWSv0Y51Kgtlb+cdKgOYVBYZSgVF4="
+  },
+  {
+    "pname": "PleasantUI",
+    "version": "5.3.1",
+    "hash": "sha256-2FIbuVFkPthciA4WWofttg9frFe++McMvYIB729XowU="
+  },
+  {
+    "pname": "PleasantUI.DataGrid",
+    "version": "5.3.1",
+    "hash": "sha256-tnUvl8kXXM5+5oVO0p82SvliDA+giNi3uv2OYC8XCnU="
+  },
+  {
+    "pname": "PleasantUI.MaterialIcons",
+    "version": "5.2.2",
+    "hash": "sha256-/nCWlSRKsV7dQTCm/7cs++6yoIN1Q46l2RB1MqLh1P8="
+  },
+  {
+    "pname": "PleasantUI.ToolKit",
+    "version": "5.3.1",
+    "hash": "sha256-HO7uYlTC199gi6gEMAQ/lSpvByadVYy/CUyV2DnihxM="
   },
   {
     "pname": "SkiaSharp",

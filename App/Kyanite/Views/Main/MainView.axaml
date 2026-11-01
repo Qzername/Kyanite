@@ -1,44 +1,40 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vm="using:Kyanite.ViewModels.Main"
-             d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kyanite.Views.Main.MainView"
-             x:DataType="vm:MainViewModel"
-			 
-		     xmlns:controls="using:Kyanite.Controls"
-             xmlns:viewLocators="using:Kyanite.ViewLocators"
-             	 
-             FontFamily="Unbounded">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:vm="using:Kyanite.ViewModels.Main"
+    d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="Kyanite.Views.Main.MainView"
+    x:DataType="vm:MainViewModel"
+    xmlns:controls="using:Kyanite.Controls"
+    xmlns:viewLocators="using:Kyanite.ViewLocators">
 
     <SplitView IsPaneOpen="{Binding IsPaneOpen}"
-               DisplayMode="CompactInline"
-			   
-               CompactPaneLength="48"
-               OpenPaneLength="200">
+        DisplayMode="CompactInline"
+        CompactPaneLength="48"
+        OpenPaneLength="200">
         <SplitView.Pane>
             <DockPanel>
-                <StackPanel DockPanel.Dock="Bottom" >
+                <StackPanel DockPanel.Dock="Bottom">
                     <Button Content="Synchronize Database" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                            Command="{Binding ManuallySynchronizeDatabaseCommand}"/>
+                        Command="{Binding ManuallySynchronizeDatabaseCommand}" />
                     <Button Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                            Command="{Binding CreateModuleCommand}"/>
+                        Command="{Binding CreateModuleCommand}" />
                     <Button Content="Reset initialization" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                            Command="{Binding ResetInitializationCommand}"/>
+                        Command="{Binding ResetInitializationCommand}" />
                 </StackPanel>
-			  
+
                 <Button DockPanel.Dock="Top"
-                        Content="☰" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding TogglePaneCommand}" />
+                    Content="☰" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Command="{Binding TogglePaneCommand}" />
                 <Grid>
                     <ListBox Background="Transparent"
-                             ItemsSource="{Binding AllModules}"
-                             SelectedItem="{Binding SelectedModule}">
+                        ItemsSource="{Binding AllModules}"
+                        SelectedItem="{Binding SelectedModule}">
                         <ListBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Remove"
-                                          Command="{Binding DeleteModuleCommand}"
-                                          CommandParameter="{Binding SelectedModule}" />
+                                    Command="{Binding DeleteModuleCommand}"
+                                    CommandParameter="{Binding SelectedModule}" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
 
@@ -48,18 +44,18 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-				  
+
                     <controls:LoadingCircle HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            IsVisible="{Binding !IsDataLoaded}"/>
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding !IsDataLoaded}" />
                 </Grid>
             </DockPanel>
         </SplitView.Pane>
 
         <SplitView.Content>
-            <ContentControl Content="{Binding SelectedModule}" >
+            <ContentControl Content="{Binding SelectedModule}">
                 <ContentControl.DataTemplates>
-                    <viewLocators:ModuleViewLocator/>
+                    <viewLocators:ModuleViewLocator />
                 </ContentControl.DataTemplates>
             </ContentControl>
         </SplitView.Content>

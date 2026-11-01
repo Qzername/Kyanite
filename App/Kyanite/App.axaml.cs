@@ -2,10 +2,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Kyanite.Services;
 using Kyanite.ViewModels;
 using Kyanite.Views;
 using Microsoft.Extensions.DependencyInjection;
+using PleasantUI.Core;
 
 namespace Kyanite;
 
@@ -16,6 +18,8 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        // override font for PleasantUI library
+        PleasantSettings.Current!.Font = (FontFamily)Resources["Unbounded"]!;
     }
 
     public override void OnFrameworkInitializationCompleted()
