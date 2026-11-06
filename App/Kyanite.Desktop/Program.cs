@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using HotAvalonia;
 using Kyanite.Desktop.NotificationServices;
+using Kyanite.Services;
 using System;
 using System.Threading;
 
@@ -16,24 +17,29 @@ internal sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        var notificationService = NotificationServiceFactory.Create();
+
         // Try to create/acquire the mutex
         using var mutex = new Mutex(true, MutexName, out bool isNewInstance);
 
         if (!isNewInstance)
         {
-            new WindowsNotificationService().Show(
+            notificationService.Show(
                 "Kyanite",
-                "Instance of this app is already running"
+                "An instance of this app is already running."
             );
 
             return;
         }
 
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        BuildAvaloniaApp(notificationService).StartWithClassicDesktopLifetime(args);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
+        => BuildAvaloniaApp(NotificationServiceFactory.Create());
+
+    static AppBuilder BuildAvaloniaApp(INotificationService notificationService)
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
 #if DEBUG
@@ -42,17 +48,9 @@ internal sealed class Program
 #endif
             .WithInterFont()
             .LogToTrace()
-            .AfterSetup(ProvideNotificationService);
-
-    static void ProvideNotificationService(AppBuilder builder)
-    {
-        var app = (App)builder.Instance!;
-
-        if (OperatingSystem.IsWindows())
-            app.RegisterNotificationService(new WindowsNotificationService());
-        else if (OperatingSystem.IsMacOS())
-            app.RegisterNotificationService(new MacOsNotificationService());
-        else if (OperatingSystem.IsLinux())
-            app.RegisterNotificationService(new LinuxNotificationService());
-    }
+            .AfterSetup(builder =>
+            {
+                if (builder.Instance is App app)
+                    app.RegisterNotificationService(notificationService);
+            });
 }

@@ -8,4 +8,9 @@ public class NotificationServiceProvider
     {
         ActiveService = notificationService;
     }
+
+    public void Show(string title, string message)
+    {
+        ActiveService?.Show(title, message);
+    }
 }

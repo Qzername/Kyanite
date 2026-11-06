@@ -1,19 +1,33 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.Input;
+using Kyanite.Core.Dialogs;
 using Kyanite.ViewModels;
+using System;
 
 namespace Kyanite.Modules.Default.ToDoList.Dialogs;
 
-
-public partial class ToDoSettingsViewModel : ViewModelBase
+internal partial class ToDoSettingsViewModel : ViewModelBase
 {
-    [ObservableProperty] int _dueSoonThresholdMinutes;
-    [ObservableProperty] bool _enableNotifications;
-    [ObservableProperty] bool _notifyOnOverdue;
+    readonly IDialogService _dialogService;
+    readonly Action<ToDoSettings> _onSave;
 
-    public ToDoSettingsViewModel(ToDoSettings currentSettings)
+    public ToDoSettings SettingsDraft { get; }
+
+    public ToDoSettingsViewModel(IDialogService dialogService, ToDoSettings currentSettings, Action<ToDoSettings> onSave)
     {
-        DueSoonThresholdMinutes = currentSettings.DueSoonThresholdMinutes;
-        EnableNotifications = currentSettings.EnableNotifications;
-        NotifyOnOverdue = currentSettings.NotifyOnOverdue;
+        _dialogService = dialogService;
+        _onSave = onSave;
+
+        SettingsDraft = new ToDoSettings();
+        SettingsDraft.CopyFrom(currentSettings);
     }
+
+    [RelayCommand]
+    void Save()
+    {
+        _onSave(SettingsDraft);
+        _dialogService.Close();
+    }
+
+    [RelayCommand]
+    void Cancel() => _dialogService.Close();
 }

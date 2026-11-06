@@ -20,7 +20,7 @@ public class LocalModuleRepository : IModuleRepository
 
         CheckForInitialization();
 
-        var moduleWithId = module with { Id = Guid.NewGuid() };
+        var moduleWithId = module with { Id = module.Id == Guid.Empty ? Guid.NewGuid() : module.Id };
 
         string createModuleTableQuery = $@"
             CREATE TABLE IF NOT EXISTS ""{moduleWithId.Id}"" (
@@ -29,8 +29,14 @@ public class LocalModuleRepository : IModuleRepository
             Value TEXT NOT NULL
         );";
 
-        await sqliteConnection.ExecuteAsync(insertQuery, moduleWithId);
-        await sqliteConnection.ExecuteAsync(createModuleTableQuery, moduleWithId);
+        await sqliteConnection!.ExecuteAsync(insertQuery, new
+        {
+            Id = moduleWithId.Id.ToString(),
+            moduleWithId.Name,
+            moduleWithId.Type
+        });
+
+        await sqliteConnection!.ExecuteAsync(createModuleTableQuery);
 
         return moduleWithId;
     }
@@ -39,30 +45,39 @@ public class LocalModuleRepository : IModuleRepository
     {
         CheckForInitialization();
 
-        var modules = await sqliteConnection.QueryAsync<ModuleInformation>("SELECT * FROM Modules;");
+        var rows = await sqliteConnection!.QueryAsync<ModuleRow>(
+            "SELECT Id, Name, Type FROM Modules;");
 
-        return modules;
+        return rows.Select(ToModuleInformation).ToArray();
     }
 
     public async Task<ModuleInformation> GetSingleAsync(Guid id)
     {
         CheckForInitialization();
 
-        var module = await sqliteConnection.QuerySingleAsync<ModuleInformation>("SELECT * FROM Modules WHERE Id = @Id;", new { Id = id });
+        var row = await sqliteConnection!.QuerySingleOrDefaultAsync<ModuleRow>(
+            "SELECT Id, Name, Type FROM Modules WHERE Id = @Id;",
+            new { Id = id.ToString() })
+            ?? throw new InvalidOperationException($"Module '{id}' does not exist.");
 
-        return module;
+        return ToModuleInformation(row);
     }
 
     public async Task<ModuleInformation> UpdateAsync(ModuleInformation module)
     {
-        string updateQuery = @$"
+        string updateQuery = @"
             UPDATE Modules
             SET Name = @Name, Type = @Type
             WHERE Id = @Id;";
 
         CheckForInitialization();
 
-        await sqliteConnection.ExecuteAsync(updateQuery, module);
+        await sqliteConnection!.ExecuteAsync(updateQuery, new
+        {
+            Id = module.Id.ToString(),
+            module.Name,
+            module.Type
+        });
 
         return module;
     }
@@ -71,16 +86,31 @@ public class LocalModuleRepository : IModuleRepository
     {
         const string deleteQuery = @"
             DELETE FROM Modules
-            WHERE Id = @id;";
+            WHERE Id = @Id;";
 
         CheckForInitialization();
 
-        await sqliteConnection.ExecuteAsync(deleteQuery, new { id });
+        await sqliteConnection!.ExecuteAsync(deleteQuery, new { Id = id.ToString() });
     }
 
     void CheckForInitialization()
     {
         if (sqliteConnection is null)
-            throw new Exception("SQLite connection is not initialized. Call Initialize() before using the repository.");
+            throw new InvalidOperationException("SQLite connection is not initialized. Call Initialize() before using the repository.");
+    }
+
+    static ModuleInformation ToModuleInformation(ModuleRow row)
+        => new()
+        {
+            Id = Guid.Parse(row.Id),
+            Name = row.Name,
+            Type = row.Type
+        };
+
+    sealed class ModuleRow
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
     }
 }

@@ -2,15 +2,76 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Kyanite.Modules.Default.Reminder"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kyanite.Modules.Default.Reminder.ReminderView">
-    <StackPanel>
-        <TextBlock Text="Reminder module, for now it only sends notifications"/>
-        <TextBox PlaceholderText="Enter title" 
-                 Text="{Binding NotificationTitle}"/>
-        <TextBox PlaceholderText="Enter description" 
-                 Text="{Binding NotificationDescription}"/>
-        <Button Content="Show" 
-                Command="{Binding SendNotificationCommand}"/>
-    </StackPanel>
+             x:Class="Kyanite.Modules.Default.Reminder.ReminderView"
+             x:Name="RootView"
+             x:DataType="vm:ReminderViewModel">
+    <ScrollViewer>
+        <StackPanel Margin="10" Spacing="10">
+            <TextBlock Text="Scheduled reminders" FontWeight="Bold"/>
+
+            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="12">
+                <StackPanel Spacing="8">
+                    <TextBox PlaceholderText="Title" Text="{Binding NewTitle}"/>
+                    <TextBox PlaceholderText="Message" Text="{Binding NewMessage}"/>
+                    <Grid ColumnDefinitions="*,*">
+                        <CalendarDatePicker Grid.Column="0"
+                                            SelectedDate="{Binding NewDate}"
+                                            HorizontalAlignment="Stretch"
+                                            Margin="0,0,6,0"/>
+                        <TimePicker Grid.Column="1"
+                                    SelectedTime="{Binding NewTime}"
+                                    UseSeconds="False"
+                                    ClockIdentifier="24HourClock"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="6,0,0,0"/>
+                    </Grid>
+                    <Button Content="Add reminder"
+                            HorizontalAlignment="Right"
+                            Command="{Binding AddReminderCommand}"/>
+                </StackPanel>
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding Reminders}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,5,0,0"
+                                CornerRadius="5"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                Padding="10,6">
+                            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                                <StackPanel Grid.Column="0" Spacing="2">
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Message}" Opacity="0.75" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding RemindAt, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                                               FontSize="11" Opacity="0.6"/>
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="1"
+                                           Text="Completed"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0"
+                                           IsVisible="{Binding IsCompleted}"/>
+
+                                <Button Grid.Column="2"
+                                        Content="Done"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,8,0"
+                                        Command="{Binding #RootView.DataContext.MarkCompletedCommand}"
+                                        CommandParameter="{Binding}"/>
+
+                                <Button Grid.Column="3"
+                                        Content="Remove"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding #RootView.DataContext.RemoveReminderCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

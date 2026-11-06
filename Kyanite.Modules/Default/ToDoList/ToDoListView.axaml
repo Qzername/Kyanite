@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Kyanite.Modules.Default.ToDoList"
-             xmlns:models="using:Kyanite.Database"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Kyanite.Modules.Default.ToDoList.ToDoListView"
              x:Name="RootView"
@@ -37,6 +36,10 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 
+        <Style Selector="TextBlock.tags">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Opacity" Value="0.7"/>
+        </Style>
     </UserControl.Styles>
 
     <ScrollViewer>
@@ -51,9 +54,9 @@
                         VerticalAlignment="Center"
                         Content="Create new element"
                         Command="{Binding OpenAddNewDialogCommand}"/>
-                <Button Grid.Column="1" 
-                        Content="Settings" 
-                        VerticalAlignment="Center" 
+                <Button Grid.Column="1"
+                        Content="Settings"
+                        VerticalAlignment="Center"
                         HorizontalAlignment="Right"
                         Command="{Binding OpenSettingsDialogCommand}"/>
             </Grid>
@@ -65,6 +68,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColPriority" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
@@ -72,9 +76,10 @@
 
                     <TextBlock Grid.Column="0" Text="" Width="24" />
                     <TextBlock Grid.Column="1" Text="Task" FontWeight="SemiBold" VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="2" Text="DueDate" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
-                    <TextBlock Grid.Column="3" Text="Date" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
-                    <TextBlock Grid.Column="4" Text="Remove" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2" Text="Priority" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <TextBlock Grid.Column="3" Text="DueDate" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <TextBlock Grid.Column="4" Text="Date" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <TextBlock Grid.Column="5" Text="Remove" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
             </Border>
 
@@ -90,6 +95,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColPriority" />
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
@@ -104,15 +110,25 @@
                                           Command="{Binding #RootView.DataContext.TogglePinCommand}"
                                           CommandParameter="{Binding}"/>
 
-                                <CheckBox Grid.Column="1"
-                                          Classes="todoCheck"
-                                          VerticalAlignment="Center"
-                                          IsChecked="{Binding IsCompleted}" 
-                                          Content="{Binding Name}"
-                                          Command="{Binding #RootView.DataContext.ToggleCompleteCommand}"
-                                          CommandParameter="{Binding}"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                    <CheckBox Classes="todoCheck"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding IsCompleted}"
+                                              Content="{Binding Name}"/>
+                                    <TextBlock Classes="tags"
+                                               Text="{Binding TagsDisplay}"
+                                               IsVisible="{Binding HasTags}"
+                                               Margin="28,0,0,0"/>
+                                </StackPanel>
 
                                 <TextBlock Grid.Column="2"
+                                           Text="{Binding Priority}"
+                                           Foreground="{Binding PriorityBrush}"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,12,0"/>
+
+                                <TextBlock Grid.Column="3"
                                            Classes="dateText"
                                            Classes.completed="{Binding IsCompleted}"
                                            Classes.overdue="{Binding IsOverdue}"
@@ -120,14 +136,14 @@
                                            VerticalAlignment="Center"
                                            Margin="0,0,12,0"/>
 
-                                <TextBlock Grid.Column="3"
+                                <TextBlock Grid.Column="4"
                                            Classes="dateText"
                                            Classes.completed="{Binding IsCompleted}"
                                            Text="{Binding DisplayDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
                                            VerticalAlignment="Center"
                                            Margin="0,0,12,0"/>
 
-                                <Button Grid.Column="4"
+                                <Button Grid.Column="5"
                                         Content="Remove"
                                         VerticalAlignment="Center"
                                         Command="{Binding #RootView.DataContext.RemoveToDoElementCommand}"

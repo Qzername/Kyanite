@@ -1,25 +1,37 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dialogs="using:Kyanite.Modules.Default.ToDoList.Dialogs"
+             mc:Ignorable="d" d:DesignWidth="440" d:DesignHeight="320"
              x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.ToDoSettingsView"
              x:DataType="dialogs:ToDoSettingsViewModel">
 
-    <StackPanel Margin="16" Spacing="12">
+    <StackPanel Margin="20" Spacing="14">
         <CheckBox Content="Enable notifications"
-                  IsChecked="{Binding EnableNotifications}"/>
+                  IsChecked="{Binding SettingsDraft.EnableNotifications}"/>
 
         <CheckBox Content="Enable notifications for overdue tasks"
-                  IsChecked="{Binding NotifyOnOverdue}"
-                  IsEnabled="{Binding EnableNotifications}"/>
+                  IsChecked="{Binding SettingsDraft.NotifyOnOverdue}"
+                  IsEnabled="{Binding SettingsDraft.EnableNotifications}"/>
 
         <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-            <TextBlock Text="Notification timer before overdue :" 
-                       VerticalAlignment="Center"/>
-            <NumericUpDown Grid.Column="1" 
-                           Value="{Binding DueSoonThresholdMinutes}" 
+            <TextBlock Text="Notify before the due time (minutes)"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"/>
+            <NumericUpDown Grid.Column="1"
+                           Value="{Binding SettingsDraft.DueSoonThresholdMinutes}"
                            Minimum="1" Maximum="1440"
-                           IsEnabled="{Binding EnableNotifications}"
+                           IsEnabled="{Binding SettingsDraft.EnableNotifications}"
                            Width="120"/>
         </Grid>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,8,0,0">
+            <Button Content="Cancel" Command="{Binding CancelCommand}"/>
+            <Button Content="Save" Command="{Binding SaveCommand}"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>

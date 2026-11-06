@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 
 namespace Kyanite.Modules.Default.Kanban;
 
@@ -20,6 +21,10 @@ public partial class KanbanView : UserControl
         if (sender is not Control control || control.DataContext is not Item item)
             return;
 
+        // Let buttons inside the card handle their own clicks.
+        if (e.Source is Control sourceControl && sourceControl.FindAncestorOfType<Button>(includeSelf: true) is not null)
+            return;
+
         var data = new DataTransfer();
         data.Add(DataTransferItem.Create(ItemFormat, item));
 
@@ -28,23 +33,16 @@ public partial class KanbanView : UserControl
 
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-        if (e.DataTransfer.TryGetValue(ItemFormat) is not null)
-            e.DragEffects = DragDropEffects.Move;
-        else
-            e.DragEffects = DragDropEffects.None;
+        e.DragEffects = e.DataTransfer.TryGetValue(ItemFormat) is not null
+            ? DragDropEffects.Move
+            : DragDropEffects.None;
     }
 
     private void OnDrop(object? sender, DragEventArgs e)
     {
         var item = e.DataTransfer.TryGetValue(ItemFormat);
 
-        if (item is null)
-        {
-            e.DragEffects = DragDropEffects.None;
-            return;
-        }
-
-        if (e.Source is not Control source)
+        if (item is null || e.Source is not Control source)
         {
             e.DragEffects = DragDropEffects.None;
             return;
@@ -52,21 +50,17 @@ public partial class KanbanView : UserControl
 
         var targetColumn = FindColumn(source);
 
-        if (targetColumn is null)
-        {
-            e.DragEffects = DragDropEffects.None;
-            return;
-        }
-
-        if (DataContext is not KanbanViewModel viewModel)
+        if (targetColumn is null || DataContext is not KanbanViewModel viewModel)
         {
             e.DragEffects = DragDropEffects.None;
             return;
         }
 
         foreach (var column in viewModel.Columns)
+        {
             if (column.Items.Remove(item))
                 break;
+        }
 
         targetColumn.Items.Add(item);
         e.DragEffects = DragDropEffects.Move;

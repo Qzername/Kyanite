@@ -2,53 +2,22 @@
     x:Class="Kyanite.Views.ShellView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Kyanite.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewLocators="using:Kyanite.ViewLocators"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:CompileBindings="False"
     mc:Ignorable="d">
+
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="Escape" Command="{Binding CloseDialogCommand}" />
+    </UserControl.KeyBindings>
+
     <Panel>
         <ContentControl Content="{Binding CurrentViewModel}" />
 
         <!--  Dialog system  -->
-        <!--  TODO: move it to another control  -->
-        <Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
-            <Panel
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="#99393939" />
-
-            <DockPanel
-                Width="{Binding DialogService.CurrentDialog.Width}"
-                Height="{Binding DialogService.CurrentDialog.Height}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="Black">
-
-                <ItemsControl
-                    HorizontalAlignment="Center"
-                    DockPanel.Dock="Bottom"
-                    ItemsSource="{Binding DialogService.CurrentDialog.Buttons}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Command="{Binding Command}" Content="{Binding Content}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}">
-                    <ContentControl.DataTemplates>
-                        <viewLocators:MainViewLocator />
-                    </ContentControl.DataTemplates>
-                </ContentControl>
-            </DockPanel>
-        </Panel>
+        <controls:DialogHost />
     </Panel>
 </UserControl>
