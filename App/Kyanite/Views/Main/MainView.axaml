@@ -1,55 +1,110 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:vm="using:Kyanite.ViewModels.Main"
-    d:DesignWidth="800" d:DesignHeight="450"
+<UserControl
     x:Class="Kyanite.Views.Main.MainView"
-    x:DataType="vm:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Kyanite.Controls"
-    xmlns:viewLocators="using:Kyanite.ViewLocators">
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:PleasantUI;assembly=PleasantUI.MaterialIcons"
+    xmlns:viewLocators="using:Kyanite.ViewLocators"
+    xmlns:vm="using:Kyanite.ViewModels.Main"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:MainViewModel">
 
-    <SplitView IsPaneOpen="{Binding IsPaneOpen}"
-        DisplayMode="CompactInline"
+    <SplitView
         CompactPaneLength="48"
+        DisplayMode="CompactInline"
+        IsPaneOpen="{Binding IsPaneOpen}"
         OpenPaneLength="200">
         <SplitView.Pane>
-            <DockPanel>
-                <StackPanel DockPanel.Dock="Bottom">
-                    <Button Content="Synchronize Database" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding ManuallySynchronizeDatabaseCommand}" />
-                    <Button Content="Create Module" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding CreateModuleCommand}" />
-                    <Button Content="Reset initialization" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding ResetInitializationCommand}" />
-                </StackPanel>
+            <Border Padding="8">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Spacing="8">
+                        <Button
+                            Height="32"
+                            Padding="0"
+                            Command="{Binding ManuallySynchronizeDatabaseCommand}"
+                            CornerRadius="10">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon
+                                    Width="14"
+                                    Height="14"
+                                    Data="{x:Static icons:MaterialIcons.Sync}" />
+                                <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Sync" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Height="32"
+                            Padding="0"
+                            Command="{Binding CreateModuleCommand}"
+                            CornerRadius="10">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon
+                                    Width="14"
+                                    Height="14"
+                                    Data="{x:Static icons:MaterialIcons.PenPlus}" />
+                                <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Create" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Height="32"
+                            Padding="0"
+                            Command="{Binding ResetInitializationCommand}"
+                            CornerRadius="10">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon
+                                    Width="14"
+                                    Height="14"
+                                    Data="{x:Static icons:MaterialIcons.ReloadAlert}" />
+                                <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Reset" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
 
-                <Button DockPanel.Dock="Top"
-                    Content="☰" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                    Command="{Binding TogglePaneCommand}" />
-                <Grid>
-                    <ListBox Background="Transparent"
-                        ItemsSource="{Binding AllModules}"
-                        SelectedItem="{Binding SelectedModule}">
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Remove"
-                                    Command="{Binding DeleteModuleCommand}"
-                                    CommandParameter="{Binding SelectedModule}" />
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
+                    <Button
+                        Height="32"
+                        Padding="0"
+                        Command="{Binding TogglePaneCommand}"
+                        CornerRadius="10"
+                        DockPanel.Dock="Top">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <PathIcon
+                                Width="14"
+                                Height="14"
+                                Data="{x:Static icons:MaterialIcons.Menu}" />
+                            <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Menu" />
+                        </StackPanel>
+                    </Button>
 
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <Grid>
+                        <ListBox
+                            Background="Transparent"
+                            ItemsSource="{Binding AllModules}"
+                            SelectedItem="{Binding SelectedModule}">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Command="{Binding DeleteModuleCommand}"
+                                        CommandParameter="{Binding SelectedModule}"
+                                        Header="Remove" />
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
 
-                    <controls:LoadingCircle HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding !IsDataLoaded}" />
-                </Grid>
-            </DockPanel>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <controls:LoadingCircle
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding !IsDataLoaded}" />
+                    </Grid>
+                </DockPanel>
+            </Border>
+
         </SplitView.Pane>
 
         <SplitView.Content>
