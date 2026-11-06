@@ -1,50 +1,54 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kyanite.Views.ShellView"
-
-            xmlns:viewLocators="using:Kyanite.ViewLocators"
-		   
-            x:CompileBindings="False">
+<UserControl
+    x:Class="Kyanite.Views.ShellView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewLocators="using:Kyanite.ViewLocators"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:CompileBindings="False"
+    mc:Ignorable="d">
     <Panel>
-	    <ContentControl Content="{Binding CurrentViewModel}"/>
-        
-		<!--Dialog system-->
-		<!--TODO: move it to another control-->
-		<Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
-            <Panel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#99393939"/>
+        <ContentControl Content="{Binding CurrentViewModel}" />
 
-            <DockPanel  VerticalAlignment="Center"
-                       HorizontalAlignment="Center" 
-                       Background="Black"
-                       
-                       Width="{Binding DialogService.CurrentDialog.Width}" 
-                       Height="{Binding DialogService.CurrentDialog.Height}" >
+        <!--  Dialog system  -->
+        <!--  TODO: move it to another control  -->
+        <Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <Panel
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="#99393939" />
 
-                <ItemsControl DockPanel.Dock="Bottom" 
-                              HorizontalAlignment="Center" 
-                              ItemsSource="{Binding DialogService.CurrentDialog.Buttons}">
+            <DockPanel
+                Width="{Binding DialogService.CurrentDialog.Width}"
+                Height="{Binding DialogService.CurrentDialog.Height}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="Black">
+
+                <ItemsControl
+                    HorizontalAlignment="Center"
+                    DockPanel.Dock="Bottom"
+                    ItemsSource="{Binding DialogService.CurrentDialog.Buttons}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
+                            <StackPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Command="{Binding Command}" 
-                                    Content="{Binding Content}"/>
+                            <Button Command="{Binding Command}" Content="{Binding Content}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}" >
-			        <ContentControl.DataTemplates>        
-                        <viewLocators:MainViewLocator/>
-			        </ContentControl.DataTemplates>
-		        </ContentControl>
-		    </DockPanel>
+                <ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}">
+                    <ContentControl.DataTemplates>
+                        <viewLocators:MainViewLocator />
+                    </ContentControl.DataTemplates>
+                </ContentControl>
+            </DockPanel>
         </Panel>
     </Panel>
 </UserControl>
