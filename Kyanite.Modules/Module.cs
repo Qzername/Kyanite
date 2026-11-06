@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kyanite.Database;
+using System;
 
 namespace Kyanite.Modules;
 
-public abstract class Module : ObservableObject
+public abstract class Module : ObservableObject, IDisposable
 {
     public Guid ModuleId { get; }
     public string Name { get; }
@@ -14,8 +15,12 @@ public abstract class Module : ObservableObject
         Name = moduleInformation.Name;
     }
 
-    public void Refresh()
+    public virtual void Refresh()
     {
         OnPropertyChanged(string.Empty);
+    }
+
+    public virtual void Dispose()
+    {
     }
 }

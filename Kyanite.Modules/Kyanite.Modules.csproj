@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.1.2" />
-    <PackageReference Include="AvaloniaHotMarkdown" Version="1.0.0" />
+    <PackageReference Include="AvaloniaHotMarkdown" Version="1.0.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
   </ItemGroup>
 

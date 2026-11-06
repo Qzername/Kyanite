@@ -2,36 +2,54 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.AddNewToDoElementView">
-    <StackPanel Margin="16" Spacing="12">
-        <TextBox PlaceholderText="Task name..."
-                 Text="{Binding ToDoElementName}"/>
+             xmlns:vm="using:Kyanite.Modules.Default.ToDoList.Dialogs"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="420"
+             x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.AddNewToDoElementView"
+             x:DataType="vm:AddNewToDoElementViewModel">
+    <StackPanel Margin="20" Spacing="14">
+        <StackPanel Spacing="6">
+            <TextBlock Text="Task name" FontWeight="SemiBold"/>
+            <TextBox PlaceholderText="Enter task name..."
+                     Text="{Binding ToDoElementName}"/>
+        </StackPanel>
 
         <Grid ColumnDefinitions="*,*">
-            <CalendarDatePicker Grid.Column="0"
-                        SelectedDate="{Binding DueDate}"
-                        HorizontalAlignment="Stretch"
-                        Margin="0,0,6,0"/>
+            <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,6,0">
+                <TextBlock Text="Due date" FontWeight="SemiBold"/>
+                <CalendarDatePicker SelectedDate="{Binding DueDate}"
+                                    HorizontalAlignment="Stretch"/>
+            </StackPanel>
 
-            <TimePicker Grid.Column="1"
-                        SelectedTime="{Binding DueTime}"
-                        UseSeconds="False"
-                        ClockIdentifier="24HourClock"
-                        HorizontalAlignment="Stretch"
-                        Margin="6,0,0,0"/>
+            <StackPanel Grid.Column="1" Spacing="6" Margin="6,0,0,0">
+                <TextBlock Text="Due time" FontWeight="SemiBold"/>
+                <TimePicker SelectedTime="{Binding DueTime}"
+                            UseSeconds="False"
+                            ClockIdentifier="24HourClock"
+                            HorizontalAlignment="Stretch"/>
+            </StackPanel>
         </Grid>
+
         <Grid ColumnDefinitions="*,*">
-            <ComboBox Grid.Column="1"
-                    PlaceholderText="Priority"
-                    ItemsSource="{Binding AvailablePriorities}"
-                    SelectedItem="{Binding Priority}"
-                    HorizontalAlignment="Stretch"
-                    Margin="6,0,0,0"/>
-            
-            <TextBox Grid.Column="0"    
-                    PlaceholderText="Tags (comma-separated, e.g. Work, Home)..."
-                    Text="{Binding TagsInput}"/>
+            <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,6,0">
+                <TextBlock Text="Tags" FontWeight="SemiBold"/>
+                <TextBox PlaceholderText="Work, Home, Shopping..."
+                         Text="{Binding TagsInput}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Spacing="6" Margin="6,0,0,0">
+                <TextBlock Text="Priority" FontWeight="SemiBold"/>
+                <ComboBox ItemsSource="{Binding AvailablePriorities}"
+                          SelectedItem="{Binding Priority}"
+                          HorizontalAlignment="Stretch"/>
+            </StackPanel>
         </Grid>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,8,0,0">
+            <Button Content="Cancel" Command="{Binding CancelCommand}"/>
+            <Button Content="Add" Command="{Binding AddCommand}"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>

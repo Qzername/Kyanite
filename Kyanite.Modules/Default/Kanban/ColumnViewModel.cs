@@ -6,20 +6,25 @@ namespace Kyanite.Modules.Default.Kanban;
 
 internal partial class ColumnViewModel : ObservableObject
 {
-    public string Name { get; set; } = string.Empty;
-    public ObservableCollection<Item> Items { get; set; } = [];
-
+    [ObservableProperty] string _name = string.Empty;
     [ObservableProperty] string _newItemName = string.Empty;
+    [ObservableProperty] string _newItemDescription = string.Empty;
+
+    public ObservableCollection<Item> Items { get; set; } = [];
 
     [RelayCommand]
     void AddTask()
     {
-        Items.Add(new Item()
+        if (string.IsNullOrWhiteSpace(NewItemName))
+            return;
+
+        Items.Add(new Item
         {
-            Name = NewItemName,
-            Description = "desc"
+            Name = NewItemName.Trim(),
+            Description = NewItemDescription.Trim()
         });
 
         NewItemName = string.Empty;
+        NewItemDescription = string.Empty;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace Kyanite.Database.Default.Local;
 
@@ -21,8 +22,14 @@ public class LocalDatabaseStack()
                   Type TEXT NOT NULL
               );";
 
+        await CloseConnectionAsync();
+
+        var directory = Path.GetDirectoryName(GetFilePath());
+
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
+
         connection = new SqliteConnection($"Data Source={GetFilePath()}");
-        SqlMapper.AddTypeHandler(new GuidHandler());
 
         await connection.OpenAsync();
 
@@ -31,21 +38,34 @@ public class LocalDatabaseStack()
 
         await connection.ExecuteAsync(createModuleListTableQuery);
 
+        IsPrepared = true;
         return true;
     }
 
-    public override async void OnRemoved()
+    public override async Task OnRemoved()
     {
-        if (connection is not null)
-        {
-            await connection.CloseAsync();
-            await connection.DisposeAsync();
-            connection = null;
-        }
+        await CloseConnectionAsync();
 
         SqliteConnection.ClearAllPools();
 
-        File.Delete(GetFilePath());
+        IsPrepared = false;
+        TryDelete(GetFilePath());
+    }
+
+    /// <summary>
+    /// Closes the connection without deleting the database file. Used before uploading the file
+    /// to a remote storage provider.
+    /// </summary>
+    protected async Task CloseConnectionAsync()
+    {
+        if (connection is null)
+            return;
+
+        if (connection.State == ConnectionState.Open)
+            await connection.CloseAsync();
+
+        await connection.DisposeAsync();
+        connection = null;
     }
 
     public override DatabaseInitializationViewModelBase CreateInitializationViewModel()
@@ -54,8 +74,19 @@ public class LocalDatabaseStack()
     protected static string GetFilePath()
     {
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var path = Path.Combine(appData, DatabaseFilename);
+        return Path.Combine(appData, DatabaseFilename);
+    }
 
-        return path;
+    static void TryDelete(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+        catch (IOException)
+        {
+            // Another process still holds the file. It will be replaced on the next launch.
+        }
     }
 }

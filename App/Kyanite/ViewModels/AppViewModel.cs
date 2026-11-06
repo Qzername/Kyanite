@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Controls.ErrorInformation;
+using Kyanite.Core.Dialogs;
 using Kyanite.Database;
 using Kyanite.Modules;
 using Kyanite.Services;
@@ -13,71 +15,121 @@ using System.Threading.Tasks;
 namespace Kyanite.ViewModels;
 
 /// <summary>
-/// viewmodel for entire application
+/// View model for the entire application.
 /// </summary>
 internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewModelBase
 {
+    bool _isShuttingDown;
+
     [RelayCommand]
     public void OpenApplication()
     {
-        var desktop = (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            return;
 
         if (desktop.MainWindow is not null)
+        {
+            desktop.MainWindow.Show();
+            desktop.MainWindow.Activate();
             return;
+        }
 
         var shellProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
 
-        desktop.MainWindow = new MainWindow()
+        var window = new MainWindow
         {
             DataContext = shellProvider.CreateOrGetShell()
         };
 
-        desktop.MainWindow.Closed += async (sender, e) =>
+        desktop.MainWindow = window;
+        window.Closed += async (_, _) => await OnMainWindowClosedAsync(desktop, shellProvider);
+        window.Show();
+    }
+
+    [RelayCommand]
+    async Task CloseApplication()
+    {
+        try
         {
-            var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
-            var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
+            _isShuttingDown = true;
+
+            await SaveCurrentModuleAsync();
+
             var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
 
+            if (databaseStackProvider.ActiveStack is not null)
+                await databaseStackProvider.ActiveStack.OnWindowClosing();
 
-            //app is not configured; close the app
+            serviceProvider.GetRequiredService<ModuleManager>().ClearData();
+            serviceProvider.GetRequiredService<ShellViewModelProvider>().DisposeShell();
+
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow = null;
+                desktop.Shutdown();
+            }
+        }
+        catch (Exception exception)
+        {
+            _isShuttingDown = false;
+            ShowError(exception.Message);
+        }
+    }
+
+    async Task OnMainWindowClosedAsync(
+        IClassicDesktopStyleApplicationLifetime desktop,
+        ShellViewModelProvider shellProvider)
+    {
+        if (_isShuttingDown)
+            return;
+
+        try
+        {
+            var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
+
+            // The app is not configured yet, so close it instead of leaving it in the tray.
             if (databaseStackProvider.ActiveStack is null)
             {
                 desktop.Shutdown();
                 return;
             }
 
-            if (shellViewModelProvider.TryRetriveShellCurrentViewModel(out MainViewModel mainViewModel) &&
-                mainViewModel.SelectedModule is not null)
-                await moduleManager.SaveModule(mainViewModel.SelectedModule);
-
+            await SaveCurrentModuleAsync();
             await databaseStackProvider.ActiveStack.OnWindowClosing();
-
-            moduleManager.ClearData();
+        }
+        catch (Exception exception)
+        {
+            ShowError(exception.Message);
+        }
+        finally
+        {
+            serviceProvider.GetRequiredService<ModuleManager>().ClearData();
             shellProvider.DisposeShell();
             desktop.MainWindow = null;
-        };
-
-        desktop.MainWindow.Show();
+        }
     }
 
-    [RelayCommand]
-    async Task CloseApplication()
+    async Task SaveCurrentModuleAsync()
     {
-        //save current module if any
-        var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
+        var shellProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
 
-        if (mainViewModel.SelectedModule is not null)
+        if (!shellProvider.TryRetriveShellCurrentViewModel(out MainViewModel mainViewModel) ||
+            mainViewModel.SelectedModule is null)
         {
-            var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
-            await moduleManager.SaveModule(mainViewModel.SelectedModule);
+            return;
         }
 
-        DatabaseStackProvider databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-        
-        if(databaseStackProvider.ActiveStack is not null)
-            await databaseStackProvider.ActiveStack.OnWindowClosing();
+        await serviceProvider.GetRequiredService<ModuleManager>().SaveModule(mainViewModel.SelectedModule);
+    }
 
-        if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.Shutdown();
+    void ShowError(string message)
+    {
+        serviceProvider.GetRequiredService<IDialogService>()
+            .CreateBuilder()
+            .WithTitle("Error")
+            .WithSize(460, 240)
+            .WithViewModel(new ErrorInformationViewModel(message))
+            .AddCloseButton()
+            .BuildAndShow();
     }
 }

@@ -8,12 +8,14 @@ public class ModuleManager()
 {
     const string DefaultModuleNamespace = "Kyanite.Modules.Default";
 
+    static readonly Dictionary<Type, FieldInfo[]> SynchronizableFieldsCache = [];
+
     readonly List<Module> modules = [];
     public Module[] Modules => [.. modules];
 
     public Dictionary<string, Type> ModuleTypes { get; private set; } = [];
 
-    public bool IsStackPrepared { get; private set; } = false;
+    public bool IsStackPrepared { get; private set; }
 
     IServiceProvider? _serviceProvider;
     DatabaseStack? databaseStack;
@@ -35,12 +37,13 @@ public class ModuleManager()
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        var foundModules = from t in Assembly.GetExecutingAssembly().GetTypes()
-                           where typeof(Module).IsAssignableFrom(t) &&
-                                 t != typeof(Module) &&
-                                 t.Namespace is not null &&
-                                 t.Namespace.StartsWith(DefaultModuleNamespace)
-                           select t;
+        var foundModules = from type in assembly.GetTypes()
+                           where typeof(Module).IsAssignableFrom(type) &&
+                                 type != typeof(Module) &&
+                                 !type.IsAbstract &&
+                                 type.Namespace is not null &&
+                                 type.Namespace.StartsWith(DefaultModuleNamespace)
+                           select type;
 
         foreach (var moduleType in foundModules)
             ModuleTypes[moduleType.Name.Replace("ViewModel", string.Empty)] = moduleType;
@@ -49,63 +52,70 @@ public class ModuleManager()
     async Task LoadSavedModulesFromDatabase()
     {
         if (databaseStack is null)
-            throw new Exception("Module manager needs to be prepared before usage");
+            throw new InvalidOperationException("Module manager needs to be prepared before usage.");
 
-        await databaseStack.Prepare(databaseStackData);
-
+        if (!databaseStack.IsPrepared && !await databaseStack.Prepare(databaseStackData))
+            throw new InvalidOperationException("Database stack could not be prepared.");
         var moduleInformations = await databaseStack.ModuleRepository.GetAllAsync();
 
         foreach (var moduleInformation in moduleInformations)
+        {
+            // Ignore modules that were created by an older version and are no longer registered.
+            if (!ModuleTypes.ContainsKey(moduleInformation.Type))
+                continue;
+
             modules.Add(ConvertInformationToModule(moduleInformation));
+        }
     }
 
     public async Task<Module> CreateModule(string name, string type)
     {
-        if (databaseStack is null)
-            throw new Exception("Module manager needs to be prepared before usage");
+        EnsurePrepared();
 
         type = type.Replace("ViewModel", string.Empty);
 
-        if (!ModuleTypes.TryGetValue(type, out Type? value))
-            throw new Exception($"Wrong module name: {type}, module is not registered in ModuleManager");
+        if (!ModuleTypes.TryGetValue(type, out Type? moduleType))
+            throw new InvalidOperationException($"Wrong module type: {type}. The module is not registered in ModuleManager.");
 
-        var addedModule = await databaseStack.ModuleRepository.AddAsync(new ModuleInformation()
+        var addedModule = await databaseStack!.ModuleRepository.AddAsync(new ModuleInformation()
         {
-            Name = name,
+            Name = string.IsNullOrWhiteSpace(name) ? type : name.Trim(),
             Type = type
         });
 
         var module = ConvertInformationToModule(addedModule);
 
-        var fields = value.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-        var synchronizableFields = fields.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
-
-        foreach (var synchronizableField in synchronizableFields)
+        foreach (var synchronizableField in GetSynchronizableFields(module.GetType()))
         {
-            var defaultFieldValue = synchronizableField.GetValue(module);
-            var dataInformation = CreateDataInformation(synchronizableField.Name, defaultFieldValue);
+            var defaultValue = synchronizableField.GetValue(module);
+            var dataInformation = CreateDataInformation(synchronizableField.Name, defaultValue);
             await databaseStack.DataRepository.AddAsync(dataInformation, addedModule.Id);
         }
+
         modules.Add(module);
         return module;
     }
 
     public async Task LoadModule(Module module)
     {
-        if (databaseStack is null)
-            throw new Exception("Module manager needs to be prepared before usage");
+        EnsurePrepared();
 
-        var data = await databaseStack.DataRepository.GetAllAsync(module.ModuleId);
+        var data = (await databaseStack!.DataRepository.GetAllAsync(module.ModuleId)).ToList();
 
-        var fields = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-        var synchronizableFields = fields.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
-
-        foreach (var synchronizableField in synchronizableFields)
+        foreach (var synchronizableField in GetSynchronizableFields(module.GetType()))
         {
             var fieldData = data.FirstOrDefault(d => d.Id == synchronizableField.Name);
 
             if (fieldData is null)
+            {
+                // Backfill fields added in a newer version of the module.
+                var defaultValue = synchronizableField.GetValue(module);
+                await databaseStack.DataRepository.AddAsync(
+                    CreateDataInformation(synchronizableField.Name, defaultValue),
+                    module.ModuleId);
+
                 continue;
+            }
 
             synchronizableField.SetValue(module, CreateObjectFromDataInformation(fieldData));
         }
@@ -115,50 +125,70 @@ public class ModuleManager()
 
     public async Task SaveModule(Module module)
     {
-        if (databaseStack is null)
-            throw new Exception("Module manager needs to be prepared before usage");
+        EnsurePrepared();
 
-        var fields = module.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-        var synchronizableFields = fields.Where(p => p.GetCustomAttributes(typeof(SynchronizeAttribute), true).Length > 0);
-
-        foreach (var synchronizableField in synchronizableFields)
+        foreach (var synchronizableField in GetSynchronizableFields(module.GetType()))
         {
             var value = synchronizableField.GetValue(module);
-            DataInformation fieldData = CreateDataInformation(synchronizableField.Name, value);
-            await databaseStack.DataRepository.UpdateAsync(fieldData, module.ModuleId);
+            var fieldData = CreateDataInformation(synchronizableField.Name, value);
+            await databaseStack!.DataRepository.UpsertAsync(fieldData, module.ModuleId);
         }
     }
 
     public async Task DeleteModule(Module module)
     {
-        if (databaseStack is null)
-            throw new Exception("Module manager needs to be prepared before usage");
+        EnsurePrepared();
 
-        if (!modules.Contains(module))
-            throw new Exception("Module not found");
+        if (!modules.Remove(module))
+            throw new InvalidOperationException("The module was not found.");
 
+        await databaseStack!.DataRepository.DeleteStorageAsync(module.ModuleId);
         await databaseStack.ModuleRepository.DeleteAsync(module.ModuleId);
-        modules.Remove(module);
+
+        module.Dispose();
     }
 
     public void ClearData()
     {
+        foreach (var module in modules)
+            module.Dispose();
+
         IsStackPrepared = false;
         modules.Clear();
         ModuleTypes.Clear();
+        databaseStack = null;
+        databaseStackData = [];
     }
 
     Module ConvertInformationToModule(ModuleInformation moduleInformation)
     {
         if (_serviceProvider is null)
-            throw new Exception("Service provider is not available");
+            throw new InvalidOperationException("Service provider is not available.");
 
-        var moduleType = ModuleTypes[moduleInformation.Type] ?? throw new Exception("Module type does not exist in ModuleManager registry");
-        var instance = NativeActivator.CreateInstance(moduleType, _serviceProvider, moduleInformation) ?? throw new Exception("Something went wrong with creating module instance");
+        if (!ModuleTypes.TryGetValue(moduleInformation.Type, out var moduleType))
+            throw new InvalidOperationException($"Module type '{moduleInformation.Type}' is not registered in ModuleManager.");
+
+        var instance = NativeActivator.CreateInstance(moduleType, _serviceProvider, moduleInformation)
+            ?? throw new InvalidOperationException("Could not create the module instance.");
+
         return (Module)instance;
     }
 
-    DataInformation CreateDataInformation(string id, object? value)
+    static FieldInfo[] GetSynchronizableFields(Type moduleType)
+    {
+        if (SynchronizableFieldsCache.TryGetValue(moduleType, out var cached))
+            return cached;
+
+        var fields = moduleType
+            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+            .Where(field => field.GetCustomAttribute<SynchronizeAttribute>(inherit: true) is not null)
+            .ToArray();
+
+        SynchronizableFieldsCache[moduleType] = fields;
+        return fields;
+    }
+
+    static DataInformation CreateDataInformation(string id, object? value)
         => new()
         {
             Id = id,
@@ -168,10 +198,7 @@ public class ModuleManager()
 
     public object? CreateObjectFromDataInformation(DataInformation dataInfo)
     {
-        if (dataInfo is null)
-            return null;
-
-        if (string.IsNullOrEmpty(dataInfo.Type))
+        if (dataInfo is null || string.IsNullOrEmpty(dataInfo.Type))
             return null;
 
         Type? type = Type.GetType(dataInfo.Type);
@@ -180,5 +207,11 @@ public class ModuleManager()
             throw new InvalidOperationException($"Could not find type '{dataInfo.Type}'.");
 
         return JsonSerializer.Deserialize(dataInfo.Value, type);
+    }
+
+    void EnsurePrepared()
+    {
+        if (databaseStack is null || !IsStackPrepared)
+            throw new InvalidOperationException("Module manager needs to be prepared before usage.");
     }
 }

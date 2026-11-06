@@ -1,7 +1,16 @@
-﻿namespace Kyanite.Modules.Default.Kanban;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text.Json.Serialization;
 
-internal class Item
+namespace Kyanite.Modules.Default.Kanban;
+
+internal partial class Item : ObservableObject
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    [ObservableProperty] string _name = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasDescription))]
+    string _description = string.Empty;
+
+    [JsonIgnore]
+    public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
 }

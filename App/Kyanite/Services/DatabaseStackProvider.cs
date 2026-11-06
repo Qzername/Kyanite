@@ -18,9 +18,16 @@ internal class DatabaseStackProvider
             return;
 
         if (string.IsNullOrEmpty(appSettingsService.CurrentAppSettings.DatabaseStackType))
-            throw new Exception("DatabaseStackType expected to be set in appSettings");
+            throw new InvalidOperationException("DatabaseStackType is expected to be set in app settings.");
 
-        var stackType = databaseStackLoader.DatabaseStackTypes[appSettingsService.CurrentAppSettings.DatabaseStackType];
+        if (!databaseStackLoader.DatabaseStackTypes.TryGetValue(
+                appSettingsService.CurrentAppSettings.DatabaseStackType,
+                out var stackType))
+        {
+            throw new InvalidOperationException(
+                $"Database stack '{appSettingsService.CurrentAppSettings.DatabaseStackType}' is not available.");
+        }
+
         var instance = ActivatorUtilities.CreateInstance(serviceProvider, stackType);
         SetStack((DatabaseStack)instance);
     }
@@ -29,4 +36,6 @@ internal class DatabaseStackProvider
     {
         ActiveStack = databaseStack ?? throw new ArgumentNullException(nameof(databaseStack));
     }
+
+    public void ClearStack() => ActiveStack = null;
 }

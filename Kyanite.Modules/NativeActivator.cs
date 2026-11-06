@@ -4,21 +4,29 @@ internal static class NativeActivator
 {
     public static object CreateInstance(Type type, IServiceProvider provider, params object[] customArgs)
     {
-        var constructor = type.GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
+        var constructor = type.GetConstructors()
+            .OrderByDescending(candidate => candidate.GetParameters().Length)
+            .FirstOrDefault()
+            ?? throw new InvalidOperationException($"Type '{type}' does not have a public constructor.");
 
         var parameters = constructor.GetParameters();
         var resolvedArgs = new object[parameters.Length];
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            var paramType = parameters[i].ParameterType;
+            var parameterType = parameters[i].ParameterType;
 
-            var customArg = customArgs.FirstOrDefault(arg => arg != null && paramType.IsAssignableFrom(arg.GetType()));
+            var customArg = customArgs.FirstOrDefault(
+                argument => argument is not null && parameterType.IsInstanceOfType(argument));
 
-            if (customArg != null)
+            if (customArg is not null)
+            {
                 resolvedArgs[i] = customArg;
-            else
-                resolvedArgs[i] = provider.GetService(paramType) ?? throw new InvalidOperationException($"Unable to resolve service for type {paramType}");
+                continue;
+            }
+
+            resolvedArgs[i] = provider.GetService(parameterType)
+                ?? throw new InvalidOperationException($"Unable to resolve service for type {parameterType}.");
         }
 
         return constructor.Invoke(resolvedArgs);
