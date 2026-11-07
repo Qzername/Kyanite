@@ -1,18 +1,16 @@
-﻿
-using Kyanite.ViewModels;
+﻿using Kyanite.ViewModels;
 
 namespace Kyanite.Core.Dialogs;
 
 public class DialogBuilder(IDialogService dialogService)
 {
     readonly IDialogService _dialogService = dialogService;
+    readonly List<RawButtonInfo> buttons = [];
 
     string title = "Dialog";
     int width = 300, height = 200;
 
     ViewModelBase? viewModel;
-
-    List<RawButtonInfo> buttons = [];
 
     public DialogBuilder WithTitle(string title)
     {
@@ -35,23 +33,13 @@ public class DialogBuilder(IDialogService dialogService)
 
     public DialogBuilder AddButton(string content, Action<Dialog> onPress, bool closeWhenPressed = true)
     {
-        buttons.Add(new RawButtonInfo()
-        {
-            Content = content,
-            Command = onPress,
-            AutoClose = closeWhenPressed
-        });
+        buttons.Add(new RawButtonInfo(content, onPress, closeWhenPressed));
         return this;
     }
 
     public DialogBuilder AddCloseButton(string content = "Close")
     {
-        buttons.Add(new RawButtonInfo()
-        {
-            Content = content,
-            Command = (d) => { },
-            AutoClose = true
-        });
+        buttons.Add(new RawButtonInfo(content, _ => { }, true));
         return this;
     }
 
@@ -62,17 +50,13 @@ public class DialogBuilder(IDialogService dialogService)
 
         var dialog = new Dialog(title, width, height, viewModel);
 
-        dialog.Buttons = buttons.Select(x => new ButtonInfo()
+        dialog.Buttons = [.. buttons.Select(button => new ButtonInfo(button.Content, () =>
         {
-            Content = x.Content,
-            Command = () =>
-            {
-                x.Command(dialog);
+            button.Command(dialog);
 
-                if (x.AutoClose)
-                    _dialogService.Close();
-            }
-        }).ToArray();
+            if (button.AutoClose)
+                _dialogService.Close();
+        }))];
 
         return dialog;
     }

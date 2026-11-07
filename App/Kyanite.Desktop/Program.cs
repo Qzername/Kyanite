@@ -21,9 +21,9 @@ internal sealed class Program
 
         if (!isNewInstance)
         {
-            new WindowsNotificationService().Show(
+            NotificationServiceFactory.Create().Show(
                 "Kyanite",
-                "Instance of this app is already running"
+                "An instance of this app is already running."
             );
 
             return;
@@ -46,13 +46,7 @@ internal sealed class Program
 
     static void ProvideNotificationService(AppBuilder builder)
     {
-        var app = (App)builder.Instance!;
-
-        if (OperatingSystem.IsWindows())
-            app.RegisterNotificationService(new WindowsNotificationService());
-        else if (OperatingSystem.IsMacOS())
-            app.RegisterNotificationService(new MacOsNotificationService());
-        else if (OperatingSystem.IsLinux())
-            app.RegisterNotificationService(new LinuxNotificationService());
+        if (builder.Instance is App app)
+            app.RegisterNotificationService(NotificationServiceFactory.Create());
     }
 }

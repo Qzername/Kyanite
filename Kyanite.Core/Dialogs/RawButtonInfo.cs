@@ -1,14 +1,5 @@
 ﻿namespace Kyanite.Core.Dialogs;
 
-public struct RawButtonInfo
-{
-    public string Content { get; set; }
-    public Action<Dialog> Command { get; set; }
-    public bool AutoClose { get; set; }
-}
+public sealed record RawButtonInfo(string Content, Action<Dialog> Command, bool AutoClose = true);
 
-public struct ButtonInfo
-{
-    public string Content { get; set; }
-    public Action Command { get; set; }
-}
+public sealed record ButtonInfo(string Content, Action Command);
