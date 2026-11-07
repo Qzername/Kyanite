@@ -2,7 +2,7 @@
 
 public record DataInformation
 {
-    public string Id { get; set; }
-    public string Type { get; set; }
-    public string Value { get; set; }
+    public required string Id { get; set; }
+    public required string Type { get; set; }
+    public required string Value { get; set; }
 }
