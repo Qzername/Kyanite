@@ -5,67 +5,97 @@
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             x:Class="Kyanite.Modules.Default.Kanban.KanbanView">
+             x:Class="Kyanite.Modules.Default.Kanban.KanbanView"
+             x:Name="Root">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
-    <StackPanel Orientation="Horizontal">
-        <ItemsControl ItemsSource="{Binding Columns}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="10">
+            <ItemsControl ItemsSource="{Binding Columns}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Margin="5"
-                            Padding="5"
-                            Background="DimGray"
-                            DragDrop.AllowDrop="True">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5"
+                                Padding="8"
+                                MinWidth="220"
+                                CornerRadius="6"
+                                Background="DimGray"
+                                DragDrop.AllowDrop="True">
 
-                        <StackPanel>
-                            <TextBlock Text="{Binding Name}"
-                                       FontWeight="Bold"
-                                       Margin="5"/>
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBox Grid.Column="0"
+                                             Text="{Binding Name}"
+                                             FontWeight="Bold"
+                                             Background="Transparent"
+                                             BorderThickness="0"/>
+                                    <Button Grid.Column="1"
+                                            Content="✕"
+                                            Padding="6,2"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding #Root.DataContext.RemoveColumnCommand}"
+                                            CommandParameter="{Binding}"/>
+                                </Grid>
 
-                            <ItemsControl ItemsSource="{Binding Items}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="Red"
-                                                BorderThickness="1"
-                                                Background="Gray"
-                                                Margin="5"
-                                                Padding="5"
-                                                PointerPressed="Task_PointerPressed">
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Name}"/>
-                                                <TextBlock Text="{Binding Description}"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="Red"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4"
+                                                    Background="Gray"
+                                                    Margin="0,4,0,0"
+                                                    Padding="6"
+                                                    PointerPressed="Task_PointerPressed">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <StackPanel Grid.Column="0" Spacing="2">
+                                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                        <TextBlock Text="{Binding Description}"
+                                                                   TextWrapping="Wrap"
+                                                                   Opacity="0.75"
+                                                                   IsVisible="{Binding HasDescription}"/>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="1"
+                                                            Content="✕"
+                                                            Padding="6,2"
+                                                            VerticalAlignment="Top"
+                                                            Command="{Binding #Root.DataContext.RemoveTaskCommand}"
+                                                            CommandParameter="{Binding}"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
-                            <DockPanel>
-                                <Button DockPanel.Dock="Right" 
-                                        Content="Add"
-                                        Command="{Binding AddTaskCommand}"/>
-                                <TextBox PlaceholderText="Enter task name..."
-                                         Text="{Binding NewItemName}"/>
-                            </DockPanel>
+                                <StackPanel Spacing="4" Margin="0,8,0,0">
+                                    <TextBox PlaceholderText="Task name..."
+                                             Text="{Binding NewItemName}"/>
+                                    <TextBox PlaceholderText="Description (optional)"
+                                             Text="{Binding NewItemDescription}"/>
+                                    <Button Content="Add task"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding AddTaskCommand}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <StackPanel Orientation="Horizontal">
-            <TextBox Width="150" PlaceholderText="Enter column name..."
-                     Text="{Binding NewColumnName}"/>
-            <Button Content="Add"
-                    Command="{Binding AddColumnCommand}"/>
+            <Border Margin="5" Padding="8" MinWidth="220" CornerRadius="6" Background="DimGray">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="New column" FontWeight="Bold"/>
+                    <TextBox PlaceholderText="Column name..."
+                             Text="{Binding NewColumnName}"/>
+                    <Button Content="Add column"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding AddColumnCommand}"/>
+                </StackPanel>
+            </Border>
         </StackPanel>
-    </StackPanel>
     </ScrollViewer>
 </UserControl>
