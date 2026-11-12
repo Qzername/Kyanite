@@ -34,15 +34,26 @@ internal sealed class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
-            .UsePlatformDetect()
+    {
+        var builder = AppBuilder.Configure<App>()
+            .UsePlatformDetect();
+
+        if (OperatingSystem.IsLinux() &&
+            Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") is not null)
+        {
+            builder = builder.UseWayland();
+        }
+
+    return builder
 #if DEBUG
-            .UseHotReload()
-            .WithDeveloperTools()
+        .UseHotReload()
+        .WithDeveloperTools()
 #endif
-            .WithInterFont()
-            .LogToTrace()
-            .AfterSetup(ProvideNotificationService);
+        .WithInterFont()
+        .LogToTrace()
+        .AfterSetup(ProvideNotificationService);
+    }
+
 
     static void ProvideNotificationService(AppBuilder builder)
     {
