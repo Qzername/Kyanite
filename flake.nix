@@ -25,6 +25,13 @@
             libx11
             libice
             libsm
+            libxcursor
+            libxrandr
+            libxi
+            libxext
+            libxfixes
+            libglvnd
+            mesa
           ]
         );
       };
