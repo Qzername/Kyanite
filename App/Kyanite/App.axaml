@@ -2,6 +2,8 @@
 	x:Class="Kyanite.App"
 	xmlns="https://github.com/avaloniaui"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:pleasant="using:PleasantUI.Controls"
+	xmlns:pleasantChrome="using:PleasantUI.Controls.Chrome"
 	xmlns:viewLocators="using:Kyanite.ViewLocators"
 	x:CompileBindings="False"
 	RequestedThemeVariant="Dark">
@@ -12,8 +14,7 @@
 
 	<Application.Resources>
 		<FontFamily x:Key="Unbounded">avares://Kyanite/Assets#Unbounded</FontFamily>
-
-		<ControlTheme x:Key="FlyoutBorderTheme" TargetType="Border"/>
+		<ControlTheme x:Key="FlyoutBorderTheme" TargetType="Border" />
 	</Application.Resources>
 
 	<TrayIcon.Icons>
@@ -33,5 +34,10 @@
 
 	<Application.Styles>
 		<PleasantTheme />
+		<!--  PleasantUI caps the window title sizes  -->
+		<Style Selector="pleasantChrome|PleasantTitleBar:titlebar /template/ pleasant|PleasantIcon#PART_DisplayTitle">
+			<Setter Property="MaxHeight" Value="Infinity" />
+			<Setter Property="MaxWidth" Value="Infinity" />
+		</Style>
 	</Application.Styles>
 </Application>
