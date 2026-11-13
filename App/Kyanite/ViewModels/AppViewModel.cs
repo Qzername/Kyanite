@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
-using Kyanite.Database;
 using Kyanite.Modules;
 using Kyanite.Services;
 using Kyanite.ViewModels.Main;
@@ -32,12 +31,11 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
             DataContext = shellProvider.CreateOrGetShell()
         };
 
-        desktop.MainWindow.Closed += async (sender, e) =>
+        desktop.MainWindow.Closed += async (_, _) =>
         {
             var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
             var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
             var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-
 
             //app is not configured; close the app
             if (databaseStackProvider.ActiveStack is null)
@@ -73,8 +71,8 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
         }
 
         DatabaseStackProvider databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-        
-        if(databaseStackProvider.ActiveStack is not null)
+
+        if (databaseStackProvider.ActiveStack is not null)
             await databaseStackProvider.ActiveStack.OnWindowClosing();
 
         if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
