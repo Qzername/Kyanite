@@ -12,6 +12,8 @@
 
 	<Application.Resources>
 		<FontFamily x:Key="Unbounded">avares://Kyanite/Assets#Unbounded</FontFamily>
+
+		<ControlTheme x:Key="FlyoutBorderTheme" TargetType="Border"/>
 	</Application.Resources>
 
 	<TrayIcon.Icons>
