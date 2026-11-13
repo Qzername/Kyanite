@@ -21,7 +21,7 @@
 			<TrayIcon
 				Command="{Binding OpenApplicationCommand}"
 				Icon="/Assets/kyanite-logo.ico"
-				ToolTipText="Whiteboard">
+				ToolTipText="Kyanite">
 				<TrayIcon.Menu>
 					<NativeMenu>
 						<NativeMenuItem Command="{Binding CloseApplicationCommand}" Header="Close application" />
