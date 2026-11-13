@@ -19,8 +19,8 @@
 
         DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet";
         LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath (
-          with pkgs;
-          [
+          with pkgs; [
+            # X
             fontconfig
             libx11
             libice
@@ -32,6 +32,10 @@
             libxfixes
             libglvnd
             mesa
+
+            # Wayland
+            wayland
+            libxkbcommon
           ]
         );
       };
