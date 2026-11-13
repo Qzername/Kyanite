@@ -81,18 +81,27 @@
                             Background="Transparent"
                             ItemsSource="{Binding AllModules}"
                             SelectedItem="{Binding SelectedModule}">
-                            <ListBox.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem
-                                        Command="{Binding DeleteModuleCommand}"
-                                        CommandParameter="{Binding SelectedModule}"
-                                        Header="Remove" />
-                                </ContextMenu>
-                            </ListBox.ContextMenu>
+                            <ListBox.Styles>
+                                <!-- let the row template fill the whole ListBoxItem, so the context menu covers the full row -->
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListBox.Styles>
 
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" />
+                                    <Border Padding="16,10" Background="Transparent">
+                                        <Border.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem
+                                                    Command="{Binding $parent[ListBox].DataContext.DeleteModuleCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Header="Remove" />
+                                            </ContextMenu>
+                                        </Border.ContextMenu>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
