@@ -37,6 +37,7 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
             var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
             var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
             var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
+            var appSettingsService = serviceProvider.GetRequiredService<AppSettingsService>();
 
 
             //app is not configured; close the app
@@ -54,7 +55,11 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
 
             moduleManager.ClearData();
             shellProvider.DisposeShell();
-            desktop.MainWindow = null;
+
+            if (appSettingsService.KeepRunningInBackground)
+                desktop.MainWindow = null;
+            else
+                desktop.Shutdown();
         };
 
         desktop.MainWindow.Show();
