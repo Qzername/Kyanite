@@ -50,6 +50,10 @@ internal partial class MainViewModel : ViewModelBase
     [RelayCommand]
     void CreateModule()
     {
+        // module picker throws when the manager is still loading; a click during startup must not kill the app
+        if (!_moduleManager.IsStackPrepared)
+            return;
+
         _dialogService.CreateBuilder()
             .WithTitle("Create dialog")
             .WithSize(400, 300)

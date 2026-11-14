@@ -14,6 +14,6 @@ public partial class ReminderViewModel(ModuleInformation moduleInformation, Noti
     void SendNotification()
     {
         var notificationService = notificationServiceProvider.ActiveService;
-        notificationService.Show(NotificationTitle, NotificationDescription);
+        notificationService?.Show(NotificationTitle, NotificationDescription);
     }
 }
