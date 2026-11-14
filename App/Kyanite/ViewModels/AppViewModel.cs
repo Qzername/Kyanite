@@ -36,13 +36,15 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
 
         desktop.MainWindow.Closed += async (_, _) =>
         {
+            var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
+            var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
+            var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
+            var appSettingsService = serviceProvider.GetRequiredService<AppSettingsService>();
+
             //async void: any exception thrown here (failed save, offline upload) would abort the process and lose the session
             try
             {
-                var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
-                var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
-                var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-
+                
                 //app is not configured; close the app
                 if (databaseStackProvider.ActiveStack is null)
                 {
@@ -67,13 +69,23 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
                 //window is already gone; reopen it so the user sees the error instead of a vanished app
                 desktop.MainWindow = null;
                 OpenApplication();
-
+                
                 serviceProvider.GetRequiredService<IDialogService>()
                     .CreateBuilder()
                     .WithViewModel(new ErrorInformationViewModel(ex.Message))
                     .AddCloseButton()
                     .BuildAndShow();
             }
+
+            await databaseStackProvider.ActiveStack.OnWindowClosing();
+
+            moduleManager.ClearData();
+            shellProvider.DisposeShell();
+
+            if (appSettingsService.KeepRunningInBackground)
+                desktop.MainWindow = null;
+            else
+                desktop.Shutdown();
         };
 
         desktop.MainWindow.Show();

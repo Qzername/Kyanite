@@ -13,6 +13,7 @@ internal static class ServiceCollectionExtensions
     internal static IServiceCollection AddCommonServices(this IServiceCollection collection)
     {
         collection.AddSingleton<AppSettingsService>();
+        collection.AddSingleton<IAppSettingsService>(sp => sp.GetRequiredService<AppSettingsService>());
 
         // --- database ---
 
