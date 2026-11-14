@@ -34,7 +34,7 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
             DataContext = shellProvider.CreateOrGetShell()
         };
 
-        desktop.MainWindow.Closed += async (sender, e) =>
+        desktop.MainWindow.Closed += async (_, _) =>
         {
             //async void: any exception thrown here (failed save, offline upload) would abort the process and lose the session
             try
@@ -42,7 +42,6 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
                 var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
                 var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
                 var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-
 
                 //app is not configured; close the app
                 if (databaseStackProvider.ActiveStack is null)
@@ -93,8 +92,8 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
         }
 
         DatabaseStackProvider databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-        
-        if(databaseStackProvider.ActiveStack is not null)
+
+        if (databaseStackProvider.ActiveStack is not null)
             await databaseStackProvider.ActiveStack.OnWindowClosing();
 
         if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
