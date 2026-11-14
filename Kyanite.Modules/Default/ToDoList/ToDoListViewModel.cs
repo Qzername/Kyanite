@@ -138,19 +138,13 @@ internal partial class ToDoListViewModel : Module
 
     void ApplySorting()
     {
-        var sorted = ToDoElements
-            .OrderByDescending(e => e.IsPinned)
-            .ThenBy(e => e.IsCompleted)
-            .ThenByDescending(e => e.DisplayDate)
-            .ToList();
+    	var sorted = ToDoElements.OrderByDescending(e => e.IsPinned)
+     		.ThenBy(e => e.IsCompleted)
+       		.ThenByDescending(e => e.DisplayDate)
+         	.ToList();
 
-        for (int targetIndex = 0; targetIndex < sorted.Count; targetIndex++)
-        {
-            var item = sorted[targetIndex];
-            int currentIndex = ToDoElements.IndexOf(item);
-
-            if (currentIndex != targetIndex)
-                ToDoElements.Move(currentIndex, targetIndex);
-        }
+        ToDoElements.Clear();
+        foreach (var item in sorted)
+            ToDoElements.Add(item);
     }
 }
