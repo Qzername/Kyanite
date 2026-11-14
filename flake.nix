@@ -15,6 +15,7 @@
         packages = with pkgs; [
           dotnet-sdk_10
           nuget-to-json
+          libnotify
         ];
 
         DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet";
