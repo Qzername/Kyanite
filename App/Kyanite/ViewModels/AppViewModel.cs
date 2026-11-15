@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Controls.ErrorInformation;
+using Kyanite.Core.Dialogs;
 using Kyanite.Database;
 using Kyanite.Modules;
 using Kyanite.Services;
@@ -32,29 +34,58 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
             DataContext = shellProvider.CreateOrGetShell()
         };
 
-        desktop.MainWindow.Closed += async (sender, e) =>
+        desktop.MainWindow.Closed += async (_, _) =>
         {
             var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
             var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
             var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
+            var appSettingsService = serviceProvider.GetRequiredService<AppSettingsService>();
 
-
-            //app is not configured; close the app
-            if (databaseStackProvider.ActiveStack is null)
+            //async void: any exception thrown here (failed save, offline upload) would abort the process and lose the session
+            try
             {
-                desktop.Shutdown();
-                return;
-            }
+                
+                //app is not configured; close the app
+                if (databaseStackProvider.ActiveStack is null)
+                {
+                    desktop.Shutdown();
+                    return;
+                }
 
-            if (shellViewModelProvider.TryRetriveShellCurrentViewModel(out MainViewModel mainViewModel) &&
-                mainViewModel.SelectedModule is not null)
-                await moduleManager.SaveModule(mainViewModel.SelectedModule);
+                if (shellViewModelProvider.TryRetriveShellCurrentViewModel(out MainViewModel mainViewModel) &&
+                    mainViewModel.SelectedModule is not null)
+                    await moduleManager.SaveModule(mainViewModel.SelectedModule);
+
+                await databaseStackProvider.ActiveStack.OnWindowClosing();
+
+                moduleManager.ClearData();
+                shellProvider.DisposeShell();
+                desktop.MainWindow = null;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Closing failed, window reopened: {ex}");
+
+                //window is already gone; reopen it so the user sees the error instead of a vanished app
+                desktop.MainWindow = null;
+                OpenApplication();
+                
+                serviceProvider.GetRequiredService<IDialogService>()
+                    .CreateBuilder()
+                    .WithViewModel(new ErrorInformationViewModel(ex.Message))
+                    .AddCloseButton()
+                    .BuildAndShow();
+            }
 
             await databaseStackProvider.ActiveStack.OnWindowClosing();
 
             moduleManager.ClearData();
             shellProvider.DisposeShell();
-            desktop.MainWindow = null;
+
+            if (appSettingsService.KeepRunningInBackground)
+                desktop.MainWindow = null;
+            else
+                desktop.Shutdown();
         };
 
         desktop.MainWindow.Show();
@@ -73,8 +104,8 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
         }
 
         DatabaseStackProvider databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-        
-        if(databaseStackProvider.ActiveStack is not null)
+
+        if (databaseStackProvider.ActiveStack is not null)
             await databaseStackProvider.ActiveStack.OnWindowClosing();
 
         if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

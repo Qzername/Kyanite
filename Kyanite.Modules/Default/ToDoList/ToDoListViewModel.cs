@@ -12,6 +12,7 @@ internal partial class ToDoListViewModel : Module
 {
     readonly IDialogService _dialogService;
     readonly NotificationServiceProvider _notificationServiceProvider;
+    readonly IAppSettingsService _appSettingsService;
     readonly DispatcherTimer _overdueCheckTimer;
 
     [Synchronize] ToDoSettings _settings = new();
@@ -23,11 +24,13 @@ internal partial class ToDoListViewModel : Module
     public ToDoListViewModel(
         ModuleInformation moduleInformation,
         IDialogService dialogService,
-        NotificationServiceProvider notificationServiceProvider)
+        NotificationServiceProvider notificationServiceProvider,
+        IAppSettingsService appSettingsService)
         : base(moduleInformation)
     {
         _dialogService = dialogService;
         _notificationServiceProvider = notificationServiceProvider;
+        _appSettingsService = appSettingsService;
         _overdueCheckTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromMinutes(1),
@@ -66,7 +69,7 @@ internal partial class ToDoListViewModel : Module
         _dialogService.CreateBuilder()
             .WithTitle("To-Do Settings")
             .WithSize(420, 260)
-            .WithViewModel(new ToDoSettingsViewModel(Settings))
+            .WithViewModel(new ToDoSettingsViewModel(Settings, _appSettingsService.KeepRunningInBackground))
             .AddButton("Add", OnSettingsDialogClosed)
             .BuildAndShow();
     }
@@ -115,6 +118,7 @@ internal partial class ToDoListViewModel : Module
         Settings.EnableNotifications = vm.EnableNotifications;
         Settings.NotifyOnOverdue = vm.NotifyOnOverdue;
         Settings.DueSoonThresholdMinutes = vm.DueSoonThresholdMinutes;
+        _appSettingsService.SetKeepRunningInBackground(vm.KeepRunningInBackground);
     }
 
     void OnAddDialogClosed(Dialog dialog)
@@ -138,19 +142,13 @@ internal partial class ToDoListViewModel : Module
 
     void ApplySorting()
     {
-        var sorted = ToDoElements
-            .OrderByDescending(e => e.IsPinned)
-            .ThenBy(e => e.IsCompleted)
-            .ThenByDescending(e => e.DisplayDate)
-            .ToList();
+    	var sorted = ToDoElements.OrderByDescending(e => e.IsPinned)
+     		.ThenBy(e => e.IsCompleted)
+       		.ThenByDescending(e => e.DisplayDate)
+         	.ToList();
 
-        for (int targetIndex = 0; targetIndex < sorted.Count; targetIndex++)
-        {
-            var item = sorted[targetIndex];
-            int currentIndex = ToDoElements.IndexOf(item);
-
-            if (currentIndex != targetIndex)
-                ToDoElements.Move(currentIndex, targetIndex);
-        }
+        ToDoElements.Clear();
+        foreach (var item in sorted)
+            ToDoElements.Add(item);
     }
 }

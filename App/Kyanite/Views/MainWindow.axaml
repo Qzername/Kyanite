@@ -15,6 +15,7 @@
     Icon="/Assets/kyanite-logo.ico"
     mc:Ignorable="d">
 
+    <!--  this does nothing on Linux  -->
     <Window.Styles>
         <!--  Hide default title bar  -->
         <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel &gt; TextBlock">
@@ -34,22 +35,5 @@
         </Style>
     </Window.Styles>
 
-    <DockPanel>
-        <Panel
-            Height="30"
-            Background="#0F0E0F"
-            DockPanel.Dock="Top"
-            WindowDecorationProperties.ElementRole="TitleBar">
-
-            <TextBlock
-                Padding="5,0"
-                VerticalAlignment="Center"
-                Foreground="#0012DE"
-                Text="Kyanite" />
-        </Panel>
-
-        <Panel>
-            <views:ShellView />
-        </Panel>
-    </DockPanel>
+    <views:ShellView />
 </Window>

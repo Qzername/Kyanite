@@ -6,13 +6,33 @@
   },
   {
     "pname": "Avalonia",
+    "version": "12.0.0",
+    "hash": "sha256-pBn3o40TTYAPtjcfvaVK6wMFNSY7AHEE5wU4zDUj4FA="
+  },
+  {
+    "pname": "Avalonia",
     "version": "12.0.1",
     "hash": "sha256-DwyZzHV9XB3b3qOWNcXYOdLwVht049Y0jX7s1XmzVp0="
   },
   {
     "pname": "Avalonia",
+    "version": "12.1.0",
+    "hash": "sha256-G824thlSx6grixZdFX0yonwGXQYequFLwFAyhEyuPzk="
+  },
+  {
+    "pname": "Avalonia",
+    "version": "12.1.1",
+    "hash": "sha256-GTv2rouQKTrLcryoodYujka0YKSFJ/Xx8Y9ikHPZ130="
+  },
+  {
+    "pname": "Avalonia",
     "version": "12.1.2",
     "hash": "sha256-mZh0FMY6w5kzRqhKhSAG35Y/+Dn5bRQFV+4x+IUNsI8="
+  },
+  {
+    "pname": "Avalonia",
+    "version": "12.1.6",
+    "hash": "sha256-P8FfgJeG7pl5FiDF08JUUkh8tw1c2ZOT+FPk0kE2ElU="
   },
   {
     "pname": "Avalonia.Angle.Windows.Natives",
@@ -50,6 +70,11 @@
     "hash": "sha256-Esxo2rYv/MSVmdWqY5nu1Vd4YcAr87mg4o56maQaaSs="
   },
   {
+    "pname": "Avalonia.FreeDesktop",
+    "version": "12.1.6",
+    "hash": "sha256-8lTDB25RdtoORwjdEUMx4FWL7nKfNH+65LJh2wQEMtY="
+  },
+  {
     "pname": "Avalonia.FreeDesktop.AtSpi",
     "version": "12.1.2",
     "hash": "sha256-XMWyVgn3S5x9Z0fzffD2lSQvhJKMCjLDUlFizUqp4aQ="
@@ -76,8 +101,23 @@
   },
   {
     "pname": "Avalonia.Remote.Protocol",
+    "version": "12.1.1",
+    "hash": "sha256-Ewx9x7XsVrmv3Z2TkqVzTASxloSijLftrkYB9YK5MBE="
+  },
+  {
+    "pname": "Avalonia.Remote.Protocol",
     "version": "12.1.2",
     "hash": "sha256-IPuepoUzVR+llgU9CInvkrTYW00CVHdzewzE6QYcZV0="
+  },
+  {
+    "pname": "Avalonia.Remote.Protocol",
+    "version": "12.1.6",
+    "hash": "sha256-NmklIAu8FdQv0VHLi1qPaGnxQyYMjLAlFCJd2Srahvs="
+  },
+  {
+    "pname": "Avalonia.Skia",
+    "version": "12.1.1",
+    "hash": "sha256-9oPb5fXc395iy4vuDMdeO5vsldn5JHlso2J72ov6TyU="
   },
   {
     "pname": "Avalonia.Skia",
@@ -88,6 +128,11 @@
     "pname": "Avalonia.Themes.Fluent",
     "version": "12.1.2",
     "hash": "sha256-wBngLXs5jn3Pk+UWz+uz9ftGPOStpt++NQTHswsvPr8="
+  },
+  {
+    "pname": "Avalonia.Wayland",
+    "version": "12.1.6",
+    "hash": "sha256-RJjzQ+QWLGATfxEOrI/yHIIjleR03L9CjifYBvbqqyI="
   },
   {
     "pname": "Avalonia.Win32",
@@ -283,6 +328,11 @@
     "pname": "Microsoft.Win32.SystemEvents",
     "version": "4.7.0",
     "hash": "sha256-GHxnD1Plb32GJWVWSv0Y51Kgtlb+cdKgOYVBYZSgVF4="
+  },
+  {
+    "pname": "NWayland",
+    "version": "0.11.0",
+    "hash": "sha256-6I5F9aYQCP7JWsNMCkvUCYvsp20Gn+eYNO2ySuKUuhY="
   },
   {
     "pname": "PleasantUI",
