@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Kyanite.Services;
 
-internal class AppSettingsService
+internal class AppSettingsService : IAppSettingsService
 {
     readonly string AppDataDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -19,6 +19,16 @@ internal class AppSettingsService
         );
 
     public AppSettings? CurrentAppSettings { get; private set; }
+
+    public bool KeepRunningInBackground => CurrentAppSettings?.KeepRunningInBackground ?? true;
+
+    public void SetKeepRunningInBackground(bool value)
+    {
+        if (CurrentAppSettings is null)
+            return;
+
+        Save(CurrentAppSettings with { KeepRunningInBackground = value });
+    }
 
     public AppSettingsService()
     {

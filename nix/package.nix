@@ -3,6 +3,7 @@
   buildDotnetModule,
   dotnetCorePackages,
   makeWrapper,
+  libnotify,
   wayland,
   libxkbcommon,
 }:
@@ -29,7 +30,8 @@ buildDotnetModule (finalAttrs: {
 
   postFixup = ''
     makeWrapper $out/bin/Kyanite.Desktop $out/bin/kyanite \
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ wayland libxkbcommon ]}"
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ wayland libxkbcommon ]}" \
+      --prefix PATH : "${lib.makeBinPath [ libnotify ]}"
   '';
 
   meta = {
