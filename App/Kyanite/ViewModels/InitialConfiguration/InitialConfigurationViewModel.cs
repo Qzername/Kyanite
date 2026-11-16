@@ -43,10 +43,6 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
     [RelayCommand]
     void GoToNextPage()
     {
-        // GetPickedStack uses Single() and throws on an empty pick (crash on first run)
-        if (Page == (int)Pages.PickStack && string.IsNullOrEmpty(pickDatabaseStackViewModel.PickedDatabaseStack))
-            return;
-
         if (Page + 1 >= TotalPages)
         {
             _shellViewModel.UpdateView();
