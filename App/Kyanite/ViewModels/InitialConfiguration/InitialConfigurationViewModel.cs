@@ -43,6 +43,10 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
     [RelayCommand]
     void GoToNextPage()
     {
+        // detect whenever user picked database stack or not
+        if (Page == (int)Pages.PickStack && string.IsNullOrEmpty(pickDatabaseStackViewModel.PickedDatabaseStack))
+            return;
+
         if (Page + 1 >= TotalPages)
         {
             _shellViewModel.UpdateView();
