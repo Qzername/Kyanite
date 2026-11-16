@@ -6,6 +6,8 @@
   libnotify,
   wayland,
   libxkbcommon,
+  makeDesktopItem,
+  copyDesktopItems,
 }:
 
 buildDotnetModule (finalAttrs: {
@@ -26,13 +28,42 @@ buildDotnetModule (finalAttrs: {
 
   nativeBuildInputs = [
     makeWrapper
+    copyDesktopItems
   ];
+
+  postInstall = ''
+    for icon in App/Kyanite/Assets/Icons/*.png; do
+      size="$(basename "$icon" .png)"
+      install -Dm644 "$icon" "$out/share/icons/hicolor/$size/apps/kyanite.png"
+    done
+
+    install -Dm644 App/Kyanite/Assets/Icons/Scalable/Kyanite.svg "$out/share/icons/hicolor/scalable/apps/kyanite.svg"
+  '';
 
   postFixup = ''
     makeWrapper $out/bin/Kyanite.Desktop $out/bin/kyanite \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ wayland libxkbcommon ]}" \
       --prefix PATH : "${lib.makeBinPath [ libnotify ]}"
   '';
+
+  desktopItems = [
+    (makeDesktopItem {
+      name = "kyanite";
+      desktopName = "Kyanite";
+      exec = "kyanite %U";
+      icon = "kyanite";
+      comment = "Simple work managment tool";
+      categories = [
+        "Office"
+        "Utility"
+        "TextEditor"
+      ];
+      startupWMClass = "Kyanite";
+      mimeTypes = [
+        "text/markdown"
+      ];
+    })
+  ];
 
   meta = {
     description = "Simple work managment tool";
@@ -42,6 +73,6 @@ buildDotnetModule (finalAttrs: {
       justkrysteq
     ];
     mainProgram = "kyanite";
-    platforms = lib.platforms.all;
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };
 })
