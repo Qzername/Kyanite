@@ -43,8 +43,17 @@ internal class AppSettingsService : IAppSettingsService
             return;
         }
 
-        string json = File.ReadAllText(FullPathToSetingsFile);
-        CurrentAppSettings = JsonSerializer.Deserialize<AppSettings>(json);
+        try
+        {
+            string json = File.ReadAllText(FullPathToSetingsFile);
+            CurrentAppSettings = JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+            CurrentAppSettings.DatabaseInformation ??= [];
+        }
+        catch (Exception e) when (e is JsonException or IOException or UnauthorizedAccessException)
+        {
+            try { File.Move(FullPathToSetingsFile, FullPathToSetingsFile + ".invalid", overwrite: true); } catch { }
+            CurrentAppSettings = new AppSettings();
+        }
     }
 
     public void Save(AppSettings appSettings)
@@ -52,8 +61,9 @@ internal class AppSettingsService : IAppSettingsService
         if (!Directory.Exists(AppDataDirectory))
             Directory.CreateDirectory(AppDataDirectory);
 
-        string json = JsonSerializer.Serialize(appSettings);
-        File.WriteAllText(FullPathToSetingsFile, json);
+        string tempPath = FullPathToSetingsFile + ".tmp";
+        File.WriteAllText(tempPath, JsonSerializer.Serialize(appSettings));
+        File.Move(tempPath, FullPathToSetingsFile, overwrite: true);
 
         CurrentAppSettings = appSettings;
     }
