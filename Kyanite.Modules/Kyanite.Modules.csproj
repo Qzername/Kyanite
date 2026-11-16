@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Kyanite.Database\Kyanite.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Kyanite.Modules.Tests" />
+  </ItemGroup>
+
 </Project>

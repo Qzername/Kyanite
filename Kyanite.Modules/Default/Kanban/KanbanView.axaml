@@ -21,12 +21,25 @@
                     <Border Margin="5"
                             Padding="5"
                             Background="DimGray"
+                            BorderBrush="Transparent"
+                            BorderThickness="2"
+                            Opacity="{Binding Opacity}"
                             DragDrop.AllowDrop="True">
 
+                        <Border.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+                            </Transitions>
+                        </Border.Transitions>
+
                         <StackPanel>
-                            <TextBlock Text="{Binding Name}"
-                                       FontWeight="Bold"
-                                       Margin="5"/>
+                            <DockPanel PointerPressed="Column_PointerPressed"
+                                       Background="Transparent"
+                                       Cursor="SizeAll">
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="Bold"
+                                           Margin="5" />
+                            </DockPanel>
 
                             <ItemsControl ItemsSource="{Binding Items}">
                                 <ItemsControl.ItemTemplate>
@@ -37,17 +50,31 @@
                                                 Margin="5"
                                                 Padding="5"
                                                 PointerPressed="Task_PointerPressed">
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Name}"/>
-                                                <TextBlock Text="{Binding Description}"/>
-                                            </StackPanel>
+                                            <DockPanel>
+                                                <Button DockPanel.Dock="Right"
+                                                        Content="✕"
+                                                        AutomationProperties.Name="Delete task"
+                                                        VerticalAlignment="Top"
+                                                        Command="{Binding $parent[UserControl].DataContext.DeleteTaskCommand}"
+                                                        CommandParameter="{Binding}" />
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </StackPanel>
+                                            </DockPanel>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
                             <DockPanel>
-                                <Button DockPanel.Dock="Right" 
+                                <Button DockPanel.Dock="Left"
+                                        Margin="0,0,5,0"
+                                        MinWidth="60"
+                                        Content="{Binding DeleteButtonText}"
+                                        AutomationProperties.Name="Delete column"
+                                        Command="{Binding $parent[UserControl].DataContext.RequestDeleteColumnCommand}"
+                                        CommandParameter="{Binding}"/>
+                                <Button DockPanel.Dock="Right"
                                         Content="Add"
                                         Command="{Binding AddTaskCommand}"/>
                                 <TextBox PlaceholderText="Enter task name..."
