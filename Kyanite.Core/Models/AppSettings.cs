@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace Kyanite.Core.Models;
 
-namespace Kyanite.Models;
-
-internal record AppSettings
+public class AppSettings
 {
     public bool DatabaseinformationInitialized { get; set; } = false;
     public bool KeepRunningInBackground { get; set; } = true;

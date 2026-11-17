@@ -1,11 +1,12 @@
-﻿using Kyanite.Models;
+﻿using Kyanite.Core.Models;
+using Kyanite.Core.Services;
 using System;
 using System.IO;
 using System.Text.Json;
 
 namespace Kyanite.Services;
 
-internal class AppSettingsService
+internal class AppSettingsService : IAppSettingsService
 {
     readonly string AppDataDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -27,7 +28,9 @@ internal class AppSettingsService
         if (CurrentAppSettings is null)
             return;
 
-        Save(CurrentAppSettings with { KeepRunningInBackground = value });
+        CurrentAppSettings.KeepRunningInBackground = value;
+        
+        Save(CurrentAppSettings);
     }
 
     public bool EnableNotifications => CurrentAppSettings?.EnableNotifications ?? true;
@@ -38,13 +41,12 @@ internal class AppSettingsService
     {
         if (CurrentAppSettings is null)
             return;
-
-        Save(CurrentAppSettings with
-        {
-            DueSoonThresholdMinutes = dueSoonThresholdMinutes,
-            EnableNotifications = enableNotifications,
-            NotifyOnOverdue = notifyOnOverdue,
-        });
+        
+        CurrentAppSettings.DueSoonThresholdMinutes = dueSoonThresholdMinutes;
+        CurrentAppSettings.EnableNotifications = enableNotifications;
+        CurrentAppSettings.NotifyOnOverdue = notifyOnOverdue;
+        
+        Save(CurrentAppSettings);
     }
 
     public AppSettingsService()

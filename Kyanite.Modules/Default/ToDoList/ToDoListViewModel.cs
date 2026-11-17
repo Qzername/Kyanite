@@ -1,9 +1,9 @@
 ﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Core.Dialogs;
+using Kyanite.Core.Services;
 using Kyanite.Database;
 using Kyanite.Modules.Default.ToDoList.Dialogs;
-using Kyanite.Services;
 using System.Collections.ObjectModel;
 
 namespace Kyanite.Modules.Default.ToDoList;
@@ -12,7 +12,7 @@ internal partial class ToDoListViewModel : Module
 {
     readonly IDialogService _dialogService;
     readonly NotificationServiceProvider _notificationServiceProvider;
-    readonly Kyanite.Services.AppSettingsService _appSettingsService;
+    readonly IAppSettingsService _appSettingsService;
     readonly DispatcherTimer _overdueCheckTimer;
 
     [Synchronize] ToDoSettings _settings = new();
@@ -25,7 +25,7 @@ internal partial class ToDoListViewModel : Module
         ModuleInformation moduleInformation,
         IDialogService dialogService,
         NotificationServiceProvider notificationServiceProvider,
-        AppSettingsService appSettingsService)
+        IAppSettingsService appSettingsService)
         : base(moduleInformation)
     {
         _dialogService = dialogService;
@@ -62,9 +62,9 @@ internal partial class ToDoListViewModel : Module
         };
     }
 
-    bool EnableNotifications => Settings.OverrideGlobalNotifications ? Settings.EnableNotifications : _appSettingsService.EnableNotifications;
-    bool NotifyOnOverdue => Settings.OverrideGlobalNotifications ? Settings.NotifyOnOverdue : _appSettingsService.NotifyOnOverdue;
-    int DueSoonThresholdMinutes => Settings.OverrideGlobalNotifications ? Settings.DueSoonThresholdMinutes : _appSettingsService.DueSoonThresholdMinutes;
+    bool EnableNotifications => Settings.OverrideGlobalNotifications ? Settings.EnableNotifications : _appSettingsService.CurrentAppSettings.EnableNotifications;
+    bool NotifyOnOverdue => Settings.OverrideGlobalNotifications ? Settings.NotifyOnOverdue : _appSettingsService.CurrentAppSettings.NotifyOnOverdue;
+    int DueSoonThresholdMinutes => Settings.OverrideGlobalNotifications ? Settings.DueSoonThresholdMinutes : _appSettingsService.CurrentAppSettings.DueSoonThresholdMinutes;
 
     [RelayCommand]
     void OpenSettingsDialog()

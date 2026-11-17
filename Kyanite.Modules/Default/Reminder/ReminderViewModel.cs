@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Core.Services;
 using Kyanite.Database;
-using Kyanite.Services;
 
 namespace Kyanite.Modules.Default.Reminder;
 

@@ -1,4 +1,4 @@
-﻿using Kyanite.Services;
+﻿using Kyanite.Core.Services;
 using System;
 
 namespace Kyanite.Desktop.NotificationServices;

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Kyanite.Core.Services;
 
 namespace Kyanite.ViewModels.Main;
 
@@ -20,7 +21,7 @@ internal partial class MainViewModel : ViewModelBase
     readonly ModuleManager _moduleManager;
     readonly IDialogService _dialogService;
     readonly DatabaseStackProvider _databaseStackProvider;
-    readonly AppSettingsService _appSettingsService;
+    readonly IAppSettingsService _appSettingsService;
 
     [ObservableProperty] bool _isDataLoaded;
     [ObservableProperty] bool _isPaneOpen = true;
@@ -28,7 +29,7 @@ internal partial class MainViewModel : ViewModelBase
     public ObservableCollection<Module> AllModules { get; } = [];
     [ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider, AppSettingsService appSettingsService)
+    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider, IAppSettingsService appSettingsService)
     {
         AllModules.Clear();
 
@@ -66,8 +67,10 @@ internal partial class MainViewModel : ViewModelBase
         if (dialog.ViewModel is not AppSettingsViewModel vm)
             return;
 
-        _appSettingsService.SetNotificationDefaults(vm.DueSoonThresholdMinutes, vm.EnableNotifications, vm.NotifyOnOverdue);
-        _appSettingsService.SetKeepRunningInBackground(vm.KeepRunningInBackground);
+        var appSettingsService = (AppSettingsService)_appSettingsService;
+
+        appSettingsService.SetNotificationDefaults(vm.DueSoonThresholdMinutes, vm.EnableNotifications, vm.NotifyOnOverdue);
+        appSettingsService.SetKeepRunningInBackground(vm.KeepRunningInBackground);
     }
 
     [RelayCommand]
@@ -93,17 +96,17 @@ internal partial class MainViewModel : ViewModelBase
     [RelayCommand]
     void ResetInitialization()
     {
-        var appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+        var appSettingsService = _serviceProvider.GetRequiredService<IAppSettingsService>();
 
         if (appSettingsService.CurrentAppSettings is null)
             throw new AppSettingsNotInitializedException();
 
-        appSettingsService.Save(appSettingsService.CurrentAppSettings with
-        {
-            DatabaseinformationInitialized = false,
-            DatabaseStackType = null,
-            DatabaseInformation = [],
-        });
+        
+        appSettingsService.CurrentAppSettings.DatabaseinformationInitialized = false;
+        appSettingsService.CurrentAppSettings.DatabaseStackType = null;
+        appSettingsService.CurrentAppSettings.DatabaseInformation = [];
+        
+        appSettingsService.Save();
 
         _databaseStackProvider.ActiveStack?.OnRemoved();
         AllModules.Clear();

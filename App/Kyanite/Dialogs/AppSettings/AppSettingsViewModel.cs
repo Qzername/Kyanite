@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Kyanite.Core.Services;
 using Kyanite.Services;
 using Kyanite.ViewModels;
 
@@ -15,11 +16,11 @@ internal partial class AppSettingsViewModel : ViewModelBase
 
     public bool IsDesktop => Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime;
 
-    public AppSettingsViewModel(AppSettingsService settings)
+    public AppSettingsViewModel(IAppSettingsService settings)
     {
-        DueSoonThresholdMinutes = settings.DueSoonThresholdMinutes;
-        EnableNotifications = settings.EnableNotifications;
-        NotifyOnOverdue = settings.NotifyOnOverdue;
-        KeepRunningInBackground = settings.KeepRunningInBackground;
+        DueSoonThresholdMinutes = settings.CurrentAppSettings.DueSoonThresholdMinutes;
+        EnableNotifications = settings.CurrentAppSettings.EnableNotifications;
+        NotifyOnOverdue = settings.CurrentAppSettings.NotifyOnOverdue;
+        KeepRunningInBackground = settings.CurrentAppSettings.KeepRunningInBackground;
     }
 }
