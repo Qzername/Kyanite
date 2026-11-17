@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Controls.ErrorInformation;
 using Kyanite.Core.Dialogs;
+using Kyanite.Core.Services;
 using Kyanite.Database;
 using Kyanite.Modules;
 using Kyanite.Services;
@@ -39,7 +40,7 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
             var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
             var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
             var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-            var appSettingsService = serviceProvider.GetRequiredService<AppSettingsService>();
+            var appSettingsService = serviceProvider.GetRequiredService<IAppSettingsService>();
 
             //async void: any exception thrown here (failed save, offline upload) would abort the process and lose the session
             try
@@ -82,7 +83,7 @@ internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewMode
             moduleManager.ClearData();
             shellProvider.DisposeShell();
 
-            if (appSettingsService.KeepRunningInBackground)
+            if (appSettingsService.CurrentAppSettings.KeepRunningInBackground)
                 desktop.MainWindow = null;
             else
                 desktop.Shutdown();
