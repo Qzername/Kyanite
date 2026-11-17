@@ -159,7 +159,7 @@ internal partial class MainViewModel : ViewModelBase
     {
         try
         {
-            AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+            IAppSettingsService appSettingsService = _serviceProvider.GetRequiredService<IAppSettingsService>();
 
             if (_databaseStackProvider.ActiveStack is null)
                 throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
