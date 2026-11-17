@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Kyanite.Services;
 
-internal class AppSettingsService : IAppSettingsService
+internal class AppSettingsService
 {
     readonly string AppDataDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -28,6 +28,23 @@ internal class AppSettingsService : IAppSettingsService
             return;
 
         Save(CurrentAppSettings with { KeepRunningInBackground = value });
+    }
+
+    public bool EnableNotifications => CurrentAppSettings?.EnableNotifications ?? true;
+    public bool NotifyOnOverdue => CurrentAppSettings?.NotifyOnOverdue ?? true;
+    public int DueSoonThresholdMinutes => CurrentAppSettings?.DueSoonThresholdMinutes ?? 30;
+
+    public void SetNotificationDefaults(int dueSoonThresholdMinutes, bool enableNotifications, bool notifyOnOverdue)
+    {
+        if (CurrentAppSettings is null)
+            return;
+
+        Save(CurrentAppSettings with
+        {
+            DueSoonThresholdMinutes = dueSoonThresholdMinutes,
+            EnableNotifications = enableNotifications,
+            NotifyOnOverdue = notifyOnOverdue,
+        });
     }
 
     public AppSettingsService()

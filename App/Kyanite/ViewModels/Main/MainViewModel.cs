@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Dialogs.AppSettings;
 using Kyanite.Controls.ErrorInformation;
 using Kyanite.Controls.ModulePicker;
 using Kyanite.Core.Dialogs;
@@ -19,6 +20,7 @@ internal partial class MainViewModel : ViewModelBase
     readonly ModuleManager _moduleManager;
     readonly IDialogService _dialogService;
     readonly DatabaseStackProvider _databaseStackProvider;
+    readonly AppSettingsService _appSettingsService;
 
     [ObservableProperty] bool _isDataLoaded;
     [ObservableProperty] bool _isPaneOpen = true;
@@ -26,7 +28,7 @@ internal partial class MainViewModel : ViewModelBase
     public ObservableCollection<Module> AllModules { get; } = [];
     [ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider)
+    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider, AppSettingsService appSettingsService)
     {
         AllModules.Clear();
 
@@ -34,6 +36,7 @@ internal partial class MainViewModel : ViewModelBase
         _moduleManager = moduleManager;
         _dialogService = dialogService;
         _databaseStackProvider = databaseStackProvider;
+        _appSettingsService = appSettingsService;
 
         _ = PrepareModuleManager();
     }
@@ -45,6 +48,26 @@ internal partial class MainViewModel : ViewModelBase
             return;
 
         await _databaseStackProvider.ActiveStack.OnWindowClosing();
+    }
+
+    [RelayCommand]
+    void OpenSettings()
+    {
+        _dialogService.CreateBuilder()
+            .WithTitle("Settings")
+            .WithSize(420, 280)
+            .WithViewModel(new AppSettingsViewModel(_appSettingsService))
+            .AddButton("Save", OnSettingsDialogClosed)
+            .BuildAndShow();
+    }
+
+    void OnSettingsDialogClosed(Dialog dialog)
+    {
+        if (dialog.ViewModel is not AppSettingsViewModel vm)
+            return;
+
+        _appSettingsService.SetNotificationDefaults(vm.DueSoonThresholdMinutes, vm.EnableNotifications, vm.NotifyOnOverdue);
+        _appSettingsService.SetKeepRunningInBackground(vm.KeepRunningInBackground);
     }
 
     [RelayCommand]
