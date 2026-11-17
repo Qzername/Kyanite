@@ -12,6 +12,11 @@ internal partial class ColumnViewModel : ObservableObject
 
     [ObservableProperty] string _newItemName = string.Empty;
 
+    double _opacity = 1;
+
+    [JsonIgnore]
+    public double Opacity { get => _opacity; set => SetProperty(ref _opacity, value); }
+
     bool _isPendingDelete;
 
     [JsonIgnore]
