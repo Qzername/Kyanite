@@ -68,10 +68,17 @@ internal partial class MainViewModel : ViewModelBase
         if (dialog.ViewModel is not AppSettingsViewModel vm)
             return;
 
-        var appSettingsService = (AppSettingsService)_appSettingsService;
+        var appSettings = _appSettingsService.CurrentAppSettings;
 
-        appSettingsService.SetNotificationDefaults(vm.DueSoonThresholdMinutes, vm.EnableNotifications, vm.NotifyOnOverdue);
-        appSettingsService.SetKeepRunningInBackground(vm.KeepRunningInBackground);
+        //Notification defaults
+        appSettings.DueSoonThresholdMinutes = vm.DueSoonThresholdMinutes;
+        appSettings.EnableNotifications = vm.EnableNotifications;
+        appSettings.NotifyOnOverdue = vm.NotifyOnOverdue;
+
+        //Run in background setting
+        appSettings.KeepRunningInBackground = vm.KeepRunningInBackground;
+
+        _appSettingsService.Save();
     }
 
     [RelayCommand]

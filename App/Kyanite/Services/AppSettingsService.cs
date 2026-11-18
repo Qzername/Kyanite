@@ -19,39 +19,22 @@ internal class AppSettingsService : IAppSettingsService
             "settings.json"
         );
 
-    public AppSettings? CurrentAppSettings { get; private set; }
-
-    public bool KeepRunningInBackground => CurrentAppSettings?.KeepRunningInBackground ?? true;
-
-    public void SetKeepRunningInBackground(bool value)
-    {
-        if (CurrentAppSettings is null)
-            return;
-
-        CurrentAppSettings.KeepRunningInBackground = value;
-        
-        Save(CurrentAppSettings);
-    }
-
-    public bool EnableNotifications => CurrentAppSettings?.EnableNotifications ?? true;
-    public bool NotifyOnOverdue => CurrentAppSettings?.NotifyOnOverdue ?? true;
-    public int DueSoonThresholdMinutes => CurrentAppSettings?.DueSoonThresholdMinutes ?? 30;
-
-    public void SetNotificationDefaults(int dueSoonThresholdMinutes, bool enableNotifications, bool notifyOnOverdue)
-    {
-        if (CurrentAppSettings is null)
-            return;
-        
-        CurrentAppSettings.DueSoonThresholdMinutes = dueSoonThresholdMinutes;
-        CurrentAppSettings.EnableNotifications = enableNotifications;
-        CurrentAppSettings.NotifyOnOverdue = notifyOnOverdue;
-        
-        Save(CurrentAppSettings);
-    }
+    public AppSettings CurrentAppSettings { get; private set; } = new();
 
     public AppSettingsService()
     {
         Load();
+    }
+
+    public void Save(AppSettings appSettings)
+    {
+        if (!Directory.Exists(AppDataDirectory))
+            Directory.CreateDirectory(AppDataDirectory);
+
+        string json = JsonSerializer.Serialize(appSettings);
+        File.WriteAllText(FullPathToSetingsFile, json);
+
+        CurrentAppSettings = appSettings;
     }
 
     void Load()
@@ -64,16 +47,5 @@ internal class AppSettingsService : IAppSettingsService
 
         string json = File.ReadAllText(FullPathToSetingsFile);
         CurrentAppSettings = JsonSerializer.Deserialize<AppSettings>(json);
-    }
-
-    public void Save(AppSettings appSettings)
-    {
-        if (!Directory.Exists(AppDataDirectory))
-            Directory.CreateDirectory(AppDataDirectory);
-
-        string json = JsonSerializer.Serialize(appSettings);
-        File.WriteAllText(FullPathToSetingsFile, json);
-
-        CurrentAppSettings = appSettings;
     }
 }
