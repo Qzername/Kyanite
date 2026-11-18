@@ -16,6 +16,13 @@
           dotnet-sdk_10
           nuget-to-json
           libnotify
+
+          (writeShellScriptBin "format" ''
+            cd "$(git rev-parse --show-toplevel)"
+            dotnet format Kyanite.slnx --no-restore
+            dotnet xstyler -d . -r -c .xamlstyler.json
+            cd -
+          '')
         ];
 
         DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet";
