@@ -49,19 +49,6 @@
                         <Button
                             Height="32"
                             Padding="0"
-                            Command="{Binding ResetInitializationCommand}"
-                            CornerRadius="10">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <PathIcon
-                                    Width="14"
-                                    Height="14"
-                                    Data="{x:Static icons:MaterialIcons.ReloadAlert}" />
-                                <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Reset" />
-                            </StackPanel>
-                        </Button>                        
-                        <Button
-                            Height="32"
-                            Padding="0"
                             Command="{Binding OpenSettingsCommand}"
                             CornerRadius="10">
                             <StackPanel Orientation="Horizontal" Spacing="6">

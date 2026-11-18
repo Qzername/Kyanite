@@ -58,6 +58,7 @@ internal partial class MainViewModel : ViewModelBase
             .WithTitle("Settings")
             .WithSize(420, 280)
             .WithViewModel(new AppSettingsViewModel(_appSettingsService))
+            .AddButton("Reset", _ => ResetInitialization())
             .AddButton("Save", OnSettingsDialogClosed)
             .BuildAndShow();
     }
@@ -93,7 +94,6 @@ internal partial class MainViewModel : ViewModelBase
             .BuildAndShow();
     }
 
-    [RelayCommand]
     void ResetInitialization()
     {
         var appSettingsService = _serviceProvider.GetRequiredService<IAppSettingsService>();
