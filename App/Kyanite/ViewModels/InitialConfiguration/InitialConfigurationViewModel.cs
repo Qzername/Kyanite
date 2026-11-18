@@ -89,13 +89,9 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
 
                 _databaseStackProvider.SetStack(currentStack);
 
-                if (_appSettingsService.CurrentAppSettings is null)
-                    throw new AppSettingsNotInitializedException();
-
-
                 _appSettingsService.CurrentAppSettings.DatabaseInformation = initVm.GetData();
                 _appSettingsService.CurrentAppSettings.DatabaseStackType = currentStack.GetType().Name;
-                _appSettingsService.CurrentAppSettings.DatabaseinformationInitialized = true;
+                _appSettingsService.CurrentAppSettings.DatabaseInformationInitialized = true;
         
                 _appSettingsService.Save();
 

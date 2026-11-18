@@ -2,7 +2,7 @@
 
 public class AppSettings
 {
-    public bool DatabaseinformationInitialized { get; set; } = false;
+    public bool DatabaseInformationInitialized { get; set; } = false;
     public bool KeepRunningInBackground { get; set; } = true;
     public bool EnableNotifications { get; set; } = true;
     public bool NotifyOnOverdue { get; set; } = true;

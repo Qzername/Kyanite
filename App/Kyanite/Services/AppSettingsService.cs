@@ -46,6 +46,6 @@ internal class AppSettingsService : IAppSettingsService
         }
 
         string json = File.ReadAllText(FullPathToSetingsFile);
-        CurrentAppSettings = JsonSerializer.Deserialize<AppSettings>(json);
+        CurrentAppSettings = JsonSerializer.Deserialize<AppSettings>(json) ?? new();
     }
 }

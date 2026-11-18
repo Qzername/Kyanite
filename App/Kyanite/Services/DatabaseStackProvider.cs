@@ -12,10 +12,7 @@ internal class DatabaseStackProvider
 
     public DatabaseStackProvider(IServiceProvider serviceProvider, IAppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader)
     {
-        if (appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitializedException();
-
-        if (!appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
+        if (!appSettingsService.CurrentAppSettings.DatabaseInformationInitialized)
             return;
 
         if (string.IsNullOrEmpty(appSettingsService.CurrentAppSettings.DatabaseStackType))

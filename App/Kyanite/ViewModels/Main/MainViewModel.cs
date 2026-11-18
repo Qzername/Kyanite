@@ -4,7 +4,6 @@ using Kyanite.Dialogs.AppSettings;
 using Kyanite.Controls.ErrorInformation;
 using Kyanite.Controls.ModulePicker;
 using Kyanite.Core.Dialogs;
-using Kyanite.Exceptions;
 using Kyanite.Modules;
 using Kyanite.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -105,13 +104,11 @@ internal partial class MainViewModel : ViewModelBase
     {
         var appSettingsService = _serviceProvider.GetRequiredService<IAppSettingsService>();
 
-        if (appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitializedException();
+        var appSettings = appSettingsService.CurrentAppSettings;
 
-        
-        appSettingsService.CurrentAppSettings.DatabaseinformationInitialized = false;
-        appSettingsService.CurrentAppSettings.DatabaseStackType = null;
-        appSettingsService.CurrentAppSettings.DatabaseInformation = [];
+        appSettings.DatabaseInformationInitialized = false;
+        appSettings.DatabaseStackType = null;
+        appSettings.DatabaseInformation = [];
         
         appSettingsService.Save();
 
