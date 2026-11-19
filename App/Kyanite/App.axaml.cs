@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Kyanite.Core.Services;
 using Kyanite.Services;
 using Kyanite.ViewModels;
 using Kyanite.Views;

@@ -1,15 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Dialogs.AppSettings;
 using Kyanite.Controls.ErrorInformation;
 using Kyanite.Controls.ModulePicker;
 using Kyanite.Core.Dialogs;
-using Kyanite.Exceptions;
 using Kyanite.Modules;
 using Kyanite.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Kyanite.Core.Services;
 
 namespace Kyanite.ViewModels.Main;
 
@@ -19,6 +20,7 @@ internal partial class MainViewModel : ViewModelBase
     readonly ModuleManager _moduleManager;
     readonly IDialogService _dialogService;
     readonly DatabaseStackProvider _databaseStackProvider;
+    readonly IAppSettingsService _appSettingsService;
 
     [ObservableProperty] bool _isDataLoaded;
     [ObservableProperty] bool _isPaneOpen = true;
@@ -26,7 +28,7 @@ internal partial class MainViewModel : ViewModelBase
     public ObservableCollection<Module> AllModules { get; } = [];
     [ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider)
+    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider, IAppSettingsService appSettingsService)
     {
         AllModules.Clear();
 
@@ -34,6 +36,7 @@ internal partial class MainViewModel : ViewModelBase
         _moduleManager = moduleManager;
         _dialogService = dialogService;
         _databaseStackProvider = databaseStackProvider;
+        _appSettingsService = appSettingsService;
 
         _ = PrepareModuleManager();
     }
@@ -45,6 +48,36 @@ internal partial class MainViewModel : ViewModelBase
             return;
 
         await _databaseStackProvider.ActiveStack.OnWindowClosing();
+    }
+
+    [RelayCommand]
+    void OpenSettings()
+    {
+        _dialogService.CreateBuilder()
+            .WithTitle("Settings")
+            .WithSize(420, 280)
+            .WithViewModel(new AppSettingsViewModel(_appSettingsService))
+            .AddButton("Reset", _ => ResetInitialization())
+            .AddButton("Save", OnSettingsDialogClosed)
+            .BuildAndShow();
+    }
+
+    void OnSettingsDialogClosed(Dialog dialog)
+    {
+        if (dialog.ViewModel is not AppSettingsViewModel vm)
+            return;
+
+        var appSettings = _appSettingsService.CurrentAppSettings;
+
+        //Notification defaults
+        appSettings.DueSoonThresholdMinutes = vm.DueSoonThresholdMinutes;
+        appSettings.EnableNotifications = vm.EnableNotifications;
+        appSettings.NotifyOnOverdue = vm.NotifyOnOverdue;
+
+        //Run in background setting
+        appSettings.KeepRunningInBackground = vm.KeepRunningInBackground;
+
+        _appSettingsService.Save();
     }
 
     [RelayCommand]
@@ -67,20 +100,17 @@ internal partial class MainViewModel : ViewModelBase
             .BuildAndShow();
     }
 
-    [RelayCommand]
     void ResetInitialization()
     {
-        var appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+        var appSettingsService = _serviceProvider.GetRequiredService<IAppSettingsService>();
 
-        if (appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitializedException();
+        var appSettings = appSettingsService.CurrentAppSettings;
 
-        appSettingsService.Save(appSettingsService.CurrentAppSettings with
-        {
-            DatabaseinformationInitialized = false,
-            DatabaseStackType = null,
-            DatabaseInformation = [],
-        });
+        appSettings.DatabaseInformationInitialized = false;
+        appSettings.DatabaseStackType = null;
+        appSettings.DatabaseInformation = [];
+        
+        appSettingsService.Save();
 
         _databaseStackProvider.ActiveStack?.OnRemoved();
         AllModules.Clear();
@@ -133,7 +163,7 @@ internal partial class MainViewModel : ViewModelBase
     {
         try
         {
-            AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+            IAppSettingsService appSettingsService = _serviceProvider.GetRequiredService<IAppSettingsService>();
 
             if (_databaseStackProvider.ActiveStack is null)
                 throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");

@@ -1,9 +1,9 @@
 ﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Core.Dialogs;
+using Kyanite.Core.Services;
 using Kyanite.Database;
 using Kyanite.Modules.Default.ToDoList.Dialogs;
-using Kyanite.Services;
 using System.Collections.ObjectModel;
 
 namespace Kyanite.Modules.Default.ToDoList;
@@ -43,25 +43,28 @@ internal partial class ToDoListViewModel : Module
             {
                 element.RefreshOverdueStatus();
 
-                if (!Settings.EnableNotifications || element.IsCompleted || element.DueDate is null)
+                if (!EnableNotifications || element.IsCompleted || element.DueDate is null)
                     continue;
 
-                if (Settings.NotifyOnOverdue && !element.OverdueNotified && element.IsOverdue)
+                if (NotifyOnOverdue && !element.OverdueNotified && element.IsOverdue)
                 {
                     ShowNotification("Overdue", $"\"{element.Name}\" is overdue.");
                     element.OverdueNotified = true;
                     element.DueSoonNotified = true; // Prevent due soon notification after overdue notification
                 }
 
-                if (!element.DueSoonNotified && element.IsDueSoon(Settings.DueSoonThresholdMinutes))
+                if (!element.DueSoonNotified && element.IsDueSoon(DueSoonThresholdMinutes))
                 {
-                    ShowNotification("Reminder", $"\"{element.Name}\" is due in {Settings.DueSoonThresholdMinutes} minutes.");
+                    ShowNotification("Reminder", $"\"{element.Name}\" is due in {DueSoonThresholdMinutes} minutes.");
                     element.DueSoonNotified = true;
                 }
             }
         };
     }
 
+    bool EnableNotifications => Settings.OverrideGlobalNotifications ? Settings.EnableNotifications : _appSettingsService.CurrentAppSettings.EnableNotifications;
+    bool NotifyOnOverdue => Settings.OverrideGlobalNotifications ? Settings.NotifyOnOverdue : _appSettingsService.CurrentAppSettings.NotifyOnOverdue;
+    int DueSoonThresholdMinutes => Settings.OverrideGlobalNotifications ? Settings.DueSoonThresholdMinutes : _appSettingsService.CurrentAppSettings.DueSoonThresholdMinutes;
 
     [RelayCommand]
     void OpenSettingsDialog()
@@ -69,8 +72,8 @@ internal partial class ToDoListViewModel : Module
         _dialogService.CreateBuilder()
             .WithTitle("To-Do Settings")
             .WithSize(420, 260)
-            .WithViewModel(new ToDoSettingsViewModel(Settings, _appSettingsService.KeepRunningInBackground))
-            .AddButton("Add", OnSettingsDialogClosed)
+            .WithViewModel(new ToDoSettingsViewModel(Settings))
+            .AddButton("Save", OnSettingsDialogClosed)
             .BuildAndShow();
     }
 
@@ -115,10 +118,10 @@ internal partial class ToDoListViewModel : Module
     {
         if (dialog.ViewModel is not ToDoSettingsViewModel vm)
             return;
+        Settings.OverrideGlobalNotifications = vm.OverrideGlobalNotifications;
         Settings.EnableNotifications = vm.EnableNotifications;
         Settings.NotifyOnOverdue = vm.NotifyOnOverdue;
         Settings.DueSoonThresholdMinutes = vm.DueSoonThresholdMinutes;
-        _appSettingsService.SetKeepRunningInBackground(vm.KeepRunningInBackground);
     }
 
     void OnAddDialogClosed(Dialog dialog)
