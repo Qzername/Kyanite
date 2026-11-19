@@ -1,0 +1,26 @@
+name: Check formatting
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore local .NET tools
+        run: dotnet tool restore
+
+      - name: Verify formatting
+        run: |
+          dotnet format Kyanite.slnx --no-restore --verify-no-changes
+          dotnet xstyler -d . -r -c .xamlstyler.json -p

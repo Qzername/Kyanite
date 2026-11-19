@@ -1,4 +1,4 @@
-<UserControl
+﻿<UserControl
     x:Class="Kyanite.Views.Main.MainView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -82,7 +82,7 @@
                             ItemsSource="{Binding AllModules}"
                             SelectedItem="{Binding SelectedModule}">
                             <ListBox.Styles>
-                                <!-- let the row template fill the whole ListBoxItem, so the context menu covers the full row -->
+                                <!--  let the row template fill the whole ListBoxItem, so the context menu covers the full row  -->
                                 <Style Selector="ListBoxItem">
                                     <Setter Property="Padding" Value="0" />
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />

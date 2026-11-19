@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Core.Services;
 using Kyanite.Database;
@@ -11,94 +11,94 @@ namespace Kyanite.ViewModels.InitialConfiguration;
 
 internal partial class InitialConfigurationViewModel : ViewModelBase
 {
-    public enum Pages
-    {
-        PickStack,
-        ProvidePrepareData,
-        Finitialization
-    }
+	public enum Pages
+	{
+		PickStack,
+		ProvidePrepareData,
+		Finitialization
+	}
 
-    const int TotalPages = 3;
+	const int TotalPages = 3;
 
-    [ObservableProperty] int _page;
-    [ObservableProperty] ObservableObject? _currentPageViewModel;
+	[ObservableProperty] int _page;
+	[ObservableProperty] ObservableObject? _currentPageViewModel;
 
-    readonly ShellViewModel _shellViewModel;
-    readonly IAppSettingsService _appSettingsService;
-    readonly DatabaseStackProvider _databaseStackProvider;
+	readonly ShellViewModel _shellViewModel;
+	readonly IAppSettingsService _appSettingsService;
+	readonly DatabaseStackProvider _databaseStackProvider;
 
-    readonly PickDatabaseStackViewModel pickDatabaseStackViewModel;
-    readonly FinishedPageViewModel finishedPageViewModel = new();
+	readonly PickDatabaseStackViewModel pickDatabaseStackViewModel;
+	readonly FinishedPageViewModel finishedPageViewModel = new();
 
-    public InitialConfigurationViewModel(IServiceProvider serviceProvider, ShellViewModel shellViewModel, IAppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader, DatabaseStackProvider databaseStackProvider)
-    {
-        _shellViewModel = shellViewModel;
-        _appSettingsService = appSettingsService;
-        _databaseStackProvider = databaseStackProvider;
+	public InitialConfigurationViewModel(IServiceProvider serviceProvider, ShellViewModel shellViewModel, IAppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader, DatabaseStackProvider databaseStackProvider)
+	{
+		_shellViewModel = shellViewModel;
+		_appSettingsService = appSettingsService;
+		_databaseStackProvider = databaseStackProvider;
 
-        pickDatabaseStackViewModel = new(serviceProvider, databaseStackLoader);
+		pickDatabaseStackViewModel = new(serviceProvider, databaseStackLoader);
 
-        CurrentPageViewModel = pickDatabaseStackViewModel;
-    }
+		CurrentPageViewModel = pickDatabaseStackViewModel;
+	}
 
-    [RelayCommand]
-    void GoToNextPage()
-    {
-        // detect whenever user picked database stack or not
-        if (Page == (int)Pages.PickStack && string.IsNullOrEmpty(pickDatabaseStackViewModel.PickedDatabaseStack))
-            return;
+	[RelayCommand]
+	void GoToNextPage()
+	{
+		// detect whenever user picked database stack or not
+		if (Page == (int)Pages.PickStack && string.IsNullOrEmpty(pickDatabaseStackViewModel.PickedDatabaseStack))
+			return;
 
-        if (Page + 1 >= TotalPages)
-        {
-            _shellViewModel.UpdateView();
-            return;
-        }
+		if (Page + 1 >= TotalPages)
+		{
+			_shellViewModel.UpdateView();
+			return;
+		}
 
-        Page++;
-    }
+		Page++;
+	}
 
-    [RelayCommand]
-    void GoToPreviousPage()
-    {
-        if (Page - 1 < 0)
-            return;
+	[RelayCommand]
+	void GoToPreviousPage()
+	{
+		if (Page - 1 < 0)
+			return;
 
-        Page--;
-    }
+		Page--;
+	}
 
-    partial void OnPageChanged(int value)
-    {
-        Pages page = (Pages)value;
+	partial void OnPageChanged(int value)
+	{
+		Pages page = (Pages)value;
 
-        switch (page)
-        {
-            case Pages.PickStack:
-                CurrentPageViewModel = pickDatabaseStackViewModel;
-                break;
+		switch (page)
+		{
+			case Pages.PickStack:
+				CurrentPageViewModel = pickDatabaseStackViewModel;
+				break;
 
-            case Pages.ProvidePrepareData:
-                var vm = pickDatabaseStackViewModel.GetPickedStack().CreateInitializationViewModel();
-                CurrentPageViewModel = vm;
-                break;
+			case Pages.ProvidePrepareData:
+				var vm = pickDatabaseStackViewModel.GetPickedStack().CreateInitializationViewModel();
+				CurrentPageViewModel = vm;
+				break;
 
-            case Pages.Finitialization:
-                var currentStack = pickDatabaseStackViewModel.GetPickedStack();
+			case Pages.Finitialization:
+				var currentStack = pickDatabaseStackViewModel.GetPickedStack();
 
-                if (CurrentPageViewModel is not DatabaseInitializationViewModelBase initVm)
-                    throw new Exception("Current ViewModel expected to be of type: " + nameof(DatabaseInitializationViewModelBase));
+				if (CurrentPageViewModel is not DatabaseInitializationViewModelBase initVm)
+					throw new Exception("Current ViewModel expected to be of type: " + nameof(DatabaseInitializationViewModelBase));
 
-                _databaseStackProvider.SetStack(currentStack);
+				_databaseStackProvider.SetStack(currentStack);
 
-                _appSettingsService.CurrentAppSettings.DatabaseInformation = initVm.GetData();
-                _appSettingsService.CurrentAppSettings.DatabaseStackType = currentStack.GetType().Name;
-                _appSettingsService.CurrentAppSettings.DatabaseInformationInitialized = true;
-        
-                _appSettingsService.Save();
+				_appSettingsService.CurrentAppSettings.DatabaseInformation = initVm.GetData();
+				_appSettingsService.CurrentAppSettings.DatabaseStackType = currentStack.GetType().Name;
+				_appSettingsService.CurrentAppSettings.DatabaseInformationInitialized = true;
 
-                CurrentPageViewModel = finishedPageViewModel;
-                break;
+				_appSettingsService.Save();
 
-            default: throw new Exception("Unexpected page value");
-        }
-    }
+				CurrentPageViewModel = finishedPageViewModel;
+				break;
+
+			default: throw new Exception("Unexpected page value");
+		}
+	}
 }

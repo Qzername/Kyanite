@@ -1,0 +1,24 @@
+{
+	"IndentSize": 4,
+	"AttributesTolerance": 2,
+	"KeepFirstAttributeOnSameLine": true,
+	"MaxAttributeCharatersPerLine": 0,
+	"MaxAttributesPerLine": 1,
+	"NewlineExemptionElements": "RadialGradientBrush,GradientStop,LinearGradientBrush,ScaleTransform,SkewTransform,RotateTransform,TranslateTransform,Trigger,Condition,Setter",
+	"SeparateByGroups": true,
+	"EnableAttributeReordering": true,
+	"OrderAttributesByName": true,
+	"AttributeOrderingRuleGroups": [
+		"x:Class",
+		"xmlns, xmlns:x",
+		"xmlns:*",
+		"x:Key, x:Name, Name, x:Uid, Uid",
+		"Grid.Row, Grid.RowSpan, Grid.Column, Grid.ColumnSpan, Canvas.Left, Canvas.Top, Canvas.Right, Canvas.Bottom",
+		"Width, Height, MinWidth, MinHeight, MaxWidth, MaxHeight, WidthRequest, HeightRequest",
+		"Margin, Padding, CornerRadius, HorizontalAlignment, VerticalAlignment, HorizontalOptions, VerticalOptions",
+		"*",
+		"Command, CommandParameter"
+	]
+	"FormatMarkupExtension": true,
+	"IndentWithTabs": true
+}	

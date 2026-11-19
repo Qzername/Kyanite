@@ -4,8 +4,8 @@ namespace Kyanite.Modules.Default.ToDoList.Dialogs;
 
 public partial class AddNewToDoElementView : UserControl
 {
-    public AddNewToDoElementView()
-    {
-        InitializeComponent();
-    }
+	public AddNewToDoElementView()
+	{
+		InitializeComponent();
+	}
 }

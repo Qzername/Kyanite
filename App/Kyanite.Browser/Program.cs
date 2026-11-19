@@ -1,17 +1,17 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Browser;
 using Kyanite;
 using System.Threading.Tasks;
 
 internal sealed partial class Program
 {
-    private static Task Main(string[] args) => BuildAvaloniaApp()
-            .WithInterFont()
+	private static Task Main(string[] args) => BuildAvaloniaApp()
+			.WithInterFont()
 #if DEBUG
-            .WithDeveloperTools()
+			.WithDeveloperTools()
 #endif
-            .StartBrowserAppAsync("out");
+			.StartBrowserAppAsync("out");
 
-    public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>();
+	public static AppBuilder BuildAvaloniaApp()
+		=> AppBuilder.Configure<App>();
 }

@@ -4,8 +4,8 @@ namespace Kyanite.Modules.Default.ToDoList;
 
 public partial class ToDoListView : UserControl
 {
-    public ToDoListView()
-    {
-        InitializeComponent();
-    }
+	public ToDoListView()
+	{
+		InitializeComponent();
+	}
 }

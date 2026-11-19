@@ -4,8 +4,8 @@ namespace Kyanite.Modules.Default.Reminder;
 
 public partial class ReminderView : UserControl
 {
-    public ReminderView()
-    {
-        InitializeComponent();
-    }
+	public ReminderView()
+	{
+		InitializeComponent();
+	}
 }

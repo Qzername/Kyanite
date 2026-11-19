@@ -1,8 +1,8 @@
-﻿namespace Kyanite.Database;
+namespace Kyanite.Database;
 
 public record DataInformation
 {
-    public string Id { get; set; }
-    public string Type { get; set; }
-    public string Value { get; set; }
+	public string Id { get; set; }
+	public string Type { get; set; }
+	public string Value { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using Kyanite.Core.Services;
+using Kyanite.Core.Services;
 
 
 #if WINDOWS
@@ -9,13 +9,13 @@ namespace Kyanite.Desktop.NotificationServices;
 
 internal class WindowsNotificationService : INotificationService
 {
-    public void Show(string title, string message)
-    {
+	public void Show(string title, string message)
+	{
 #if WINDOWS
         new ToastContentBuilder()
                .AddText(title)
                .AddText(message)
                .Show();
 #endif
-    }
+	}
 }
