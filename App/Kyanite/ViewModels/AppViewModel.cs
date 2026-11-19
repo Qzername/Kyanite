@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Controls.ErrorInformation;
@@ -19,96 +19,96 @@ namespace Kyanite.ViewModels;
 /// </summary>
 internal partial class AppViewModel(IServiceProvider serviceProvider) : ViewModelBase
 {
-	[RelayCommand]
-	public void OpenApplication()
-	{
-		var desktop = (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
+    [RelayCommand]
+    public void OpenApplication()
+    {
+        var desktop = (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
 
-		if (desktop.MainWindow is not null)
-			return;
+        if (desktop.MainWindow is not null)
+            return;
 
-		var shellProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
+        var shellProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
 
-		desktop.MainWindow = new MainWindow()
-		{
-			DataContext = shellProvider.CreateOrGetShell()
-		};
+        desktop.MainWindow = new MainWindow()
+        {
+            DataContext = shellProvider.CreateOrGetShell()
+        };
 
-		desktop.MainWindow.Closed += async (_, _) =>
-		{
-			var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
-			var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
-			var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-			var appSettingsService = serviceProvider.GetRequiredService<AppSettingsService>();
+        desktop.MainWindow.Closed += async (_, _) =>
+        {
+            var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
+            var shellViewModelProvider = serviceProvider.GetRequiredService<ShellViewModelProvider>();
+            var databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
+            var appSettingsService = serviceProvider.GetRequiredService<AppSettingsService>();
 
-			//async void: any exception thrown here (failed save, offline upload) would abort the process and lose the session
-			try
-			{
+            //async void: any exception thrown here (failed save, offline upload) would abort the process and lose the session
+            try
+            {
+                
+                //app is not configured; close the app
+                if (databaseStackProvider.ActiveStack is null)
+                {
+                    desktop.Shutdown();
+                    return;
+                }
 
-				//app is not configured; close the app
-				if (databaseStackProvider.ActiveStack is null)
-				{
-					desktop.Shutdown();
-					return;
-				}
+                if (shellViewModelProvider.TryRetriveShellCurrentViewModel(out MainViewModel mainViewModel) &&
+                    mainViewModel.SelectedModule is not null)
+                    await moduleManager.SaveModule(mainViewModel.SelectedModule);
 
-				if (shellViewModelProvider.TryRetriveShellCurrentViewModel(out MainViewModel mainViewModel) &&
-					mainViewModel.SelectedModule is not null)
-					await moduleManager.SaveModule(mainViewModel.SelectedModule);
+                await databaseStackProvider.ActiveStack.OnWindowClosing();
 
-				await databaseStackProvider.ActiveStack.OnWindowClosing();
+                moduleManager.ClearData();
+                shellProvider.DisposeShell();
+                desktop.MainWindow = null;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Closing failed, window reopened: {ex}");
 
-				moduleManager.ClearData();
-				shellProvider.DisposeShell();
-				desktop.MainWindow = null;
-			}
-			catch (Exception ex)
-			{
-				Console.Error.WriteLine($"Closing failed, window reopened: {ex}");
+                //window is already gone; reopen it so the user sees the error instead of a vanished app
+                desktop.MainWindow = null;
+                OpenApplication();
+                
+                serviceProvider.GetRequiredService<IDialogService>()
+                    .CreateBuilder()
+                    .WithViewModel(new ErrorInformationViewModel(ex.Message))
+                    .AddCloseButton()
+                    .BuildAndShow();
+            }
 
-				//window is already gone; reopen it so the user sees the error instead of a vanished app
-				desktop.MainWindow = null;
-				OpenApplication();
+            await databaseStackProvider.ActiveStack.OnWindowClosing();
 
-				serviceProvider.GetRequiredService<IDialogService>()
-					.CreateBuilder()
-					.WithViewModel(new ErrorInformationViewModel(ex.Message))
-					.AddCloseButton()
-					.BuildAndShow();
-			}
+            moduleManager.ClearData();
+            shellProvider.DisposeShell();
 
-			await databaseStackProvider.ActiveStack.OnWindowClosing();
+            if (appSettingsService.KeepRunningInBackground)
+                desktop.MainWindow = null;
+            else
+                desktop.Shutdown();
+        };
 
-			moduleManager.ClearData();
-			shellProvider.DisposeShell();
+        desktop.MainWindow.Show();
+    }
 
-			if (appSettingsService.KeepRunningInBackground)
-				desktop.MainWindow = null;
-			else
-				desktop.Shutdown();
-		};
+    [RelayCommand]
+    async Task CloseApplication()
+    {
+        //save current module if any
+        var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
 
-		desktop.MainWindow.Show();
-	}
+        if (mainViewModel.SelectedModule is not null)
+        {
+            var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
+            await moduleManager.SaveModule(mainViewModel.SelectedModule);
+        }
 
-	[RelayCommand]
-	async Task CloseApplication()
-	{
-		//save current module if any
-		var mainViewModel = serviceProvider.GetRequiredService<MainViewModel>();
+        DatabaseStackProvider databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
 
-		if (mainViewModel.SelectedModule is not null)
-		{
-			var moduleManager = serviceProvider.GetRequiredService<ModuleManager>();
-			await moduleManager.SaveModule(mainViewModel.SelectedModule);
-		}
+        if (databaseStackProvider.ActiveStack is not null)
+            await databaseStackProvider.ActiveStack.OnWindowClosing();
 
-		DatabaseStackProvider databaseStackProvider = serviceProvider.GetRequiredService<DatabaseStackProvider>();
-
-		if (databaseStackProvider.ActiveStack is not null)
-			await databaseStackProvider.ActiveStack.OnWindowClosing();
-
-		if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-			desktop.Shutdown();
-	}
+        if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            desktop.Shutdown();
+    }
 }

@@ -4,8 +4,8 @@ namespace Kyanite.Controls.ModulePicker;
 
 public partial class ModulePickerView : UserControl
 {
-	public ModulePickerView()
-	{
-		InitializeComponent();
-	}
+    public ModulePickerView()
+    {
+        InitializeComponent();
+    }
 }

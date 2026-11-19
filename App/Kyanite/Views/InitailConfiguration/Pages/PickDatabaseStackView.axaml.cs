@@ -4,8 +4,8 @@ namespace Kyanite.Views.InitialConfiguration.Pages;
 
 public partial class PickDatabaseStackView : UserControl
 {
-	public PickDatabaseStackView()
-	{
-		InitializeComponent();
-	}
+    public PickDatabaseStackView()
+    {
+        InitializeComponent();
+    }
 }

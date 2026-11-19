@@ -1,27 +1,27 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Kyanite.Core.Dialogs;
 
 public class DialogService : IDialogService
 {
-	Dialog? _currentDialog;
-	public Dialog? CurrentDialog
-	{
-		get => _currentDialog;
-		private set
-		{
-			if (_currentDialog == value)
-				return;
+    Dialog? _currentDialog;
+    public Dialog? CurrentDialog
+    {
+        get => _currentDialog;
+        private set
+        {
+            if (_currentDialog == value)
+                return;
 
-			_currentDialog = value;
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentDialog)));
-		}
-	}
+            _currentDialog = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentDialog)));
+        }
+    }
 
-	public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-	public void Show(Dialog dialog) => CurrentDialog = dialog;
-	public void Close() => CurrentDialog = null;
+    public void Show(Dialog dialog) => CurrentDialog = dialog;
+    public void Close() => CurrentDialog = null;
 
-	public DialogBuilder CreateBuilder() => new DialogBuilder(this);
+    public DialogBuilder CreateBuilder() => new DialogBuilder(this);
 }

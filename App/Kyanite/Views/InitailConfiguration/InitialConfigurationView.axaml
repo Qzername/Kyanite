@@ -1,44 +1,30 @@
-﻿<UserControl
-    x:Class="Kyanite.Views.InitialConfiguration.InitialConfigurationView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewLocators="using:Kyanite.ViewLocators"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:CompileBindings="False"
-    mc:Ignorable="d">
-    <Panel>
-        <TextBlock
-            Margin="50"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            Text="Welcome to Kyanite" />
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Kyanite.Views.InitialConfiguration.InitialConfigurationView"
+		   x:CompileBindings="False"
+		   
+		   xmlns:viewLocators="using:Kyanite.ViewLocators">
+	<Panel>
+		<TextBlock Text="Welcome to Kyanite" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="50"/>
 
-        <Panel
-            Width="300"
-            Height="600"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Background="Gray">
-            <ContentControl Content="{Binding CurrentPageViewModel}">
-                <ContentControl.DataTemplates>
-                    <viewLocators:MainViewLocator />
-                    <viewLocators:DatabaseInitializationViewLocator />
-                </ContentControl.DataTemplates>
-            </ContentControl>
+		<Panel HorizontalAlignment="Center" VerticalAlignment="Center"
+			  Width="300" Height="600" Background="Gray">
+			<ContentControl Content="{Binding CurrentPageViewModel}">
+				<ContentControl.DataTemplates>
+					<viewLocators:MainViewLocator/>
+					<viewLocators:DatabaseInitializationViewLocator/>
+				</ContentControl.DataTemplates>
+			</ContentControl>
 
-            <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-                <Button
-                    Command="{Binding GoToNextPageCommand}"
-                    Content="Next"
-                    DockPanel.Dock="Right" />
-                <Button
-                    Command="{Binding GoToPreviousPageCommand}"
-                    Content="Previous"
-                    DockPanel.Dock="Left" />
-            </DockPanel>
-        </Panel>
-    </Panel>
+			<DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+				<Button DockPanel.Dock="Right" Content="Next"
+					   Command="{Binding GoToNextPageCommand}"/>
+				<Button DockPanel.Dock="Left" Content="Previous"
+					   Command="{Binding GoToPreviousPageCommand}"/>
+			</DockPanel>
+		</Panel>
+	</Panel>
 </UserControl>

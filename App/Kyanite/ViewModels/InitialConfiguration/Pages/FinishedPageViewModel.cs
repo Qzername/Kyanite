@@ -1,4 +1,4 @@
-namespace Kyanite.ViewModels.InitialConfiguration.Pages;
+﻿namespace Kyanite.ViewModels.InitialConfiguration.Pages;
 
 internal class FinishedPageViewModel : ViewModelBase
 {

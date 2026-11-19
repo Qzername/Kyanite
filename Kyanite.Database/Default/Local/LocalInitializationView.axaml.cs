@@ -4,8 +4,8 @@ namespace Kyanite.Database.Default.Local;
 
 public partial class LocalInitializationView : UserControl
 {
-	public LocalInitializationView()
-	{
-		InitializeComponent();
-	}
+    public LocalInitializationView()
+    {
+        InitializeComponent();
+    }
 }

@@ -1,4 +1,4 @@
-using Kyanite.ViewModels;
+﻿using Kyanite.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -9,37 +9,37 @@ namespace Kyanite.Services;
 /// </summary>
 internal class ShellViewModelProvider
 {
-	readonly IServiceProvider _serviceProvider;
+    readonly IServiceProvider _serviceProvider;
 
-	ShellViewModel? shellViewModel;
+    ShellViewModel? shellViewModel;
 
-	public ShellViewModelProvider(IServiceProvider serviceProvider)
-	{
-		_serviceProvider = serviceProvider;
-	}
+    public ShellViewModelProvider(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
 
-	public ShellViewModel CreateOrGetShell()
-	{
-		shellViewModel ??= ActivatorUtilities.CreateInstance<ShellViewModel>(_serviceProvider);
-		return shellViewModel;
-	}
+    public ShellViewModel CreateOrGetShell()
+    {
+        shellViewModel ??= ActivatorUtilities.CreateInstance<ShellViewModel>(_serviceProvider);
+        return shellViewModel;
+    }
 
-	public bool TryRetriveShellCurrentViewModel<T>(out T viewModel) where T : ViewModelBase
-	{
-		viewModel = default!;
+    public bool TryRetriveShellCurrentViewModel<T>(out T viewModel) where T : ViewModelBase
+    {
+        viewModel = default!;
 
-		if (shellViewModel is null)
-			return false;
+        if (shellViewModel is null)
+            return false;
 
-		if (shellViewModel.CurrentViewModel is not T)
-			return false;
+        if (shellViewModel.CurrentViewModel is not T)
+            return false;
 
-		viewModel = (T)shellViewModel.CurrentViewModel;
-		return true;
-	}
+        viewModel = (T)shellViewModel.CurrentViewModel;
+        return true;
+    }
 
-	public void DisposeShell()
-	{
-		shellViewModel = null;
-	}
+    public void DisposeShell()
+    {
+        shellViewModel = null;
+    }
 }

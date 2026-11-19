@@ -1,32 +1,29 @@
-﻿<UserControl
-    x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.ToDoSettingsView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:dialogs="using:Kyanite.Modules.Default.ToDoList.Dialogs"
-    x:DataType="dialogs:ToDoSettingsViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dialogs="using:Kyanite.Modules.Default.ToDoList.Dialogs"
+             x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.ToDoSettingsView"
+             x:DataType="dialogs:ToDoSettingsViewModel">
 
     <StackPanel Margin="16" Spacing="12">
-        <CheckBox Content="Enable notifications" IsChecked="{Binding EnableNotifications}" />
+        <CheckBox Content="Enable notifications"
+                  IsChecked="{Binding EnableNotifications}"/>
 
-        <CheckBox
-            Content="Enable notifications for overdue tasks"
-            IsChecked="{Binding NotifyOnOverdue}"
-            IsEnabled="{Binding EnableNotifications}" />
+        <CheckBox Content="Enable notifications for overdue tasks"
+                  IsChecked="{Binding NotifyOnOverdue}"
+                  IsEnabled="{Binding EnableNotifications}"/>
 
-        <Grid VerticalAlignment="Center" ColumnDefinitions="*,Auto">
-            <TextBlock VerticalAlignment="Center" Text="Notification timer before overdue :" />
-            <NumericUpDown
-                Grid.Column="1"
-                Width="120"
-                IsEnabled="{Binding EnableNotifications}"
-                Maximum="1440"
-                Minimum="1"
-                Value="{Binding DueSoonThresholdMinutes}" />
+        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <TextBlock Text="Notification timer before overdue :" 
+                       VerticalAlignment="Center"/>
+            <NumericUpDown Grid.Column="1" 
+                           Value="{Binding DueSoonThresholdMinutes}" 
+                           Minimum="1" Maximum="1440"
+                           IsEnabled="{Binding EnableNotifications}"
+                           Width="120"/>
         </Grid>
 
-        <CheckBox
-            Content="Keep app running in the background after closing the window"
-            IsChecked="{Binding KeepRunningInBackground}"
-            IsVisible="{Binding IsDesktop}" />
+        <CheckBox Content="Keep app running in the background after closing the window"
+                  IsChecked="{Binding KeepRunningInBackground}"
+                  IsVisible="{Binding IsDesktop}"/>
     </StackPanel>
 </UserControl>

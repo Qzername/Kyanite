@@ -1,4 +1,4 @@
-using Android;
+﻿using Android;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
@@ -9,22 +9,22 @@ using Avalonia.Android;
 namespace Kyanite.Android;
 
 [Activity(
-	Label = "Kyanite",
-	Theme = "@style/MyTheme.NoActionBar",
-	Icon = "@drawable/icon",
-	MainLauncher = true,
-	ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
+    Label = "Kyanite",
+    Theme = "@style/MyTheme.NoActionBar",
+    Icon = "@drawable/icon",
+    MainLauncher = true,
+    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
 public class MainActivity : AvaloniaMainActivity
 {
-	protected override void OnCreate(Bundle? savedInstanceState)
-	{
-		base.OnCreate(savedInstanceState);
+    protected override void OnCreate(Bundle? savedInstanceState)
+    {
+        base.OnCreate(savedInstanceState);
 
-		if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu) // API 33 = Android 13
-			if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.PostNotifications) != Permission.Granted)
-				ActivityCompat.RequestPermissions(this, [Manifest.Permission.PostNotifications], 0);
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu) // API 33 = Android 13
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.PostNotifications) != Permission.Granted)
+                ActivityCompat.RequestPermissions(this, [Manifest.Permission.PostNotifications], 0);
 
-		var app = (App)App.Current!;
-		app.RegisterNotificationService(new AndroidNotificationService(this));
-	}
+        var app = (App)App.Current!;
+        app.RegisterNotificationService(new AndroidNotificationService(this));
+    }
 }
