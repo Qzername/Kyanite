@@ -1,4 +1,5 @@
-﻿using Kyanite.Database;
+﻿using Kyanite.Core.Services;
+using Kyanite.Database;
 using Kyanite.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -9,12 +10,9 @@ internal class DatabaseStackProvider
 {
     public DatabaseStack? ActiveStack { get; private set; }
 
-    public DatabaseStackProvider(IServiceProvider serviceProvider, AppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader)
+    public DatabaseStackProvider(IServiceProvider serviceProvider, IAppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader)
     {
-        if (appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitializedException();
-
-        if (!appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
+        if (!appSettingsService.CurrentAppSettings.DatabaseInformationInitialized)
             return;
 
         if (string.IsNullOrEmpty(appSettingsService.CurrentAppSettings.DatabaseStackType))

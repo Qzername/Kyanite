@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Core.Dialogs;
+using Kyanite.Core.Services;
 using Kyanite.Database;
 using Kyanite.Exceptions;
 using Kyanite.Services;
@@ -20,9 +21,9 @@ internal partial class ShellViewModel : ViewModelBase
 
     public IDialogService DialogService { get; }
     readonly IServiceProvider _serviceProvider;
-    readonly AppSettingsService _appSettingsService;
+    readonly IAppSettingsService _appSettingsService;
 
-    public ShellViewModel(IServiceProvider serviceProvider, AppSettingsService appSettingsService, IDialogService dialogService)
+    public ShellViewModel(IServiceProvider serviceProvider, IAppSettingsService appSettingsService, IDialogService dialogService)
     {
         _serviceProvider = serviceProvider;
         _appSettingsService = appSettingsService;
@@ -39,10 +40,7 @@ internal partial class ShellViewModel : ViewModelBase
 
     public void UpdateView()
     {
-        if (_appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitializedException();
-
-        if (_appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
+        if (_appSettingsService.CurrentAppSettings.DatabaseInformationInitialized)
             CurrentViewModel = _serviceProvider.GetRequiredService<MainViewModel>();
         else
             CurrentViewModel = new InitialConfigurationViewModel(

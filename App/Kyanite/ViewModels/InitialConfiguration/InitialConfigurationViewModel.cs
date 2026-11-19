@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Kyanite.Core.Services;
 using Kyanite.Database;
 using Kyanite.Exceptions;
 using Kyanite.Services;
@@ -23,13 +24,13 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
     [ObservableProperty] ObservableObject? _currentPageViewModel;
 
     readonly ShellViewModel _shellViewModel;
-    readonly AppSettingsService _appSettingsService;
+    readonly IAppSettingsService _appSettingsService;
     readonly DatabaseStackProvider _databaseStackProvider;
 
     readonly PickDatabaseStackViewModel pickDatabaseStackViewModel;
     readonly FinishedPageViewModel finishedPageViewModel = new();
 
-    public InitialConfigurationViewModel(IServiceProvider serviceProvider, ShellViewModel shellViewModel, AppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader, DatabaseStackProvider databaseStackProvider)
+    public InitialConfigurationViewModel(IServiceProvider serviceProvider, ShellViewModel shellViewModel, IAppSettingsService appSettingsService, DatabaseStackLoader databaseStackLoader, DatabaseStackProvider databaseStackProvider)
     {
         _shellViewModel = shellViewModel;
         _appSettingsService = appSettingsService;
@@ -88,15 +89,11 @@ internal partial class InitialConfigurationViewModel : ViewModelBase
 
                 _databaseStackProvider.SetStack(currentStack);
 
-                if (_appSettingsService.CurrentAppSettings is null)
-                    throw new AppSettingsNotInitializedException();
-
-                _appSettingsService.Save(_appSettingsService.CurrentAppSettings with
-                {
-                    DatabaseInformation = initVm.GetData(),
-                    DatabaseStackType = currentStack.GetType().Name,
-                    DatabaseinformationInitialized = true
-                });
+                _appSettingsService.CurrentAppSettings.DatabaseInformation = initVm.GetData();
+                _appSettingsService.CurrentAppSettings.DatabaseStackType = currentStack.GetType().Name;
+                _appSettingsService.CurrentAppSettings.DatabaseInformationInitialized = true;
+        
+                _appSettingsService.Save();
 
                 CurrentPageViewModel = finishedPageViewModel;
                 break;

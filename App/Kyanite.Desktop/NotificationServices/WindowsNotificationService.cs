@@ -1,4 +1,5 @@
-﻿using Kyanite.Services;
+﻿using Kyanite.Core.Services;
+
 
 #if WINDOWS
 using Microsoft.Toolkit.Uwp.Notifications;

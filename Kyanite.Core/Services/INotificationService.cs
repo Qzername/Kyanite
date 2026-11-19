@@ -1,4 +1,4 @@
-﻿namespace Kyanite.Services;
+﻿namespace Kyanite.Core.Services;
 
 public interface INotificationService
 {

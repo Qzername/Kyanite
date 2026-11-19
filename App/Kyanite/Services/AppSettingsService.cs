@@ -1,4 +1,5 @@
-﻿using Kyanite.Models;
+﻿using Kyanite.Core.Models;
+using Kyanite.Core.Services;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -18,33 +19,11 @@ internal class AppSettingsService : IAppSettingsService
             "settings.json"
         );
 
-    public AppSettings? CurrentAppSettings { get; private set; }
-
-    public bool KeepRunningInBackground => CurrentAppSettings?.KeepRunningInBackground ?? true;
-
-    public void SetKeepRunningInBackground(bool value)
-    {
-        if (CurrentAppSettings is null)
-            return;
-
-        Save(CurrentAppSettings with { KeepRunningInBackground = value });
-    }
+    public AppSettings CurrentAppSettings { get; private set; } = new();
 
     public AppSettingsService()
     {
         Load();
-    }
-
-    void Load()
-    {
-        if (!Directory.Exists(AppDataDirectory) || !File.Exists(FullPathToSetingsFile))
-        {
-            CurrentAppSettings = new AppSettings();
-            return;
-        }
-
-        string json = File.ReadAllText(FullPathToSetingsFile);
-        CurrentAppSettings = JsonSerializer.Deserialize<AppSettings>(json);
     }
 
     public void Save(AppSettings appSettings)
@@ -56,5 +35,17 @@ internal class AppSettingsService : IAppSettingsService
         File.WriteAllText(FullPathToSetingsFile, json);
 
         CurrentAppSettings = appSettings;
+    }
+
+    void Load()
+    {
+        if (!Directory.Exists(AppDataDirectory) || !File.Exists(FullPathToSetingsFile))
+        {
+            CurrentAppSettings = new AppSettings();
+            return;
+        }
+
+        string json = File.ReadAllText(FullPathToSetingsFile);
+        CurrentAppSettings = JsonSerializer.Deserialize<AppSettings>(json) ?? new();
     }
 }
