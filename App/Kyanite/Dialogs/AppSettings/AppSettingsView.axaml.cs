@@ -4,8 +4,8 @@ namespace Kyanite.Dialogs.AppSettings;
 
 public partial class AppSettingsView : UserControl
 {
-    public AppSettingsView()
-    {
-        InitializeComponent();
-    }
+	public AppSettingsView()
+	{
+		InitializeComponent();
+	}
 }

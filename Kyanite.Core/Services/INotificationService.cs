@@ -1,6 +1,6 @@
-﻿namespace Kyanite.Core.Services;
+namespace Kyanite.Core.Services;
 
 public interface INotificationService
 {
-    public void Show(string title, string message);
+	public void Show(string title, string message);
 }

@@ -14,53 +14,53 @@ namespace Kyanite;
 
 public partial class App : Application
 {
-    NotificationServiceProvider _notificationServiceProvider = new();
+	NotificationServiceProvider _notificationServiceProvider = new();
 
-    public override void Initialize()
-    {
-        AvaloniaXamlLoader.Load(this);
-        // override font for PleasantUI library
-        PleasantSettings.Current!.Font = (FontFamily)Resources["Unbounded"]!;
-    }
+	public override void Initialize()
+	{
+		AvaloniaXamlLoader.Load(this);
+		// override font for PleasantUI library
+		PleasantSettings.Current!.Font = (FontFamily)Resources["Unbounded"]!;
+	}
 
-    public override void OnFrameworkInitializationCompleted()
-    {
-        var collection = new ServiceCollection();
-        collection
-            .AddSingleton(_notificationServiceProvider)
-            .AddCommonServices();
+	public override void OnFrameworkInitializationCompleted()
+	{
+		var collection = new ServiceCollection();
+		collection
+			.AddSingleton(_notificationServiceProvider)
+			.AddCommonServices();
 
-        var serviceProvider = collection.BuildServiceProvider();
+		var serviceProvider = collection.BuildServiceProvider();
 
-        _notificationServiceProvider = serviceProvider.GetRequiredService<NotificationServiceProvider>();
+		_notificationServiceProvider = serviceProvider.GetRequiredService<NotificationServiceProvider>();
 
-        var appViewModel = serviceProvider.GetRequiredService<AppViewModel>();
-        DataContext = appViewModel;
+		var appViewModel = serviceProvider.GetRequiredService<AppViewModel>();
+		DataContext = appViewModel;
 
-        var shellViewModel = serviceProvider.GetRequiredService<ShellViewModelProvider>().CreateOrGetShell();
+		var shellViewModel = serviceProvider.GetRequiredService<ShellViewModelProvider>().CreateOrGetShell();
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            appViewModel.OpenApplication();
-            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-        }
-        else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
-        {
-            singleViewFactoryApplicationLifetime.MainViewFactory = () => new ShellView { DataContext = shellViewModel };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new ShellView
-            {
-                DataContext = shellViewModel
-            };
-        }
+		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+		{
+			appViewModel.OpenApplication();
+			desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+		}
+		else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+		{
+			singleViewFactoryApplicationLifetime.MainViewFactory = () => new ShellView { DataContext = shellViewModel };
+		}
+		else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+		{
+			singleViewPlatform.MainView = new ShellView
+			{
+				DataContext = shellViewModel
+			};
+		}
 
-        base.OnFrameworkInitializationCompleted();
-    }
+		base.OnFrameworkInitializationCompleted();
+	}
 
-    public void RegisterNotificationService(INotificationService notificationService)
-    {
-        _notificationServiceProvider.SetService(notificationService);
-    }
+	public void RegisterNotificationService(INotificationService notificationService)
+	{
+		_notificationServiceProvider.SetService(notificationService);
+	}
 }

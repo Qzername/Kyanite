@@ -1,4 +1,4 @@
-﻿using Kyanite.Core.Dialogs;
+using Kyanite.Core.Dialogs;
 using Kyanite.Core.Services;
 using Kyanite.Database;
 using Kyanite.Modules;
@@ -11,27 +11,27 @@ namespace Kyanite;
 
 internal static class ServiceCollectionExtensions
 {
-    internal static IServiceCollection AddCommonServices(this IServiceCollection collection)
-    {
-        collection.AddSingleton<IAppSettingsService, AppSettingsService>();
+	internal static IServiceCollection AddCommonServices(this IServiceCollection collection)
+	{
+		collection.AddSingleton<IAppSettingsService, AppSettingsService>();
 
-        // --- database ---
+		// --- database ---
 
-        collection.AddSingleton<DatabaseStackLoader>();
-        collection.AddSingleton<DatabaseStackProvider>();
+		collection.AddSingleton<DatabaseStackLoader>();
+		collection.AddSingleton<DatabaseStackProvider>();
 
-        // --- modules --- 
+		// --- modules --- 
 
-        collection.AddSingleton<ModuleManager>();
-        collection.AddSingleton<IDialogService, DialogService>();
+		collection.AddSingleton<ModuleManager>();
+		collection.AddSingleton<IDialogService, DialogService>();
 
-        // --- app ---
+		// --- app ---
 
-        collection.AddSingleton<AppViewModel>();
-        collection.AddSingleton<ShellViewModelProvider>();
+		collection.AddSingleton<AppViewModel>();
+		collection.AddSingleton<ShellViewModelProvider>();
 
-        collection.AddTransient<MainViewModel>();
+		collection.AddTransient<MainViewModel>();
 
-        return collection;
-    }
+		return collection;
+	}
 }
