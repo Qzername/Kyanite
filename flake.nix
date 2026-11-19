@@ -20,7 +20,7 @@
           (writeShellScriptBin "format" ''
             cd "$(git rev-parse --show-toplevel)"
             dotnet format Kyanite.slnx --no-restore
-            dotnet xstyler -d . -r -c .xamlstyler.json
+            dotnet xstyler -d . -r
             cd -
           '')
         ];
