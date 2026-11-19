@@ -1,12 +1,12 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Kyanite.Core.Dialogs;
 
 public interface IDialogService : INotifyPropertyChanged
 {
-    Dialog? CurrentDialog { get; }
+	Dialog? CurrentDialog { get; }
 
-    void Show(Dialog dialog);
-    void Close();
-    DialogBuilder CreateBuilder();
+	void Show(Dialog dialog);
+	void Close();
+	DialogBuilder CreateBuilder();
 }

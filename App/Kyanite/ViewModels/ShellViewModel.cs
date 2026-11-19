@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Core.Dialogs;
 using Kyanite.Database;
@@ -16,41 +16,41 @@ namespace Kyanite.ViewModels;
 /// </summary>
 internal partial class ShellViewModel : ViewModelBase
 {
-    [ObservableProperty] ViewModelBase? _currentViewModel;
+	[ObservableProperty] ViewModelBase? _currentViewModel;
 
-    public IDialogService DialogService { get; }
-    readonly IServiceProvider _serviceProvider;
-    readonly AppSettingsService _appSettingsService;
+	public IDialogService DialogService { get; }
+	readonly IServiceProvider _serviceProvider;
+	readonly AppSettingsService _appSettingsService;
 
-    public ShellViewModel(IServiceProvider serviceProvider, AppSettingsService appSettingsService, IDialogService dialogService)
-    {
-        _serviceProvider = serviceProvider;
-        _appSettingsService = appSettingsService;
-        DialogService = dialogService;
+	public ShellViewModel(IServiceProvider serviceProvider, AppSettingsService appSettingsService, IDialogService dialogService)
+	{
+		_serviceProvider = serviceProvider;
+		_appSettingsService = appSettingsService;
+		DialogService = dialogService;
 
-        UpdateView();
-    }
+		UpdateView();
+	}
 
-    [RelayCommand]
-    void CloseDialog()
-    {
-        DialogService.Close();
-    }
+	[RelayCommand]
+	void CloseDialog()
+	{
+		DialogService.Close();
+	}
 
-    public void UpdateView()
-    {
-        if (_appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitializedException();
+	public void UpdateView()
+	{
+		if (_appSettingsService.CurrentAppSettings is null)
+			throw new AppSettingsNotInitializedException();
 
-        if (_appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
-            CurrentViewModel = _serviceProvider.GetRequiredService<MainViewModel>();
-        else
-            CurrentViewModel = new InitialConfigurationViewModel(
-                _serviceProvider,
-                shellViewModel: this,
-                _appSettingsService,
-                _serviceProvider.GetRequiredService<DatabaseStackLoader>(),
-                _serviceProvider.GetRequiredService<DatabaseStackProvider>()
-            );
-    }
+		if (_appSettingsService.CurrentAppSettings.DatabaseinformationInitialized)
+			CurrentViewModel = _serviceProvider.GetRequiredService<MainViewModel>();
+		else
+			CurrentViewModel = new InitialConfigurationViewModel(
+				_serviceProvider,
+				shellViewModel: this,
+				_appSettingsService,
+				_serviceProvider.GetRequiredService<DatabaseStackLoader>(),
+				_serviceProvider.GetRequiredService<DatabaseStackProvider>()
+			);
+	}
 }

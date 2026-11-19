@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Kyanite.Controls.ErrorInformation;
 using Kyanite.Controls.ModulePicker;
@@ -15,142 +15,142 @@ namespace Kyanite.ViewModels.Main;
 
 internal partial class MainViewModel : ViewModelBase
 {
-    readonly IServiceProvider _serviceProvider;
-    readonly ModuleManager _moduleManager;
-    readonly IDialogService _dialogService;
-    readonly DatabaseStackProvider _databaseStackProvider;
+	readonly IServiceProvider _serviceProvider;
+	readonly ModuleManager _moduleManager;
+	readonly IDialogService _dialogService;
+	readonly DatabaseStackProvider _databaseStackProvider;
 
-    [ObservableProperty] bool _isDataLoaded;
-    [ObservableProperty] bool _isPaneOpen = true;
+	[ObservableProperty] bool _isDataLoaded;
+	[ObservableProperty] bool _isPaneOpen = true;
 
-    public ObservableCollection<Module> AllModules { get; } = [];
-    [ObservableProperty] Module? _selectedModule;
+	public ObservableCollection<Module> AllModules { get; } = [];
+	[ObservableProperty] Module? _selectedModule;
 
-    public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider)
-    {
-        AllModules.Clear();
+	public MainViewModel(IServiceProvider serviceProvider, ModuleManager moduleManager, IDialogService dialogService, DatabaseStackProvider databaseStackProvider)
+	{
+		AllModules.Clear();
 
-        _serviceProvider = serviceProvider;
-        _moduleManager = moduleManager;
-        _dialogService = dialogService;
-        _databaseStackProvider = databaseStackProvider;
+		_serviceProvider = serviceProvider;
+		_moduleManager = moduleManager;
+		_dialogService = dialogService;
+		_databaseStackProvider = databaseStackProvider;
 
-        _ = PrepareModuleManager();
-    }
+		_ = PrepareModuleManager();
+	}
 
-    [RelayCommand]
-    async Task ManuallySynchronizeDatabase()
-    {
-        if (_databaseStackProvider.ActiveStack is null)
-            return;
+	[RelayCommand]
+	async Task ManuallySynchronizeDatabase()
+	{
+		if (_databaseStackProvider.ActiveStack is null)
+			return;
 
-        await _databaseStackProvider.ActiveStack.OnWindowClosing();
-    }
+		await _databaseStackProvider.ActiveStack.OnWindowClosing();
+	}
 
-    [RelayCommand]
-    void CreateModule()
-    {
-        // module picker throws when the manager is still loading; a click during startup must not kill the app
-        if (!_moduleManager.IsStackPrepared)
-            return;
+	[RelayCommand]
+	void CreateModule()
+	{
+		// module picker throws when the manager is still loading; a click during startup must not kill the app
+		if (!_moduleManager.IsStackPrepared)
+			return;
 
-        _dialogService.CreateBuilder()
-            .WithTitle("Create dialog")
-            .WithSize(400, 300)
-            .WithViewModel(new ModulePickerViewModel(_moduleManager))
-            .AddButton("Close",
-            (dialog) =>
-            {
-                var modulePickerVM = (ModulePickerViewModel)dialog.ViewModel;
-                _ = FinalizeCreateModule(modulePickerVM.ModuleName, modulePickerVM.SelectedModule);
-            })
-            .BuildAndShow();
-    }
+		_dialogService.CreateBuilder()
+			.WithTitle("Create dialog")
+			.WithSize(400, 300)
+			.WithViewModel(new ModulePickerViewModel(_moduleManager))
+			.AddButton("Close",
+			(dialog) =>
+			{
+				var modulePickerVM = (ModulePickerViewModel)dialog.ViewModel;
+				_ = FinalizeCreateModule(modulePickerVM.ModuleName, modulePickerVM.SelectedModule);
+			})
+			.BuildAndShow();
+	}
 
-    [RelayCommand]
-    void ResetInitialization()
-    {
-        var appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+	[RelayCommand]
+	void ResetInitialization()
+	{
+		var appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
 
-        if (appSettingsService.CurrentAppSettings is null)
-            throw new AppSettingsNotInitializedException();
+		if (appSettingsService.CurrentAppSettings is null)
+			throw new AppSettingsNotInitializedException();
 
-        appSettingsService.Save(appSettingsService.CurrentAppSettings with
-        {
-            DatabaseinformationInitialized = false,
-            DatabaseStackType = null,
-            DatabaseInformation = [],
-        });
+		appSettingsService.Save(appSettingsService.CurrentAppSettings with
+		{
+			DatabaseinformationInitialized = false,
+			DatabaseStackType = null,
+			DatabaseInformation = [],
+		});
 
-        _databaseStackProvider.ActiveStack?.OnRemoved();
-        AllModules.Clear();
-        _moduleManager.ClearData();
+		_databaseStackProvider.ActiveStack?.OnRemoved();
+		AllModules.Clear();
+		_moduleManager.ClearData();
 
-        var shellViewModel = _serviceProvider.GetRequiredService<ShellViewModelProvider>().CreateOrGetShell();
-        shellViewModel.UpdateView();
-    }
+		var shellViewModel = _serviceProvider.GetRequiredService<ShellViewModelProvider>().CreateOrGetShell();
+		shellViewModel.UpdateView();
+	}
 
-    [RelayCommand]
-    async Task DeleteModule(object moduleObj)
-    {
-        if (moduleObj is not Module module)
-            throw new Exception("Provided object is not of a module type");
+	[RelayCommand]
+	async Task DeleteModule(object moduleObj)
+	{
+		if (moduleObj is not Module module)
+			throw new Exception("Provided object is not of a module type");
 
-        await _moduleManager.DeleteModule(module);
-        AllModules.Replace(_moduleManager.Modules);
-    }
+		await _moduleManager.DeleteModule(module);
+		AllModules.Replace(_moduleManager.Modules);
+	}
 
-    [RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
+	[RelayCommand] void TogglePane() => IsPaneOpen = !IsPaneOpen;
 
 
-    partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)
-    {
-        _ = SaveOldAndLoadNew(oldValue, newValue);
-    }
+	partial void OnSelectedModuleChanging(Module? oldValue, Module? newValue)
+	{
+		_ = SaveOldAndLoadNew(oldValue, newValue);
+	}
 
-    async Task FinalizeCreateModule(string moduleName, string selectedModule)
-    {
-        if (string.IsNullOrEmpty(selectedModule))
-            return;
+	async Task FinalizeCreateModule(string moduleName, string selectedModule)
+	{
+		if (string.IsNullOrEmpty(selectedModule))
+			return;
 
-        var createdModule = await _moduleManager.CreateModule(moduleName, selectedModule);
+		var createdModule = await _moduleManager.CreateModule(moduleName, selectedModule);
 
-        AllModules.Replace(_moduleManager.Modules);
+		AllModules.Replace(_moduleManager.Modules);
 
-        SelectedModule = createdModule;
-    }
+		SelectedModule = createdModule;
+	}
 
-    async Task SaveOldAndLoadNew(Module? oldValue, Module? newValue)
-    {
-        if (oldValue is not null)
-            await _moduleManager.SaveModule(oldValue);
+	async Task SaveOldAndLoadNew(Module? oldValue, Module? newValue)
+	{
+		if (oldValue is not null)
+			await _moduleManager.SaveModule(oldValue);
 
-        if (newValue is not null)
-            await _moduleManager.LoadModule(newValue);
-    }
+		if (newValue is not null)
+			await _moduleManager.LoadModule(newValue);
+	}
 
-    async Task PrepareModuleManager()
-    {
-        try
-        {
-            AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
+	async Task PrepareModuleManager()
+	{
+		try
+		{
+			AppSettingsService appSettingsService = _serviceProvider.GetRequiredService<AppSettingsService>();
 
-            if (_databaseStackProvider.ActiveStack is null)
-                throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
+			if (_databaseStackProvider.ActiveStack is null)
+				throw new Exception("Stackproviders Active stack is needed to be selected before module manager can be prepared");
 
-            if (!_moduleManager.IsStackPrepared)
-                await _moduleManager.Prepare(_serviceProvider, _databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
+			if (!_moduleManager.IsStackPrepared)
+				await _moduleManager.Prepare(_serviceProvider, _databaseStackProvider.ActiveStack, appSettingsService.CurrentAppSettings.DatabaseInformation);
 
-            AllModules.Replace(_moduleManager.Modules);
+			AllModules.Replace(_moduleManager.Modules);
 
-            IsDataLoaded = true;
-        }
-        catch (Exception ex)
-        {
-            _dialogService.CreateBuilder()
-                .WithViewModel(new ErrorInformationViewModel(ex.Message))
-                .AddCloseButton()
-                .BuildAndShow();
-        }
-    }
+			IsDataLoaded = true;
+		}
+		catch (Exception ex)
+		{
+			_dialogService.CreateBuilder()
+				.WithViewModel(new ErrorInformationViewModel(ex.Message))
+				.AddCloseButton()
+				.BuildAndShow();
+		}
+	}
 }
