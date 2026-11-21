@@ -17,7 +17,7 @@ A simple, versatile work management tool designed for personal use, featuring mu
 One of the core goals of the app is to provide easy-to-use data synchronization. Currently supported storage options are:
 - **Local Database**
 - **Google Drive** - The database is uploaded to Google Drive on each sync.
-- **Kyanite API** *(Coming soon — v0.3?)*
+- **Kyanite API** *(Coming soon - v0.3?)*
 
 ## Roadmap (v0.2.0)
 
