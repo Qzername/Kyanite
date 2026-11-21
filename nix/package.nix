@@ -56,7 +56,7 @@ buildDotnetModule (finalAttrs: {
       desktopName = "Kyanite";
       exec = "kyanite %U";
       icon = "kyanite";
-      comment = "Simple work managment tool";
+      comment = "Simple work management tool";
       categories = [
         "Office"
         "Utility"
@@ -70,7 +70,7 @@ buildDotnetModule (finalAttrs: {
   ];
 
   meta = {
-    description = "Simple work managment tool";
+    description = "Simple work management tool";
     changelog = "https://github.com/Qzername/Kyanite/releases/tag/${finalAttrs.version}v";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
