@@ -31,6 +31,10 @@ buildDotnetModule (finalAttrs: {
     copyDesktopItems
   ];
 
+  postPatch = ''
+    rm -f dotnet-tools.json
+  '';
+
   postInstall = ''
     for icon in App/Kyanite/Assets/Icons/*.png; do
       size="$(basename "$icon" .png)"
