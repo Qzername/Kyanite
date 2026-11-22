@@ -1,127 +1,114 @@
-﻿<UserControl
-    x:Class="Kyanite.Views.Main.MainView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Kyanite.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:icons="clr-namespace:PleasantUI;assembly=PleasantUI.MaterialIcons"
-    xmlns:viewLocators="using:Kyanite.ViewLocators"
-    xmlns:vm="using:Kyanite.ViewModels.Main"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:DataType="vm:MainViewModel">
+﻿<UserControl x:Class="Kyanite.Views.Main.MainView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Kyanite.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:icons="clr-namespace:PleasantUI;assembly=PleasantUI.MaterialIcons"
+             xmlns:viewLocators="using:Kyanite.ViewLocators"
+             xmlns:vm="using:Kyanite.ViewModels.Main"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="vm:MainViewModel">
 
-    <SplitView
-        CompactPaneLength="48"
-        DisplayMode="CompactInline"
-        IsPaneOpen="{Binding IsPaneOpen}"
-        OpenPaneLength="200">
-        <SplitView.Pane>
-            <Border Padding="8">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Bottom" Spacing="8">
-                        <Button
-                            Height="32"
-                            Padding="0"
-                            Command="{Binding ManuallySynchronizeDatabaseCommand}"
-                            CornerRadius="10">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <PathIcon
-                                    Width="14"
-                                    Height="14"
-                                    Data="{x:Static icons:MaterialIcons.Sync}" />
-                                <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Sync" />
-                            </StackPanel>
-                        </Button>
-                        <Button
-                            Height="32"
-                            Padding="0"
-                            Command="{Binding CreateModuleCommand}"
-                            CornerRadius="10">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <PathIcon
-                                    Width="14"
-                                    Height="14"
-                                    Data="{x:Static icons:MaterialIcons.PenPlus}" />
-                                <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Create" />
-                            </StackPanel>
-                        </Button>
-                        <Button
-                            Height="32"
-                            Padding="0"
-                            Command="{Binding OpenSettingsCommand}"
-                            CornerRadius="10">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <PathIcon
-                                    Width="14"
-                                    Height="14"
-                                    Data="{x:Static icons:MaterialIcons.Cog}" />
-                                <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Settings" />
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
+	<SplitView CompactPaneLength="48"
+	           DisplayMode="CompactInline"
+	           IsPaneOpen="{Binding IsPaneOpen}"
+	           OpenPaneLength="200">
+		<SplitView.Pane>
+			<Border Padding="8">
+				<DockPanel>
+					<StackPanel DockPanel.Dock="Bottom" Spacing="8">
+						<Button Height="32"
+						        Padding="0"
+						        CornerRadius="10"
+						        Command="{Binding ManuallySynchronizeDatabaseCommand}">
+							<StackPanel Orientation="Horizontal" Spacing="6">
+								<PathIcon Width="14"
+								          Height="14"
+								          Data="{x:Static icons:MaterialIcons.Sync}" />
+								<TextBlock IsVisible="{Binding IsPaneOpen}" Text="Sync" />
+							</StackPanel>
+						</Button>
+						<Button Height="32"
+						        Padding="0"
+						        CornerRadius="10"
+						        Command="{Binding CreateModuleCommand}">
+							<StackPanel Orientation="Horizontal" Spacing="6">
+								<PathIcon Width="14"
+								          Height="14"
+								          Data="{x:Static icons:MaterialIcons.PenPlus}" />
+								<TextBlock IsVisible="{Binding IsPaneOpen}" Text="Create" />
+							</StackPanel>
+						</Button>
+						<Button Height="32"
+						        Padding="0"
+						        CornerRadius="10"
+						        Command="{Binding OpenSettingsCommand}">
+							<StackPanel Orientation="Horizontal" Spacing="6">
+								<PathIcon Width="14"
+								          Height="14"
+								          Data="{x:Static icons:MaterialIcons.Cog}" />
+								<TextBlock IsVisible="{Binding IsPaneOpen}" Text="Settings" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
 
-                    <Button
-                        Height="32"
-                        Padding="0"
-                        Command="{Binding TogglePaneCommand}"
-                        CornerRadius="10"
-                        DockPanel.Dock="Top">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <PathIcon
-                                Width="14"
-                                Height="14"
-                                Data="{x:Static icons:MaterialIcons.Menu}" />
-                            <TextBlock IsVisible="{Binding IsPaneOpen}" Text="Menu" />
-                        </StackPanel>
-                    </Button>
+					<Button Height="32"
+					        Padding="0"
+					        CornerRadius="10"
+					        DockPanel.Dock="Top"
+					        Command="{Binding TogglePaneCommand}">
+						<StackPanel Orientation="Horizontal" Spacing="6">
+							<PathIcon Width="14"
+							          Height="14"
+							          Data="{x:Static icons:MaterialIcons.Menu}" />
+							<TextBlock IsVisible="{Binding IsPaneOpen}" Text="Menu" />
+						</StackPanel>
+					</Button>
 
-                    <Grid>
-                        <ListBox
-                            Background="Transparent"
-                            ItemsSource="{Binding AllModules}"
-                            SelectedItem="{Binding SelectedModule}">
-                            <ListBox.Styles>
-                                <!--  let the row template fill the whole ListBoxItem, so the context menu covers the full row  -->
-                                <Style Selector="ListBoxItem">
-                                    <Setter Property="Padding" Value="0" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListBox.Styles>
+					<Grid>
+						<ListBox Background="Transparent"
+						         ItemsSource="{Binding AllModules}"
+						         SelectedItem="{Binding SelectedModule}">
+							<ListBox.Styles>
+								<!--  let the row template fill the whole ListBoxItem, so the context menu covers the full row  -->
+								<Style Selector="ListBoxItem">
+									<Setter Property="Padding" Value="0" />
+									<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+								</Style>
+							</ListBox.Styles>
 
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Padding="16,10" Background="Transparent">
-                                        <Border.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem
-                                                    Command="{Binding $parent[ListBox].DataContext.DeleteModuleCommand}"
-                                                    CommandParameter="{Binding}"
-                                                    Header="Remove" />
-                                            </ContextMenu>
-                                        </Border.ContextMenu>
-                                        <TextBlock Text="{Binding Name}" />
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<Border Padding="16,10" Background="Transparent">
+										<Border.ContextMenu>
+											<ContextMenu>
+												<MenuItem Header="Remove"
+												          Command="{Binding $parent[ListBox].DataContext.DeleteModuleCommand}"
+												          CommandParameter="{Binding}" />
+											</ContextMenu>
+										</Border.ContextMenu>
+										<TextBlock Text="{Binding Name}" />
+									</Border>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
 
-                        <controls:LoadingCircle
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsVisible="{Binding !IsDataLoaded}" />
-                    </Grid>
-                </DockPanel>
-            </Border>
+						<controls:LoadingCircle HorizontalAlignment="Center"
+						                        VerticalAlignment="Center"
+						                        IsVisible="{Binding !IsDataLoaded}" />
+					</Grid>
+				</DockPanel>
+			</Border>
 
-        </SplitView.Pane>
+		</SplitView.Pane>
 
-        <SplitView.Content>
-            <ContentControl Content="{Binding SelectedModule}">
-                <ContentControl.DataTemplates>
-                    <viewLocators:ModuleViewLocator />
-                </ContentControl.DataTemplates>
-            </ContentControl>
-        </SplitView.Content>
-    </SplitView>
+		<SplitView.Content>
+			<ContentControl Content="{Binding SelectedModule}">
+				<ContentControl.DataTemplates>
+					<viewLocators:ModuleViewLocator />
+				</ContentControl.DataTemplates>
+			</ContentControl>
+		</SplitView.Content>
+	</SplitView>
 </UserControl>

@@ -1,31 +1,28 @@
-﻿<UserControl
-    x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.ToDoSettingsView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:dialogs="using:Kyanite.Modules.Default.ToDoList.Dialogs"
-    x:DataType="dialogs:ToDoSettingsViewModel">
+﻿<UserControl x:Class="Kyanite.Modules.Default.ToDoList.Dialogs.ToDoSettingsView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dialogs="using:Kyanite.Modules.Default.ToDoList.Dialogs"
+             x:DataType="dialogs:ToDoSettingsViewModel">
 
-    <StackPanel Margin="16" Spacing="12">
-        <CheckBox Content="Override global notification settings" IsChecked="{Binding OverrideGlobalNotifications}" />
+	<StackPanel Margin="16" Spacing="12">
+		<CheckBox Content="Override global notification settings" IsChecked="{Binding OverrideGlobalNotifications}" />
 
-        <StackPanel IsEnabled="{Binding OverrideGlobalNotifications}" Spacing="12">
-            <CheckBox Content="Enable notifications" IsChecked="{Binding EnableNotifications}" />
+		<StackPanel IsEnabled="{Binding OverrideGlobalNotifications}" Spacing="12">
+			<CheckBox Content="Enable notifications" IsChecked="{Binding EnableNotifications}" />
 
-            <CheckBox
-                Content="Enable notifications for overdue tasks"
-                IsChecked="{Binding NotifyOnOverdue}"
-                IsEnabled="{Binding EnableNotifications}" />
+			<CheckBox Content="Enable notifications for overdue tasks"
+			          IsChecked="{Binding NotifyOnOverdue}"
+			          IsEnabled="{Binding EnableNotifications}" />
 
-            <Grid VerticalAlignment="Center" ColumnDefinitions="*,Auto">
-                <TextBlock VerticalAlignment="Center" Text="Notification timer before overdue :" />
-                <NumericUpDown
-                    Grid.Column="1"
-                    Width="120"
-                    IsEnabled="{Binding EnableNotifications}"
-                    Maximum="1440"
-                    Minimum="1"
-                    Value="{Binding DueSoonThresholdMinutes}" />
-            </Grid>
-        </StackPanel>
-    </StackPanel>
+			<Grid VerticalAlignment="Center" ColumnDefinitions="*,Auto">
+				<TextBlock VerticalAlignment="Center" Text="Notification timer before overdue :" />
+				<NumericUpDown Grid.Column="1"
+				               Width="120"
+				               IsEnabled="{Binding EnableNotifications}"
+				               Maximum="1440"
+				               Minimum="1"
+				               Value="{Binding DueSoonThresholdMinutes}" />
+			</Grid>
+		</StackPanel>
+	</StackPanel>
 </UserControl>
