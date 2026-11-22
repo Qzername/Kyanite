@@ -1,20 +1,18 @@
-﻿<UserControl
-    x:Class="Kyanite.Controls.ModulePicker.ModulePickerView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:CompileBindings="False"
-    mc:Ignorable="d">
-    <StackPanel>
-        <TextBlock Text="Module name:" />
-        <TextBox Text="{Binding ModuleName}" />
-        <TextBlock Text="Selected module:" />
-        <ComboBox
-            ItemsSource="{Binding ModuleList}"
-            SelectedIndex="0"
-            SelectedItem="{Binding SelectedModule}" />
-    </StackPanel>
+﻿<UserControl x:Class="Kyanite.Controls.ModulePicker.ModulePickerView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d"
+             x:CompileBindings="False">
+	<StackPanel>
+		<TextBlock Text="Module name:" />
+		<TextBox Text="{Binding ModuleName}" />
+		<TextBlock Text="Selected module:" />
+		<ComboBox ItemsSource="{Binding ModuleList}"
+		          SelectedIndex="0"
+		          SelectedItem="{Binding SelectedModule}" />
+	</StackPanel>
 </UserControl>

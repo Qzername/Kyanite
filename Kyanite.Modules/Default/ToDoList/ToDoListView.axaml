@@ -1,178 +1,163 @@
-﻿<UserControl
-    x:Class="Kyanite.Modules.Default.ToDoList.ToDoListView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Kyanite.Database"
-    xmlns:vm="using:Kyanite.Modules.Default.ToDoList"
-    x:Name="RootView"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:DataType="vm:ToDoListViewModel"
-    mc:Ignorable="d">
+﻿<UserControl x:Class="Kyanite.Modules.Default.ToDoList.ToDoListView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="using:Kyanite.Database"
+             xmlns:vm="using:Kyanite.Modules.Default.ToDoList"
+             x:Name="RootView"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d"
+             x:DataType="vm:ToDoListViewModel">
 
-    <UserControl.Styles>
-        <Style Selector="CheckBox.todoCheck:checked">
-            <Setter Property="Opacity" Value="0.5" />
-            <Setter Property="TextBlock.TextDecorations" Value="Strikethrough" />
-        </Style>
-        <Style Selector="TextBlock.dateText">
-            <Setter Property="Foreground" Value="#2196F3" />
-        </Style>
+	<UserControl.Styles>
+		<Style Selector="CheckBox.todoCheck:checked">
+			<Setter Property="Opacity" Value="0.5" />
+			<Setter Property="TextBlock.TextDecorations" Value="Strikethrough" />
+		</Style>
+		<Style Selector="TextBlock.dateText">
+			<Setter Property="Foreground" Value="#2196F3" />
+		</Style>
 
-        <Style Selector="TextBlock.dateText.completed">
-            <Setter Property="Foreground" Value="#4CAF50" />
-        </Style>
-        <Style Selector="Button.pinBtn">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="4" />
-            <Setter Property="Opacity" Value="0.35" />
-        </Style>
+		<Style Selector="TextBlock.dateText.completed">
+			<Setter Property="Foreground" Value="#4CAF50" />
+		</Style>
+		<Style Selector="Button.pinBtn">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="BorderThickness" Value="0" />
+			<Setter Property="Padding" Value="4" />
+			<Setter Property="Opacity" Value="0.35" />
+		</Style>
 
-        <Style Selector="Button.pinBtn.pinned">
-            <Setter Property="Opacity" Value="1.0" />
-        </Style>
+		<Style Selector="Button.pinBtn.pinned">
+			<Setter Property="Opacity" Value="1.0" />
+		</Style>
 
-        <Style Selector="TextBlock.dateText.overdue">
-            <Setter Property="Foreground" Value="#E53935" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-        </Style>
+		<Style Selector="TextBlock.dateText.overdue">
+			<Setter Property="Foreground" Value="#E53935" />
+			<Setter Property="FontWeight" Value="SemiBold" />
+		</Style>
 
-    </UserControl.Styles>
+	</UserControl.Styles>
 
-    <ScrollViewer>
-        <StackPanel Margin="10" Grid.IsSharedSizeScope="True">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button
-                    Grid.Column="0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Command="{Binding OpenAddNewDialogCommand}"
-                    Content="Create new element" />
-                <Button
-                    Grid.Column="1"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Command="{Binding OpenSettingsDialogCommand}"
-                    Content="Settings" />
-            </Grid>
+	<ScrollViewer>
+		<StackPanel Margin="10" Grid.IsSharedSizeScope="True">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Button Grid.Column="0"
+				        HorizontalAlignment="Left"
+				        VerticalAlignment="Center"
+				        Content="Create new element"
+				        Command="{Binding OpenAddNewDialogCommand}" />
+				<Button Grid.Column="1"
+				        HorizontalAlignment="Right"
+				        VerticalAlignment="Center"
+				        Content="Settings"
+				        Command="{Binding OpenSettingsDialogCommand}" />
+			</Grid>
 
-            <TextBlock
-                Margin="0,10,0,10"
-                FontWeight="Bold"
-                Text="TODO:" />
+			<TextBlock Margin="0,10,0,10"
+			           FontWeight="Bold"
+			           Text="TODO:" />
 
-            <Border Margin="0,0,0,5" Padding="6,4">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
-                    </Grid.ColumnDefinitions>
+			<Border Margin="0,0,0,5" Padding="6,4">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
+						<ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
+						<ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
+					</Grid.ColumnDefinitions>
 
-                    <TextBlock
-                        Grid.Column="0"
-                        Width="24"
-                        Text="" />
-                    <TextBlock
-                        Grid.Column="1"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="Task" />
-                    <TextBlock
-                        Grid.Column="2"
-                        Margin="0,0,12,0"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="DueDate" />
-                    <TextBlock
-                        Grid.Column="3"
-                        Margin="0,0,12,0"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="Date" />
-                    <TextBlock
-                        Grid.Column="4"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="Remove" />
-                </Grid>
-            </Border>
+					<TextBlock Grid.Column="0"
+					           Width="24"
+					           Text="" />
+					<TextBlock Grid.Column="1"
+					           VerticalAlignment="Center"
+					           FontWeight="SemiBold"
+					           Text="Task" />
+					<TextBlock Grid.Column="2"
+					           Margin="0,0,12,0"
+					           VerticalAlignment="Center"
+					           FontWeight="SemiBold"
+					           Text="DueDate" />
+					<TextBlock Grid.Column="3"
+					           Margin="0,0,12,0"
+					           VerticalAlignment="Center"
+					           FontWeight="SemiBold"
+					           Text="Date" />
+					<TextBlock Grid.Column="4"
+					           HorizontalAlignment="Center"
+					           VerticalAlignment="Center"
+					           FontWeight="SemiBold"
+					           Text="Remove" />
+				</Grid>
+			</Border>
 
-            <ItemsControl ItemsSource="{Binding ToDoElements}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            Margin="0,5,0,0"
-                            Padding="6,4"
-                            BorderBrush="Gray"
-                            BorderThickness="1"
-                            CornerRadius="5">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
-                                </Grid.ColumnDefinitions>
+			<ItemsControl ItemsSource="{Binding ToDoElements}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Border Margin="0,5,0,0"
+						        Padding="6,4"
+						        CornerRadius="5"
+						        BorderBrush="Gray"
+						        BorderThickness="1">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" SharedSizeGroup="ColPin" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" SharedSizeGroup="ColDue" />
+									<ColumnDefinition Width="Auto" SharedSizeGroup="ColDisplay" />
+									<ColumnDefinition Width="Auto" SharedSizeGroup="ColAction" />
+								</Grid.ColumnDefinitions>
 
-                                <Button
-                                    Grid.Column="0"
-                                    Margin="0,0,4,0"
-                                    VerticalAlignment="Center"
-                                    Classes="pinBtn"
-                                    Classes.pinned="{Binding IsPinned}"
-                                    Command="{Binding #RootView.DataContext.TogglePinCommand}"
-                                    CommandParameter="{Binding}"
-                                    Content="⭐" />
+								<Button Grid.Column="0"
+								        Margin="0,0,4,0"
+								        VerticalAlignment="Center"
+								        Classes="pinBtn"
+								        Classes.pinned="{Binding IsPinned}"
+								        Content="⭐"
+								        Command="{Binding #RootView.DataContext.TogglePinCommand}"
+								        CommandParameter="{Binding}" />
 
-                                <CheckBox
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    Classes="todoCheck"
-                                    Command="{Binding #RootView.DataContext.ToggleCompleteCommand}"
-                                    CommandParameter="{Binding}"
-                                    Content="{Binding Name}"
-                                    IsChecked="{Binding IsCompleted}" />
+								<CheckBox Grid.Column="1"
+								          VerticalAlignment="Center"
+								          Classes="todoCheck"
+								          Content="{Binding Name}"
+								          IsChecked="{Binding IsCompleted}"
+								          Command="{Binding #RootView.DataContext.ToggleCompleteCommand}"
+								          CommandParameter="{Binding}" />
 
-                                <TextBlock
-                                    Grid.Column="2"
-                                    Margin="0,0,12,0"
-                                    VerticalAlignment="Center"
-                                    Classes="dateText"
-                                    Classes.completed="{Binding IsCompleted}"
-                                    Classes.overdue="{Binding IsOverdue}"
-                                    Text="{Binding DueDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
+								<TextBlock Grid.Column="2"
+								           Margin="0,0,12,0"
+								           VerticalAlignment="Center"
+								           Classes="dateText"
+								           Classes.completed="{Binding IsCompleted}"
+								           Classes.overdue="{Binding IsOverdue}"
+								           Text="{Binding DueDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
 
-                                <TextBlock
-                                    Grid.Column="3"
-                                    Margin="0,0,12,0"
-                                    VerticalAlignment="Center"
-                                    Classes="dateText"
-                                    Classes.completed="{Binding IsCompleted}"
-                                    Text="{Binding DisplayDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
+								<TextBlock Grid.Column="3"
+								           Margin="0,0,12,0"
+								           VerticalAlignment="Center"
+								           Classes="dateText"
+								           Classes.completed="{Binding IsCompleted}"
+								           Text="{Binding DisplayDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
 
-                                <Button
-                                    Grid.Column="4"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding #RootView.DataContext.RemoveToDoElementCommand}"
-                                    CommandParameter="{Binding}"
-                                    Content="Remove" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
-    </ScrollViewer>
+								<Button Grid.Column="4"
+								        VerticalAlignment="Center"
+								        Content="Remove"
+								        Command="{Binding #RootView.DataContext.RemoveToDoElementCommand}"
+								        CommandParameter="{Binding}" />
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</StackPanel>
+	</ScrollViewer>
 </UserControl>
