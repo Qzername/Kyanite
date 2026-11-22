@@ -18,7 +18,7 @@
 		"Margin, Padding, CornerRadius, HorizontalAlignment, VerticalAlignment, HorizontalOptions, VerticalOptions",
 		"*",
 		"Command, CommandParameter"
-	]
+	],
 	"FormatMarkupExtension": true,
 	"IndentWithTabs": true
-}	
+}
