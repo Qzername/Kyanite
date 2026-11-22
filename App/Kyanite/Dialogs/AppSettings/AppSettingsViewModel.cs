@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Kyanite.Core.Services;
-using Kyanite.Services;
 using Kyanite.ViewModels;
 
 namespace Kyanite.Dialogs.AppSettings;

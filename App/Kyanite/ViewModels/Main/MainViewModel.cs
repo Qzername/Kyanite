@@ -55,7 +55,7 @@ internal partial class MainViewModel : ViewModelBase
 	{
 		_dialogService.CreateBuilder()
 			.WithTitle("Settings")
-			.WithSize(420, 280)
+			.WithSize(800, 600)
 			.WithViewModel(new AppSettingsViewModel(_appSettingsService))
 			.AddButton("Reset", _ => ResetInitialization())
 			.AddButton("Save", OnSettingsDialogClosed)
@@ -89,7 +89,7 @@ internal partial class MainViewModel : ViewModelBase
 
 		_dialogService.CreateBuilder()
 			.WithTitle("Create dialog")
-			.WithSize(400, 300)
+			.WithSize(600, 400)
 			.WithViewModel(new ModulePickerViewModel(_moduleManager))
 			.AddButton("Close",
 			(dialog) =>

@@ -4,25 +4,46 @@
              xmlns:settings="using:Kyanite.Dialogs.AppSettings"
              x:DataType="settings:AppSettingsViewModel">
 
-	<StackPanel Margin="16" Spacing="12">
-		<CheckBox Content="Enable notifications" IsChecked="{Binding EnableNotifications}" />
+	<SplitView CompactPaneLength="48"
+	           DisplayMode="CompactInline"
+	           IsPaneOpen="True"
+	           OpenPaneLength="200">
+		<SplitView.Pane>
+			<StackPanel>
+				<Button Click="GeneralClick" Content="GENERAL" />
+				<Button Click="TodoModulesClick" Content="TODO MODULES" />
+			</StackPanel>
+		</SplitView.Pane>
 
-		<CheckBox Content="Enable notifications for overdue tasks"
-		          IsChecked="{Binding NotifyOnOverdue}"
-		          IsEnabled="{Binding EnableNotifications}" />
+		<SplitView.Content>
+			<ScrollViewer x:Name="SettingsScrollViewer">
+				<StackPanel Margin="16" Spacing="12">
+					<TextBlock x:Name="GeneralCategory"
+					           HorizontalAlignment="Center"
+					           Text="GENERAL" />
+					<CheckBox Content="Keep app running in the background after closing the window"
+					          IsChecked="{Binding KeepRunningInBackground}"
+					          IsVisible="{Binding IsDesktop}" />
 
-		<Grid VerticalAlignment="Center" ColumnDefinitions="*,Auto">
-			<TextBlock VerticalAlignment="Center" Text="Notification timer before overdue :" />
-			<NumericUpDown Grid.Column="1"
-			               Width="120"
-			               IsEnabled="{Binding EnableNotifications}"
-			               Maximum="1440"
-			               Minimum="1"
-			               Value="{Binding DueSoonThresholdMinutes}" />
-		</Grid>
-
-		<CheckBox Content="Keep app running in the background after closing the window"
-		          IsChecked="{Binding KeepRunningInBackground}"
-		          IsVisible="{Binding IsDesktop}" />
-	</StackPanel>
+					<TextBlock x:Name="TodoModulesCategory"
+					           HorizontalAlignment="Center"
+					           Text="TODO MODULES" />
+					<CheckBox Content="Enable notifications" IsChecked="{Binding EnableNotifications}" />
+					<CheckBox Content="Enable notifications for overdue tasks"
+					          IsChecked="{Binding NotifyOnOverdue}"
+					          IsEnabled="{Binding EnableNotifications}" />
+					<Grid VerticalAlignment="Center" ColumnDefinitions="*,Auto">
+						<TextBlock VerticalAlignment="Center" Text="Notification timer before overdue:" />
+						<NumericUpDown Grid.Column="1"
+						               Width="120"
+						               IsEnabled="{Binding EnableNotifications}"
+						               Maximum="1440"
+						               Minimum="1"
+						               Value="{Binding DueSoonThresholdMinutes}" />
+					</Grid>
+					<Border Height="500" />
+				</StackPanel>
+			</ScrollViewer>
+		</SplitView.Content>
+	</SplitView>
 </UserControl>
