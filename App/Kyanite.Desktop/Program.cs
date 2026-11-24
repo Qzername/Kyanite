@@ -72,6 +72,6 @@ internal sealed class Program
 			return new LinuxNotificationService();
 		else
 			throw new Exception("Platform not supported");
-			
+
 	}
 }
