@@ -1,5 +1,6 @@
 using Avalonia;
 using HotAvalonia;
+using Kyanite.Core.Services;
 using Kyanite.Desktop.NotificationServices;
 using System;
 using System.Threading;
@@ -21,7 +22,7 @@ internal sealed class Program
 
 		if (!isNewInstance)
 		{
-			new WindowsNotificationService().Show(
+			CreateNotificationService().Show(
 				"Kyanite",
 				"Instance of this app is already running"
 			);
@@ -58,12 +59,19 @@ internal sealed class Program
 	static void ProvideNotificationService(AppBuilder builder)
 	{
 		var app = (App)builder.Instance!;
+		app.RegisterNotificationService(CreateNotificationService());
+	}
 
+	static INotificationService CreateNotificationService()
+	{
 		if (OperatingSystem.IsWindows())
-			app.RegisterNotificationService(new WindowsNotificationService());
+			return new WindowsNotificationService();
 		else if (OperatingSystem.IsMacOS())
-			app.RegisterNotificationService(new MacOsNotificationService());
+			return new MacOsNotificationService();
 		else if (OperatingSystem.IsLinux())
-			app.RegisterNotificationService(new LinuxNotificationService());
+			return new LinuxNotificationService();
+		else
+			throw new Exception("Platform not supported");
+
 	}
 }
