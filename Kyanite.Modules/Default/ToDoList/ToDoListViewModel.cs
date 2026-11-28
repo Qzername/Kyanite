@@ -71,7 +71,7 @@ internal partial class ToDoListViewModel : Module
 	{
 		_dialogService.CreateBuilder()
 			.WithTitle("To-Do Settings")
-			.WithSize(420, 260)
+			.WithSize(DialogSize.Responsive())
 			.WithViewModel(new ToDoSettingsViewModel(Settings))
 			.AddButton("Save", OnSettingsDialogClosed)
 			.BuildAndShow();
@@ -89,7 +89,7 @@ internal partial class ToDoListViewModel : Module
 	{
 		_dialogService.CreateBuilder()
 			.WithTitle("Add new ToDo element")
-			.WithSize(1067, 200)
+			.WithSize(DialogSize.Responsive())
 			.WithViewModel(new AddNewToDoElementViewModel())
 			.AddButton("Close", OnAddDialogClosed)
 			.BuildAndShow();

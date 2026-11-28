@@ -1,4 +1,3 @@
-
 using Kyanite.ViewModels;
 
 namespace Kyanite.Core.Dialogs;
@@ -8,7 +7,7 @@ public class DialogBuilder(IDialogService dialogService)
 	readonly IDialogService _dialogService = dialogService;
 
 	string title = "Dialog";
-	int width = 300, height = 200;
+	DialogSize dialogSize = DialogSize.Fixed(300, 200);
 
 	ViewModelBase? viewModel;
 
@@ -20,10 +19,9 @@ public class DialogBuilder(IDialogService dialogService)
 		return this;
 	}
 
-	public DialogBuilder WithSize(int width, int height)
+	public DialogBuilder WithSize(DialogSize dialogSize)
 	{
-		this.width = width;
-		this.height = height;
+		this.dialogSize = dialogSize;
 		return this;
 	}
 
@@ -60,7 +58,7 @@ public class DialogBuilder(IDialogService dialogService)
 		if (viewModel is null)
 			throw new InvalidOperationException("ViewModel must be set before building the dialog.");
 
-		var dialog = new Dialog(title, width, height, viewModel);
+		var dialog = new Dialog(title, dialogSize, viewModel);
 
 		dialog.Buttons = buttons.Select(x => new ButtonInfo()
 		{

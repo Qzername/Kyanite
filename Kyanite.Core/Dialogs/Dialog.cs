@@ -2,11 +2,17 @@ using Kyanite.ViewModels;
 
 namespace Kyanite.Core.Dialogs;
 
-public class Dialog(string title, int width, int height, ViewModelBase viewModel) : ViewModelBase
+public class Dialog : ViewModelBase
 {
-	public readonly string Title = title;
-	public int Width { get; } = width;
-	public int Height { get; } = height;
+	internal Dialog(string title, DialogSize dialogSize, ViewModelBase viewModel)
+	{
+		Title = title;
+		DialogSize = dialogSize;
+		ViewModel = viewModel;
+	}
+
+	public readonly string Title;
+	public DialogSize DialogSize;
 	public ButtonInfo[] Buttons { get; set; } = [];
-	public ViewModelBase ViewModel { get; } = viewModel;
+	public ViewModelBase ViewModel { get; }
 }
