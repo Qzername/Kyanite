@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewLocators="using:Kyanite.ViewLocators"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+
+             x:Class="Kyanite.Controls.DialogSystem.DialogSystemView">
+	<Panel IsVisible="{Binding DialogService.CurrentDialog, Converter={x:Static ObjectConverters.IsNotNull}}">
+		<Panel HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Background="#99393939" />
+
+		<DockPanel Margin="16"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"
+					Background="Black"
+					MinWidth="{Binding DialogService.CurrentDialog.Size.MinWidth}"
+					MinHeight="{Binding DialogService.CurrentDialog.Size.MinHeight}"
+					MaxWidth="{Binding DialogService.CurrentDialog.Size.MaxWidth}"
+					MaxHeight="{Binding DialogService.CurrentDialog.Size.MaxHeight}">
+
+			<ItemsControl Margin="12,8"
+							HorizontalAlignment="Center"
+							DockPanel.Dock="Bottom"
+							ItemsSource="{Binding DialogService.CurrentDialog.Buttons}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel Orientation="Horizontal"
+									HorizontalAlignment="Center" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Margin="4"
+								Content="{Binding Content}"
+								Command="{Binding Command}" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			<ScrollViewer HorizontalScrollBarVisibility="Disabled"
+							VerticalScrollBarVisibility="Auto">
+				<ContentControl Content="{Binding DialogService.CurrentDialog.ViewModel}">
+					<ContentControl.DataTemplates>
+						<viewLocators:MainViewLocator />
+					</ContentControl.DataTemplates>
+				</ContentControl>
+			</ScrollViewer>
+		</DockPanel>
+	</Panel>
+</UserControl>
